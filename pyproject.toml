@@ -1,0 +1,13 @@
+[project]
+name = "google-acc-save"
+version = "0.1.0"
+description = "google acc save"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[standard]>=0.116.1",
+    "psycopg2>=2.9.10",
+    "requests>=2.32.4",
+    "sqlalchemy>=2.0.41",
+    "uvicorn>=0.35.0",
+]
