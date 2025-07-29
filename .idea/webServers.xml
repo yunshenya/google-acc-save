@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="e3f695e7-fa39-4d76-b4ea-9ed8bf07f6be" name="GOOLE">
-        <fileTransfer accessType="SFTP" sshConfigId="7fc1a5f7-62fc-48a4-9676-7194b68a9da6" sshConfig="root@103.118.254.151:17898 password">
+        <fileTransfer accessType="SFTP" host="103.118.254.151" port="17898" sshConfigId="cce26eb5-ae21-4d1c-850f-4a0918c005d4" sshConfig="root@103.118.254.151:17898 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>
