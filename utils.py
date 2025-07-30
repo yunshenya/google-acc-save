@@ -105,3 +105,23 @@ def get_app_install_info(pad_code_list: list[str], app_name: str) -> dict[str, s
     }
 
     return VmosUtil(url, body).send()
+
+
+def open_root(pad_code_list:list[str], pkg_name: str) -> dict[str, str]:
+    root_url = "/vcpcloud/api/padApi/switchRoot"
+    body = {
+        "padCodes": pad_code_list,
+        "packageName": pkg_name,
+        "rootStatus": 1,
+        "globalRoot": False
+    }
+    return VmosUtil(root_url, body).send()
+
+
+def reboot(pad_code_list: list[str]):
+    reboot_url = "/vcpcloud/api/padApi/restart"
+    body = {
+        "padCodes": pad_code_list
+    }
+
+    return VmosUtil(reboot_url, body).send()

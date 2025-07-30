@@ -15,11 +15,17 @@ engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 pad_code = [
     "AC32010810553",
-    "ACP250317XGMWV7A"
+    "ACP250317XGMWV7A",
+    "ACP2504225QC6HMB",
+    "ACP250417YKTB6VR",
+    "ACP250417LHNDMCY",
+    "ACP250417FRB7H9K",
+    "ACP2504175KEOO32",
+    "AC32010960163"
 ]
 pkg_name = "com.aaee8h0kh.cejwrh616"
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
-script_install_url = "https://file.vmoscloud.com/userFile/8d731085970a52d553ef7c0494cd90d9.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/49183f9866542a3a9a11ed8ff956b198.apk"
 temple_id = 44
 proxy_url = "https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/jp.yaml"
 time_zone = "Asia/Tokyo"
@@ -45,9 +51,8 @@ class AccountCreate(BaseModel):
     code: str | None = None
 
 
-class AndroidIdRequest(BaseModel):
-    id: str
-    model: str
+class AndroidPadCodeRequest(BaseModel):
+    pad_code: str
 
 
 class AccountUpdate(BaseModel):
@@ -164,10 +169,8 @@ async def update_account(account_id: int, account_update: AccountUpdate):
 
 
 @app.post("/status")
-async def status(android: AndroidIdRequest):
-    print(android.id)
-    print(android.model)
-    print(replace_pad(pad_code, temple_id))
+async def status(android_code: AndroidPadCodeRequest):
+    print(replace_pad([android_code.pad_code], temple_id))
     return {"status": "ok"}
 
 
@@ -176,7 +179,12 @@ async def callback(data: dict):
     task_business_type = data.get("taskBusinessType")
     match int(task_business_type):
         case 1000:
-            print(data)
+            print("设置语言以及时区")
+            print(update_language("en", country="US", pad_code_list=[data["padCode"]]))
+            print(update_time_zone(pad_code_list=[data["padCode"]],time_zone=time_zone))
+            print(gps_in_ject_info(pad_code_list=[data["padCode"]], latitude=latitude, longitude=longitude))
+            print("开始启动app")
+            print(start_app(pad_code_list=[data["padCode"]], pkg_name=pkg_name))
 
         case 1001:
             print(data)
@@ -191,6 +199,9 @@ async def callback(data: dict):
 
         case 1004:
             print(f"安装接口的回调{data}")
+
+        case 1006:
+            print("应用重启")
 
         case 1007:
             if data["taskStatus"] == 3:
@@ -220,7 +231,7 @@ async def callback(data: dict):
 
 
 async def check_task_status(task_id, task_type):
-    TIMEOUT_SECONDS = 180
+    TIMEOUT_SECONDS = 300
     try:
         async with asyncio.timeout(TIMEOUT_SECONDS):
             while True:
@@ -229,14 +240,14 @@ async def check_task_status(task_id, task_type):
                 if result["data"][0]["errorMsg"] == "应用安装成功":
                     if task_type.lower() == "script":
                         print(f'{task_type}安装成功')
-                        print(update_language("en", country="US", pad_code_list=[result["data"][0]["padCode"]]))
                         app_install_result = get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
                         if len(app_install_result["data"][0]["apps"]) == 2:
                             print("真安装成功")
-                            print(start_app(pad_code_list=[result["data"][0]["padCode"]], pkg_name=pkg_name))
-                            print(update_time_zone(pad_code_list=[result["data"][0]["padCode"]],time_zone=time_zone))
-                            print(gps_in_ject_info(pad_code_list=[result["data"][0]["padCode"]], latitude=latitude, longitude=longitude))
+                            print(open_root(pad_code_list=[result["data"][0]["padCode"]], pkg_name=pkg_name))
+                            print("开始重启")
+                            reboot(pad_code_list=[result["data"][0]["padCode"]])
                             break
+
                         elif len(app_install_result["data"][0]["apps"]) == 0:
                             print("假安装成功，重新安装")
                             print(install_app(pad_code_list=[result["data"][0]["padCode"]],
@@ -246,8 +257,8 @@ async def check_task_status(task_id, task_type):
                             await asyncio.sleep(10)
 
                         elif len(app_install_result["data"][0]["apps"]) == 1:
-                            app = app_install_result["data"][0]["apps"]
-                            print(f"安装成功一个:{app[0]}")
+                            app_result = app_install_result["data"][0]["apps"]
+                            print(f"安装成功一个:{app_result[0]}")
                             clash_install_result = install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url)
                             clash_task = asyncio.create_task(
                                 check_task_status(clash_install_result["data"][0]["taskId"], "Clash"))
