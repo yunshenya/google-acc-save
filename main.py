@@ -6,7 +6,6 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, declarative_base
-
 from utils import *
 
 Base = declarative_base()
@@ -15,9 +14,18 @@ DATABASE_URL = "postgresql://postgres:1332@localhost:5432/google-manager"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 pad_code = [
-    "AC32010810092",
-    "AC32010810553"
+    "AC32010810553",
+    "ACP250317XGMWV7A"
 ]
+pkg_name = "com.aaee8h0kh.cejwrh616"
+clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/8d731085970a52d553ef7c0494cd90d9.apk"
+temple_id = 44
+proxy_url = "https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/jp.yaml"
+time_zone = "Asia/Tokyo"
+latitude = 34.6657
+longitude= 135.5849
+
 
 
 class Account(Base):
@@ -35,6 +43,11 @@ class AccountCreate(BaseModel):
     password: str
     type: int = 0
     code: str | None = None
+
+
+class AndroidIdRequest(BaseModel):
+    id: str
+    model: str
 
 
 class AccountUpdate(BaseModel):
@@ -128,7 +141,7 @@ async def update_account(account_id: int, account_update: AccountUpdate):
         if db_account is None:
             raise HTTPException(status_code=404, detail="账号不存在")
 
-        # Update only provided fields
+        # 仅更新提供的字段
         if account_update.account is not None:
             db_account.account = account_update.account
         if account_update.password is not None:
@@ -150,19 +163,17 @@ async def update_account(account_id: int, account_update: AccountUpdate):
         db.close()
 
 
-@app.get("/status")
-async def status():
-    result = replace_pad(pad_code, 48)
-    if result["msg"] == "success":
-        return {"status": "ok"}
-    else:
-        raise HTTPException(status_code=400, detail=result["msg"])
+@app.post("/status")
+async def status(android: AndroidIdRequest):
+    print(android.id)
+    print(android.model)
+    print(replace_pad(pad_code, temple_id))
+    return {"status": "ok"}
 
 
 @app.post("/callback")
 async def callback(data: dict):
     task_business_type = data.get("taskBusinessType")
-    print(data)
     match int(task_business_type):
         case 1000:
             print(data)
@@ -171,11 +182,10 @@ async def callback(data: dict):
             print(data)
 
         case 1003:
-            print(data)
             if data["apps"]["result"]:
                 print(f'{data["apps"]["padCode"]}: 安装成功')
                 print(update_language("en", country="US", pad_code_list=[data["apps"]["padCode"]]))
-                print(start_app(pad_code_list=[data["apps"]["padCode"]], pkg_name="com.aaee8h0kh.cejwrh616"))
+                print(start_app(pad_code_list=[data["apps"]["padCode"]], pkg_name=pkg_name))
             else:
                 print("安装失败: " + data["apps"]["result"])
 
@@ -197,38 +207,110 @@ async def callback(data: dict):
                 if data["taskStatus"] == 3:
                     print(f'{data["padCode"]}: 一键新机成功')
                     clash_install_result = install_app(pad_code_list=[data["padCode"]],
-                                      app_url="https://file.vmoscloud.com/userFile/55f0146b6110e4970e1d1f82db8322e8.apk")
+                                                       app_url=clash_install_url)
                     script_install_result = install_app(pad_code_list=[data["padCode"]],
-                                      app_url="https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk")
-                    clash_task = asyncio.create_task(check_task_status(clash_install_result["data"][0]["taskId"], "Clash"))
-                    script_task = asyncio.create_task(check_task_status(script_install_result["data"][0]["taskId"], "Script"))
+                                                        app_url=script_install_url)
+                    clash_task = asyncio.create_task(
+                        check_task_status(clash_install_result["data"][0]["taskId"], "Clash"))
+                    script_task = asyncio.create_task(
+                        check_task_status(script_install_result["data"][0]["taskId"], "Script"))
                     await asyncio.gather(clash_task, script_task)
                 else:
                     print(f'一键新机等待中 {data["taskStatus"]}')
 
 
-@app.get("/hudson")
-async def hudson(data: dict):
-    print(data)
-
 async def check_task_status(task_id, task_type):
-    while True:
-        await asyncio.sleep(3)
-        result = get_cloud_file_task_info([str(task_id)])
-        print(f"{task_type} task {task_id}: {result}")
-        if result["data"][0]["errorMsg"] == "应用安装成功":  # Adjust this condition based on actual API response
-            print(f'安装成功')
-            print(update_language("en", country="US", pad_code_list=[result["data"][0]["padCode"]]))
-            print(start_app(pad_code_list=[result["data"][0]["padCode"]], pkg_name="com.aaee8h0kh.cejwrh616"))
-            break
-        await asyncio.sleep(3)
+    TIMEOUT_SECONDS = 180
+    try:
+        async with asyncio.timeout(TIMEOUT_SECONDS):
+            while True:
+                result = get_cloud_file_task_info([str(task_id)])
+                print(f"{task_type} task {task_id}: {result}")
+                if result["data"][0]["errorMsg"] == "应用安装成功":
+                    if task_type.lower() == "script":
+                        print(f'{task_type}安装成功')
+                        print(update_language("en", country="US", pad_code_list=[result["data"][0]["padCode"]]))
+                        app_install_result = get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
+                        if len(app_install_result["data"][0]["apps"]) == 2:
+                            print("真安装成功")
+                            print(start_app(pad_code_list=[result["data"][0]["padCode"]], pkg_name=pkg_name))
+                            print(update_time_zone(pad_code_list=[result["data"][0]["padCode"]],time_zone=time_zone))
+                            print(gps_in_ject_info(pad_code_list=[result["data"][0]["padCode"]], latitude=latitude, longitude=longitude))
+                            break
+                        elif len(app_install_result["data"][0]["apps"]) == 0:
+                            print("假安装成功，重新安装")
+                            print(install_app(pad_code_list=[result["data"][0]["padCode"]],
+                                              app_url=clash_install_url))
+                            print(install_app(pad_code_list=[result["data"][0]["padCode"]],
+                                              app_url=script_install_url))
+                            await asyncio.sleep(10)
+
+                        elif len(app_install_result["data"][0]["apps"]) == 1:
+                            app = app_install_result["data"][0]["apps"]
+                            print(f"安装成功一个:{app[0]}")
+                            clash_install_result = install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url)
+                            clash_task = asyncio.create_task(
+                                check_task_status(clash_install_result["data"][0]["taskId"], "Clash"))
+                            await asyncio.gather(clash_task)
+
+
+                    elif task_type.lower() == "clash":
+                        print(f"{task_type}安装成功")
+                        app_install_result = get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
+                        if len(app_install_result["data"][0]["apps"]) == 2:
+                            print("真安装成功")
+                            break
+                        elif len(app_install_result["data"][0]["apps"]) == 0:
+                            print("假安装成功，重新安装")
+                            print(install_app(pad_code_list=[result["data"][0]["padCode"]],
+                                              app_url=clash_install_url))
+                            print(install_app(pad_code_list=[result["data"][0]["padCode"]],
+                                              app_url=script_install_url))
+                            await asyncio.sleep(10)
+
+                        elif len(app_install_result["data"][0]["apps"]) == 1:
+                            app = app_install_result["data"][0]["apps"]
+                            print(f"安装成功一个:{app[0]}")
+                            script_install_result = install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url)
+                            script_task = asyncio.create_task(
+                                check_task_status(script_install_result["data"][0]["taskId"], "Script"))
+                            await asyncio.gather(script_task)
+
+                elif result["data"][0]["errorMsg"] == "文件下载失败 请求被中断，请重试":
+                    if task_type.lower() == "clash":
+                        print("clash下载失败")
+                        print(install_app(pad_code_list=[result["data"][0]["padCode"]],
+                                          app_url=clash_install_url))
+                    else:
+                        print("脚本下载失败")
+                        print(install_app(pad_code_list=[result["data"][0]["padCode"]],
+                                          app_url=script_install_url))
+                    await asyncio.sleep(1)
+
+                elif result["data"][0]["errorMsg"] == "任务已超时，当前设备状态为离线状态。":
+                    print("设备离线，停止安装")
+                    break
+                await asyncio.sleep(1)
+
+    except asyncio.TimeoutError:
+        print(f"{task_type} task {task_id}: Installation timed out after {TIMEOUT_SECONDS} seconds")
+        print(replace_pad([result["data"][0]["padCode"]], template_id=temple_id))
+        return
+
+
+
+@app.get("/proxy")
+async def proxy():
+    return {"proxy": proxy_url}
+
 
 @app.get("/")
 async def index(data):
     print(data)
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":
-    replace_pad(pad_code, 48)
+    print(replace_pad(pad_code, temple_id))
     Base.metadata.create_all(bind=engine)
     uvicorn.run("main:app", host="0.0.0.0", port=5000)
