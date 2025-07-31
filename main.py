@@ -1,4 +1,5 @@
 import asyncio
+from collections import defaultdict
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -6,6 +7,7 @@ from pydantic import BaseModel
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, declarative_base
+from asyncio import Task
 from utils import *
 
 Base = declarative_base()
@@ -13,25 +15,34 @@ app = FastAPI()
 DATABASE_URL = "postgresql://postgres:1332@localhost:5432/google-manager"
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-pad_code = [
+pad_code_list = [
     "AC32010810553",
-    "ACP250317XGMWV7A",
-    "ACP2504225QC6HMB",
-    "ACP250417YKTB6VR",
-    "ACP250417LHNDMCY",
-    "ACP250417FRB7H9K",
-    "ACP2504175KEOO32",
-    "AC32010960163"
+    "ACP250317XGMWV7A"
 ]
 pkg_name = "com.aaee8h0kh.cejwrh616"
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
-script_install_url = "https://file.vmoscloud.com/userFile/49183f9866542a3a9a11ed8ff956b198.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/785626fecc1d05f387b8863565e3b60c.apk"
 temple_id = 44
 proxy_url = "https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/jp.yaml"
 time_zone = "Asia/Tokyo"
 latitude = 34.6657
 longitude= 135.5849
 
+
+operations = defaultdict(lambda: Task[None])
+lock = asyncio.Lock()
+
+async def handle_timeout(pad_code_str: str):
+    try:
+        await asyncio.sleep(5 * 60)
+        async with lock:
+            if operations.get(pad_code_str) is not None:
+                print(f"标识符超时: {pad_code_str}")
+                replace_pad([pad_code_str], template_id=temple_id)
+                print("正在一键新机")
+                del operations[pad_code_str]
+    except asyncio.CancelledError:
+        print(f"标识符的超时任务: {pad_code_str} 被取消了.")
 
 
 class Account(Base):
@@ -171,6 +182,11 @@ async def update_account(account_id: int, account_update: AccountUpdate):
 @app.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
     print(replace_pad([android_code.pad_code], temple_id))
+    async with lock:
+        task = operations.get(android_code.pad_code)
+        task.cancel()
+        del operations[android_code.pad_code]
+        print("已在规定时间内完成， 超时任务已移除")
     return {"status": "ok"}
 
 
@@ -214,9 +230,16 @@ async def callback(data: dict):
             print(data)
 
         case 1124:
-            if data.get("padCode") in pad_code:
+            if data.get("padCode") in pad_code_list:
                 if data["taskStatus"] == 3:
+                    pad_code_str = data.get("padCode")
                     print(f'{data["padCode"]}: 一键新机成功')
+                    async with lock:
+                        if operations.get(pad_code_str) is not None:
+                            raise HTTPException(status_code=400, detail=f"Identifier {pad_code_str} is already in use")
+                    task = asyncio.create_task(handle_timeout(pad_code_str))
+                    operations[pad_code_str] = task
+                    print("全局超时任务开启成功")
                     clash_install_result = install_app(pad_code_list=[data["padCode"]],
                                                        app_url=clash_install_url)
                     script_install_result = install_app(pad_code_list=[data["padCode"]],
@@ -305,7 +328,12 @@ async def check_task_status(task_id, task_type):
 
     except asyncio.TimeoutError:
         print(f"{task_type} task {task_id}: Installation timed out after {TIMEOUT_SECONDS} seconds")
+        async with lock:
+            task = operations.get(result["data"][0]["padCode"])
+            task.cancel()
+            del operations[result["data"][0]["padCode"]]
         print(replace_pad([result["data"][0]["padCode"]], template_id=temple_id))
+        print("因为长时间安装不上，已移除任务")
         return
 
 
@@ -322,6 +350,8 @@ async def index(data):
 
 
 if __name__ == "__main__":
-    print(replace_pad(pad_code, temple_id))
+    print(replace_pad(pad_code_list, temple_id))
     Base.metadata.create_all(bind=engine)
     uvicorn.run("main:app", host="0.0.0.0", port=5000)
+
+
