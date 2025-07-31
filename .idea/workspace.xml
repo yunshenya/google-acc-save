@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="全流程跑通">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="加上全局超时">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +28,9 @@
   </component>
   <component name="MacroExpansionManager">
     <option name="directoryName" value="rmdDhQZ8" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -65,6 +68,7 @@
     &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
     &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
     &quot;数据库脚本.data.sql.executor&quot;: &quot;Run&quot;
   },
@@ -90,7 +94,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.test">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="google-acc-save" />
       <option name="ENV_FILES" value="" />
@@ -181,8 +185,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -221,7 +225,14 @@
       <workItem from="1753882922866" duration="741000" />
       <workItem from="1753924894077" duration="13204000" />
       <workItem from="1753940848053" duration="14000" />
-      <workItem from="1753942021724" duration="1486000" />
+      <workItem from="1753942021724" duration="1790000" />
+      <workItem from="1753944071153" duration="36000" />
+      <workItem from="1753944148932" duration="14000" />
+      <workItem from="1753944179084" duration="2000" />
+      <workItem from="1753944488411" duration="972000" />
+      <workItem from="1753945662251" duration="3035000" />
+      <workItem from="1753948727124" duration="5000" />
+      <workItem from="1753949296726" duration="1829000" />
     </task>
     <task id="LOCAL-00001" summary="初始化项目">
       <option name="closed" value="true" />
@@ -271,7 +282,23 @@
       <option name="project" value="LOCAL" />
       <updated>1753930710945</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="加上全局超时">
+      <option name="closed" value="true" />
+      <created>1753943735088</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1753943735088</updated>
+    </task>
+    <task id="LOCAL-00008" summary="加上全局超时">
+      <option name="closed" value="true" />
+      <created>1753943766390</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1753943766390</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -294,6 +321,7 @@
     <MESSAGE value="应用安装成功" />
     <MESSAGE value="完美全流程跑通" />
     <MESSAGE value="全流程跑通" />
-    <option name="LAST_COMMIT_MESSAGE" value="全流程跑通" />
+    <MESSAGE value="加上全局超时" />
+    <option name="LAST_COMMIT_MESSAGE" value="加上全局超时" />
   </component>
 </project>

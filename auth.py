@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import json
 import aiohttp
+import requests
 
 
 class VmosUtil(object):

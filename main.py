@@ -1,7 +1,9 @@
 import asyncio
+import csv
 import random
 from asyncio import Task
 from collections import defaultdict
+from typing import List
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -22,14 +24,58 @@ pad_code_list = [
     "AC32010810553",
     "ACP250317XGMWV7A"
 ]
-temple_id_list = [54,56,60,62,64,66,241,251,375,379,383,401,413,417]
+temple_id_list = [375]
 pkg_name = "com.aaee8h0kh.cejwrh616"
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
-script_install_url = "https://file.vmoscloud.com/userFile/785626fecc1d05f387b8863565e3b60c.apk"
-proxy_url = "https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/gt.yaml"
-time_zone = "America/Guatemala"
-latitude = 14.6419
-longitude= -90.5133
+script_install_url = "https://file.vmoscloud.com/userFile/e529d87b651fa55ebe2bb4743d2e8da2.apk"
+# 默认代理设置
+default_proxy = {
+    "country": "危地马拉",
+    "code": "gt",
+    "proxy_url": "https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/gt.yaml",
+    "time_zone": "America/Guatemala",
+    "language": "English",
+    "latitude": 14.6419,
+    "longitude": -90.5133
+}
+
+# 加载代理国家列表
+proxy_countries = []
+
+def load_proxy_countries():
+    global proxy_countries
+    try:
+        with open("代理国家列表 - IPIDEA.csv", "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+            for row in reader:
+                if len(row) >= 9:
+                    # 读取所有字段，但只保留模型中需要的字段
+                    country_data = {
+                        "country": row[0],  # 国家名称
+                        "code": row[1],    # 国家代码
+                        "proxy_url": row[2],  # 代理URL
+                        "time_zone": row[3],  # 时区
+                        "language": row[4],   # 语言
+                        "latitude": float(row[5]),  # 纬度
+                        "longitude": float(row[6]),  # 经度
+                    }
+                    # 仅用于内部过滤，不包含在API响应中
+                    if row[7] == "是":  # 只添加可用的代理
+                        proxy_countries.append(country_data)
+            print(f"已加载 {len(proxy_countries)} 个代理国家信息")
+    except Exception as e:
+        print(f"加载代理国家列表失败: {e}")
+        # 如果加载失败，使用默认代理
+        proxy_countries = [default_proxy]
+
+# 获取当前使用的代理信息
+current_proxy = default_proxy.copy()
+
+# 使用默认代理设置初始化变量
+proxy_url = current_proxy["proxy_url"]
+time_zone = current_proxy["time_zone"]
+latitude = current_proxy["latitude"]
+longitude = current_proxy["longitude"]
 
 
 operations = defaultdict(lambda: Task[None])
@@ -204,29 +250,39 @@ async def callback(data: dict):
         case 1000:
             _id = data.get("padCode")
             print(f"{_id}: 重启成功")
-            print("设置语言以及时区")
-            lang_result = await update_language("en", country="US", pad_code_list=[data["padCode"]])
+            print(f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
+            
+            # 设置语言
+            lang_result = await update_language("en", country=current_proxy['code'], pad_code_list=[data["padCode"]])
             print(f"Language update result: {lang_result}")
-            tz_result = await update_time_zone(pad_code_list=[data["padCode"]],time_zone=time_zone)
+            
+            # 设置时区
+            tz_result = await update_time_zone(pad_code_list=[data["padCode"]], time_zone=current_proxy["time_zone"])
             print(f"Timezone update result: {tz_result}")
-            gps_result = await gps_in_ject_info(pad_code_list=[data["padCode"]], latitude=latitude, longitude=longitude)
+            
+            # 设置GPS信息
+            gps_result = await gps_in_ject_info(
+                pad_code_list=[data["padCode"]], 
+                latitude=current_proxy["latitude"], 
+                longitude=current_proxy["longitude"]
+            )
             print(f"GPS injection result: {gps_result}")
+            await asyncio.sleep(2)
             print(f"{_id}: 开始启动app")
             app_result = await start_app(pad_code_list=[data["padCode"]], pkg_name=pkg_name)
             print(f"Start app result: {app_result}")
 
         case 1001:
-            print(data)
+            print("1001接口回调")
 
         case 1003:
-            if data["apps"]["result"]:
-                print(f'{data["apps"]["padCode"]}: 安装成功')
-                lang_result = await update_language("en", country="US", pad_code_list=[data["apps"]["padCode"]])
-                print(f"Language update result: {lang_result}")
-                app_result = await start_app(pad_code_list=[data["apps"]["padCode"]], pkg_name=pkg_name)
-                print(f"Start app result: {app_result}")
-            else:
-                print("安装失败: " + data["apps"]["result"])
+            print(f'安装成功接口回调 {data["apps"]["padCode"]}: 安装成功')
+            print(data)
+            # lang_result = await update_language("en", country=current_proxy['code'], pad_code_list=[data["apps"]["padCode"]])
+            # print(f"Language update result: {lang_result}")
+            # app_result = await start_app(pad_code_list=[data["apps"]["padCode"]], pkg_name=pkg_name)
+            # print(f"Start app result: {app_result}")
+
 
         case 1004:
             print(f"安装接口的回调{data}")
@@ -240,10 +296,11 @@ async def callback(data: dict):
                 print("启动成功")
 
             else:
-                print(data["taskStatus"])
+                task = data["taskStatus"]
+                print(f"应用启动等待中: {task}")
 
         case 1009:
-            print(data)
+            print("1009接口回调")
 
         case 1124:
             if data.get("padCode") in pad_code_list:
@@ -277,6 +334,8 @@ async def callback(data: dict):
                             script_task.cancel()
                 else:
                     print(f'一键新机等待中 {data["taskStatus"]}')
+        case _:
+            print(f"其他接口回调: {data}")
 
 
 async def check_task_status(task_id, task_type):
@@ -312,15 +371,9 @@ async def check_task_status(task_id, task_type):
                         elif len(app_install_result["data"][0]["apps"]) == 1:
                             app_result = app_install_result["data"][0]["apps"]
                             print(f"安装成功一个:{app_result[0]}")
-                            clash_install_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url)
-                            clash_task = asyncio.create_task(
-                                check_task_status(clash_install_result["data"][0]["taskId"], "Clash"))
-                            try:
-                                await asyncio.gather(clash_task)
-                            except asyncio.CancelledError:
-                                print(f"Clash任务被取消: {result['data'][0]['padCode']}")
-                                if not clash_task.done():
-                                    clash_task.cancel()
+                            await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url)
+                            await asyncio.sleep(10)
+
 
 
 
@@ -341,18 +394,10 @@ async def check_task_status(task_id, task_type):
                             await asyncio.sleep(10)
 
                         elif len(app_install_result["data"][0]["apps"]) == 1:
-                            app = app_install_result["data"][0]["apps"]
-                            print(f"安装成功一个:{app[0]}")
-                            script_install_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url)
-                            script_task = asyncio.create_task(
-                                check_task_status(script_install_result["data"][0]["taskId"], "Script"))
-                            try:
-                                await asyncio.gather(script_task)
-                            except asyncio.CancelledError:
-                                print(f"Script任务被取消: {result['data'][0]['padCode']}")
-                                if not script_task.done():
-                                    script_task.cancel()
-
+                            app_result = app_install_result["data"][0]["apps"]
+                            print(f"安装成功一个:{app_result[0]}")
+                            await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url)
+                            await asyncio.sleep(10)
 
                 elif result["data"][0]["errorMsg"] == "文件下载失败 请求被中断，请重试":
                     if task_type.lower() == "clash":
@@ -365,7 +410,7 @@ async def check_task_status(task_id, task_type):
                         script_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                           app_url=script_install_url)
                         print(script_result)
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(10)
 
                 elif result["data"][0]["errorMsg"] == "任务已超时，当前设备状态为离线状态。":
                     print("设备离线，停止安装")
@@ -390,9 +435,81 @@ async def check_task_status(task_id, task_type):
 
 
 
-@app.get("/proxy")
-async def proxy():
-    return {"proxy": proxy_url}
+class ProxyCountry(BaseModel):
+    country: str
+    code: str
+    proxy_url: str
+    time_zone: str
+    language: str
+    latitude: float
+    longitude: float
+
+class ProxyResponse(BaseModel):
+    proxy: str
+    country: str
+    code: str
+    time_zone: str
+    language: str
+    latitude: float
+    longitude: float
+
+class ProxyRequest(BaseModel):
+    country_code: str
+
+@app.get("/proxy", response_model=ProxyResponse)
+async def get_proxy():
+    """获取当前使用的代理信息"""
+    return {
+        "proxy": proxy_url,
+        "country": current_proxy["country"],
+        "code": current_proxy["code"],
+        "time_zone": current_proxy["time_zone"],
+        "language": current_proxy["language"],
+        "latitude": current_proxy["latitude"],
+        "longitude": current_proxy["longitude"]
+    }
+
+@app.get("/proxy/countries", response_model=List[ProxyCountry])
+async def get_proxy_countries():
+    """获取所有可用的代理国家列表"""
+    # 如果代理国家列表为空，尝试加载
+    if not proxy_countries:
+        load_proxy_countries()
+    return proxy_countries
+
+@app.post("/proxy/set", response_model=ProxyResponse)
+async def set_proxy(proxy_request: ProxyRequest):
+    """根据国家代码设置代理"""
+    global proxy_url, time_zone, latitude, longitude, current_proxy
+    
+    # 如果代理国家列表为空，尝试加载
+    if not proxy_countries:
+        load_proxy_countries()
+    
+    # 查找指定国家代码的代理信息
+    found = False
+    for country in proxy_countries:
+        if country["code"].lower() == proxy_request.country_code.lower():
+            current_proxy = country
+            proxy_url = country["proxy_url"]
+            time_zone = country["time_zone"]
+            latitude = country["latitude"]
+            longitude = country["longitude"]
+            found = True
+            break
+    
+    if not found:
+        raise HTTPException(status_code=404, detail=f"未找到国家代码为 {proxy_request.country_code} 的代理信息")
+    
+    return {
+        "proxy": proxy_url,
+        "country": current_proxy["country"],
+        "code": current_proxy["code"],
+        "time_zone": current_proxy["time_zone"],
+        "language": current_proxy["language"],
+        "latitude": current_proxy["latitude"],
+        "longitude": current_proxy["longitude"]
+    }
 
 
 @app.get("/")
@@ -402,8 +519,14 @@ async def index(data):
 
 
 async def startup():
+    # 加载代理国家列表
+    load_proxy_countries()
+    
+    # 一键新机
     result = await replace_pad(pad_code_list, template_id=random.choice(temple_id_list))
     print(result)
+    
+    # 创建数据库表
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
