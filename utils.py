@@ -1,7 +1,7 @@
 from auth import VmosUtil
 
 
-def replace_pad(pad_code:list[str], template_id:int) -> dict[str, str]:
+async def replace_pad(pad_code:list[str], template_id:int) -> dict[str, str]:
     pad_infos_url = '/vcpcloud/api/padApi/replacePad'
 
     replace_pad_body = {
@@ -9,10 +9,10 @@ def replace_pad(pad_code:list[str], template_id:int) -> dict[str, str]:
         "padCodes": pad_code
     }
 
-    return VmosUtil(pad_infos_url, replace_pad_body).send()
+    return await VmosUtil(pad_infos_url, replace_pad_body).send()
 
 
-def update_language(language:str, country,pad_code_list:list[str]) -> dict[str, str]:
+async def update_language(language:str, country,pad_code_list:list[str]) -> dict[str, str]:
     change_lang_url = "/vcpcloud/api/padApi/updateLanguage"
 
     set_lang_body = {
@@ -21,10 +21,10 @@ def update_language(language:str, country,pad_code_list:list[str]) -> dict[str, 
         "padCodes": pad_code_list
     }
 
-    return VmosUtil(change_lang_url, set_lang_body).send()
+    return await VmosUtil(change_lang_url, set_lang_body).send()
 
 
-def install_app(pad_code_list:list[str], app_url: str) -> dict[str, str]:
+async def install_app(pad_code_list:list[str], app_url: str) -> dict[str, str]:
     install_app_url = "/vcpcloud/api/padApi/uploadFileV3"
     body = {
         "padCodes": pad_code_list,
@@ -33,10 +33,10 @@ def install_app(pad_code_list:list[str], app_url: str) -> dict[str, str]:
         "isAuthorization": True
     }
 
-    return VmosUtil(install_app_url, body).send()
+    return await VmosUtil(install_app_url, body).send()
 
 
-def start_app(pad_code_list:list, pkg_name: str) -> list:
+async def start_app(pad_code_list:list, pkg_name: str) -> list:
     start_app_url = "/vcpcloud/api/padApi/startApp"
 
     body = {
@@ -44,20 +44,20 @@ def start_app(pad_code_list:list, pkg_name: str) -> list:
         "pkgName": pkg_name
     }
 
-    return VmosUtil(start_app_url, body).send()
+    return await VmosUtil(start_app_url, body).send()
 
 
-def replacement(pad_code:str) -> dict[str, str]:
+async def replacement(pad_code:str) -> dict[str, str]:
     replace_ment_url = "/vcpcloud/api/padApi/replacement"
 
     body = {
         "padCode": pad_code
     }
 
-    return VmosUtil(replace_ment_url, body).send()
+    return await VmosUtil(replace_ment_url, body).send()
 
 
-def update_time_zone(pad_code_list: list[str], time_zone: str) -> dict[str, str]:
+async def update_time_zone(pad_code_list: list[str], time_zone: str) -> dict[str, str]:
     update_timezone_url = "/vcpcloud/api/padApi/updateTimeZone"
 
     body = {
@@ -65,10 +65,10 @@ def update_time_zone(pad_code_list: list[str], time_zone: str) -> dict[str, str]
         "padCodes": pad_code_list
     }
 
-    return VmosUtil(update_timezone_url, body).send()
+    return await VmosUtil(update_timezone_url, body).send()
 
 
-def gps_in_ject_info(pad_code_list:list[str], longitude:float, latitude:float) -> dict[str, str]:
+async def gps_in_ject_info(pad_code_list:list[str], longitude:float, latitude:float) -> dict[str, str]:
     set_local_url = "/vcpcloud/api/padApi/gpsInjectInfo"
 
     body = {
@@ -77,37 +77,37 @@ def gps_in_ject_info(pad_code_list:list[str], longitude:float, latitude:float) -
         "padCodes" : pad_code_list
     }
 
-    return VmosUtil(set_local_url, body).send()
+    return await VmosUtil(set_local_url, body).send()
 
 
-def get_cloud_task_info(tasks_list: list[str]):
+async def get_cloud_task_info(tasks_list: list[str]):
     file_task = "/vcpcloud/api/padApi/fileTaskDetail"
     body = {
         "taskIds": tasks_list
     }
-    return VmosUtil(file_task, body).send()
+    return await VmosUtil(file_task, body).send()
 
 
 
-def get_cloud_file_task_info(tasks_list: list[str]):
+async def get_cloud_file_task_info(tasks_list: list[str]):
     file_task = "/vcpcloud/api/padApi/padTaskDetail"
     body = {
         "taskIds": tasks_list
     }
 
-    return VmosUtil(file_task, body).send()
+    return await VmosUtil(file_task, body).send()
 
-def get_app_install_info(pad_code_list: list[str], app_name: str) -> dict[str, str]:
+async def get_app_install_info(pad_code_list: list[str], app_name: str) -> dict[str, str]:
     url  ="/vcpcloud/api/padApi/listInstalledApp"
     body = {
         "padCodes" : pad_code_list,
         "appName" : app_name
     }
 
-    return VmosUtil(url, body).send()
+    return await VmosUtil(url, body).send()
 
 
-def open_root(pad_code_list:list[str], pkg_name: str) -> dict[str, str]:
+async def open_root(pad_code_list:list[str], pkg_name: str) -> dict[str, str]:
     root_url = "/vcpcloud/api/padApi/switchRoot"
     body = {
         "padCodes": pad_code_list,
@@ -115,13 +115,13 @@ def open_root(pad_code_list:list[str], pkg_name: str) -> dict[str, str]:
         "rootStatus": 1,
         "globalRoot": False
     }
-    return VmosUtil(root_url, body).send()
+    return await VmosUtil(root_url, body).send()
 
 
-def reboot(pad_code_list: list[str]):
+async def reboot(pad_code_list: list[str]):
     reboot_url = "/vcpcloud/api/padApi/restart"
     body = {
         "padCodes": pad_code_list
     }
 
-    return VmosUtil(reboot_url, body).send()
+    return await VmosUtil(reboot_url, body).send()

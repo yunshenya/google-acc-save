@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="完美全流程跑通">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="全流程跑通">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +90,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.main">
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="google-acc-save" />
       <option name="ENV_FILES" value="" />
@@ -180,8 +181,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test" />
         <item itemvalue="Python.main" />
+        <item itemvalue="Python.test" />
       </list>
     </recent_temporary>
   </component>
@@ -218,7 +219,9 @@
       <workItem from="1753839336037" duration="5086000" />
       <workItem from="1753844695007" duration="33201000" />
       <workItem from="1753882922866" duration="741000" />
-      <workItem from="1753924894077" duration="4973000" />
+      <workItem from="1753924894077" duration="13204000" />
+      <workItem from="1753940848053" duration="14000" />
+      <workItem from="1753942021724" duration="1486000" />
     </task>
     <task id="LOCAL-00001" summary="初始化项目">
       <option name="closed" value="true" />
@@ -260,7 +263,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753876701209</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="全流程跑通">
+      <option name="closed" value="true" />
+      <created>1753930710945</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1753930710945</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -281,8 +292,8 @@
     <MESSAGE value="初始化项目" />
     <MESSAGE value="提交" />
     <MESSAGE value="应用安装成功" />
-    <MESSAGE value="全流程跑通" />
     <MESSAGE value="完美全流程跑通" />
-    <option name="LAST_COMMIT_MESSAGE" value="完美全流程跑通" />
+    <MESSAGE value="全流程跑通" />
+    <option name="LAST_COMMIT_MESSAGE" value="全流程跑通" />
   </component>
 </project>

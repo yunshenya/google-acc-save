@@ -3,7 +3,7 @@ import datetime
 import hashlib
 import hmac
 import json
-import requests
+import aiohttp
 
 
 class VmosUtil(object):
@@ -96,7 +96,7 @@ class VmosUtil(object):
         return response.json()
 
 
-    def send(self):
+    async def send(self):
         signature = self._get_signature()
         url = f"https://api.vmoscloud.com{self._url}"
         payload = json.dumps(self._data, ensure_ascii=False)
@@ -106,7 +106,8 @@ class VmosUtil(object):
             'x-host': "api.vmoscloud.com",
             'authorization': f"HMAC-SHA256 Credential={self._ak}, SignedHeaders=content-type;host;x-content-sha256;x-date, Signature={signature}"
         }
-        response = requests.request("POST", url, headers=headers, data=payload)
-        return response.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, data=payload) as response:
+                return await response.json()
 
 
