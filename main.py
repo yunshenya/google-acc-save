@@ -4,6 +4,7 @@ import random
 from asyncio import Task
 from collections import defaultdict
 from typing import List
+from loguru import logger
 
 import uvicorn
 from fastapi import FastAPI, HTTPException
@@ -22,12 +23,17 @@ engine = create_async_engine(DATABASE_URL)
 SessionLocal = sessionmaker(class_=AsyncSession, bind=engine, autoflush=False, autocommit=False)
 pad_code_list = [
     "AC32010810553",
-    "ACP250317XGMWV7A"
+    "ACP250317XGMWV7A",
+    "ACP2504225QC6HMB",
+    "ACP250417LHNDMCY",
+    "ACP250417YKTB6VR",
+    "ACP250417FRB7H9K",
+    "ACP2504175KEOO32"
 ]
 temple_id_list = [375]
 pkg_name = "com.aaee8h0kh.cejwrh616"
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
-script_install_url = "https://file.vmoscloud.com/userFile/e529d87b651fa55ebe2bb4743d2e8da2.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/f141faacb7f19a26f45b5dbcc6027262.apk"
 # 默认代理设置
 default_proxy = {
     "country": "危地马拉",
@@ -62,9 +68,9 @@ def load_proxy_countries():
                     # 仅用于内部过滤，不包含在API响应中
                     if row[7] == "是":  # 只添加可用的代理
                         proxy_countries.append(country_data)
-            print(f"已加载 {len(proxy_countries)} 个代理国家信息")
+            logger.info(f"已加载 {len(proxy_countries)} 个代理国家信息")
     except Exception as e:
-        print(f"加载代理国家列表失败: {e}")
+        logger.error(f"加载代理国家列表失败: {e}")
         # 如果加载失败，使用默认代理
         proxy_countries = [default_proxy]
 
@@ -86,12 +92,12 @@ async def handle_timeout(pad_code_str: str):
         await asyncio.sleep(5 * 60)
         async with lock:
             if operations.get(pad_code_str) is not None:
-                print(f"标识符超时: {pad_code_str}")
+                logger.info(f"标识符超时: {pad_code_str}")
                 result = await replace_pad([pad_code_str], template_id=random.choice(temple_id_list))
-                print(f"正在一键新机: {result}")
+                logger.info(f"正在一键新机: {result}")
                 del operations[pad_code_str]
     except asyncio.CancelledError:
-        print(f"标识符的超时任务: {pad_code_str} 被取消了.")
+        logger.error(f"标识符的超时任务: {pad_code_str} 被取消了.")
 
 
 class Account(Base):
@@ -153,10 +159,11 @@ async def create_account(account: AccountCreate):
             db.add(db_account)
             await db.commit()
             await db.refresh(db_account)
+            logger.success("账号上传成功")
             return db_account
         except IntegrityError:
             await db.rollback()
-            raise HTTPException(status_code=400, detail="账号已存在")
+            return HTTPException(status_code=400, detail="账号已存在")
 
 
 @app.get("/accounts", response_model=list[AccountResponse])
@@ -179,7 +186,7 @@ async def get_unique_account():
         account = result.scalars().first()
         
         if account is None:
-            raise HTTPException(status_code=404, detail="没有可用的账号（status=0）")
+            return HTTPException(status_code=404, detail="没有可用的账号（status=0）")
         
         account.status = 1
         await db.commit()
@@ -195,7 +202,7 @@ async def get_account(account_id: int):
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
-            raise HTTPException(status_code=404, detail="账号不存在")
+            return HTTPException(status_code=404, detail="账号不存在")
         return account
 
 
@@ -208,7 +215,7 @@ async def update_account(account_id: int, account_update: AccountUpdate):
             result = await db.execute(stmt)
             db_account = result.scalars().first()
             if db_account is None:
-                raise HTTPException(status_code=404, detail="账号不存在")
+                return HTTPException(status_code=404, detail="账号不存在")
 
             # 仅更新提供的字段
             if account_update.account is not None:
@@ -227,19 +234,19 @@ async def update_account(account_id: int, account_update: AccountUpdate):
             return db_account
         except IntegrityError:
             await db.rollback()
-            raise HTTPException(status_code=400, detail="账号已存在")
+            return HTTPException(status_code=400, detail="账号已存在")
 
 
 @app.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
     result = await replace_pad([android_code.pad_code], template_id=random.choice(temple_id_list))
-    print(result)
+    logger.info(result)
     async with lock:
         task = operations.get(android_code.pad_code)
         if task is not None:
             task.cancel()
             del operations[android_code.pad_code]
-            print("已在规定时间内完成， 超时任务已移除")
+            logger.info("已在规定时间内完成， 超时任务已移除")
     return {"message": "Task cancelled"}
 
 
@@ -249,16 +256,16 @@ async def callback(data: dict):
     match int(task_business_type):
         case 1000:
             _id = data.get("padCode")
-            print(f"{_id}: 重启成功")
-            print(f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
+            logger.success(f"{_id}: 重启成功")
+            logger.info(f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
             
             # 设置语言
             lang_result = await update_language("en", country=current_proxy['code'], pad_code_list=[data["padCode"]])
-            print(f"Language update result: {lang_result}")
+            logger.info(f"语言更新结果: {lang_result}")
             
             # 设置时区
             tz_result = await update_time_zone(pad_code_list=[data["padCode"]], time_zone=current_proxy["time_zone"])
-            print(f"Timezone update result: {tz_result}")
+            logger.info(f"时区更新结果: {tz_result}")
             
             # 设置GPS信息
             gps_result = await gps_in_ject_info(
@@ -266,59 +273,63 @@ async def callback(data: dict):
                 latitude=current_proxy["latitude"], 
                 longitude=current_proxy["longitude"]
             )
-            print(f"GPS injection result: {gps_result}")
+            logger.info(f"GPS注入结果: {gps_result}")
             await asyncio.sleep(2)
-            print(f"{_id}: 开始启动app")
+            logger.success(f"{_id}: 开始启动app")
             app_result = await start_app(pad_code_list=[data["padCode"]], pkg_name=pkg_name)
-            print(f"Start app result: {app_result}")
+            logger.info(f"Start app result: {app_result}")
+            return None
 
         case 1001:
-            print("1001接口回调")
+            logger.trace("1001接口回调")
+            return None
 
         case 1003:
-            print(f'安装成功接口回调 {data["apps"]["padCode"]}: 安装成功')
-            print(data)
-            # lang_result = await update_language("en", country=current_proxy['code'], pad_code_list=[data["apps"]["padCode"]])
-            # print(f"Language update result: {lang_result}")
-            # app_result = await start_app(pad_code_list=[data["apps"]["padCode"]], pkg_name=pkg_name)
-            # print(f"Start app result: {app_result}")
+            logger.trace(f'安装成功接口回调 {data["apps"]["padCode"]}: 安装成功')
+            logger.trace(data)
+            return None
 
 
         case 1004:
-            print(f"安装接口的回调{data}")
+            logger.trace(f"安装接口的回调{data}")
+            return None
 
         case 1006:
-            print("应用重启")
+            logger.trace("应用重启")
+            return None
 
         case 1007:
-            print("应用启动成功回调")
+            logger.trace("应用启动成功回调")
             if data["taskStatus"] == 3:
-                print("启动成功")
+                logger.success("启动成功")
+                return None
 
             else:
                 task = data["taskStatus"]
-                print(f"应用启动等待中: {task}")
+                logger.trace(f"应用启动等待中: {task}")
+                return None
 
         case 1009:
-            print("1009接口回调")
+            logger.trace("1009接口回调")
+            return None
 
         case 1124:
             if data.get("padCode") in pad_code_list:
                 if data["taskStatus"] == 3:
                     pad_code_str = data.get("padCode")
-                    print(f'{data["padCode"]}: 一键新机成功')
+                    logger.info(f'{data["padCode"]}: 一键新机成功')
                     async with lock:
                         if operations.get(pad_code_str) is not None:
-                            raise HTTPException(status_code=400, detail=f"Identifier {pad_code_str} is already in use")
+                            return HTTPException(status_code=400, detail=f"Identifier {pad_code_str} is already in use")
                     task = asyncio.create_task(handle_timeout(pad_code_str))
                     operations[pad_code_str] = task
-                    print("全局超时任务开启成功")
+                    logger.success("全局超时任务开启成功")
                     clash_install_result = await install_app(pad_code_list=[data["padCode"]],
                                                        app_url=clash_install_url)
-                    print(f"Clash install result: {clash_install_result}")
+                    logger.info(f"Clash 安装结果: {clash_install_result}")
                     script_install_result = await install_app(pad_code_list=[data["padCode"]],
                                                         app_url=script_install_url)
-                    print(f"Script install result: {script_install_result}")
+                    logger.info(f"脚本安装结果: {script_install_result}")
                     clash_task = asyncio.create_task(
                         check_task_status(clash_install_result["data"][0]["taskId"], "Clash"))
                     script_task = asyncio.create_task(
@@ -326,51 +337,53 @@ async def callback(data: dict):
                     try:
                         await asyncio.gather(clash_task, script_task)
                     except asyncio.CancelledError:
-                        print(f"任务被取消: {data['padCode']}")
+                        logger.info(f"任务被取消: {data['padCode']}")
                         # 确保取消所有子任务
                         if not clash_task.done():
                             clash_task.cancel()
                         if not script_task.done():
                             script_task.cancel()
                 else:
-                    print(f'一键新机等待中 {data["taskStatus"]}')
+                    logger.info(f'一键新机等待中 {data["taskStatus"]}')
+            return None
         case _:
-            print(f"其他接口回调: {data}")
+            logger.trace(f"其他接口回调: {data}")
+            return None
 
 
 async def check_task_status(task_id, task_type):
-    TIMEOUT_SECONDS = 3 * 60
+    TIMEOUT_SECONDS = 2 * 60
     try:
         async with asyncio.timeout(TIMEOUT_SECONDS):
             while True:
                 result = await get_cloud_file_task_info([str(task_id)])
-                print(f"{task_type} task {task_id}: {result}")
+                logger.info(f"{task_type} task {task_id}: {result}")
                 if result["data"][0]["errorMsg"] == "应用安装成功":
                     if task_type.lower() == "script":
-                        print(f'{task_type}安装成功')
+                        logger.info(f'{task_type}安装成功')
                         app_install_result = await get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
                         if len(app_install_result["data"][0]["apps"]) == 2:
-                            print("真安装成功")
+                            logger.info("真安装成功")
                             root_result = await open_root(pad_code_list=[result["data"][0]["padCode"]], pkg_name=pkg_name)
-                            print(root_result)
-                            print("开始重启")
+                            logger.info(root_result)
+                            logger.info("开始重启")
                             reboot_result = await reboot(pad_code_list=[result["data"][0]["padCode"]])
-                            print(reboot_result)
+                            logger.info(reboot_result)
                             break
 
                         elif len(app_install_result["data"][0]["apps"]) == 0:
-                            print("假安装成功，重新安装")
+                            logger.error("假安装成功，重新安装")
                             clash_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                               app_url=clash_install_url)
-                            print(clash_result)
+                            logger.info(clash_result)
                             script_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                               app_url=script_install_url)
-                            print(script_result)
+                            logger.info(script_result)
                             await asyncio.sleep(10)
 
                         elif len(app_install_result["data"][0]["apps"]) == 1:
                             app_result = app_install_result["data"][0]["apps"]
-                            print(f"安装成功一个:{app_result[0]}")
+                            logger.error(f"安装成功一个:{app_result[0]}")
                             await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url)
                             await asyncio.sleep(10)
 
@@ -378,38 +391,38 @@ async def check_task_status(task_id, task_type):
 
 
                     elif task_type.lower() == "clash":
-                        print(f"{task_type}安装成功")
+                        logger.info(f"{task_type}安装成功")
                         app_install_result = await get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
                         if len(app_install_result["data"][0]["apps"]) == 2:
-                            print("真安装成功")
+                            logger.success("真安装成功")
                             break
                         elif len(app_install_result["data"][0]["apps"]) == 0:
-                            print("假安装成功，重新安装")
+                            logger.error("假安装成功，重新安装")
                             clash_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                               app_url=clash_install_url)
-                            print(clash_result)
+                            logger.info(clash_result)
                             script_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                               app_url=script_install_url)
-                            print(script_result)
+                            logger.info(script_result)
                             await asyncio.sleep(10)
 
                         elif len(app_install_result["data"][0]["apps"]) == 1:
                             app_result = app_install_result["data"][0]["apps"]
-                            print(f"安装成功一个:{app_result[0]}")
+                            logger.info(f"安装成功一个:{app_result[0]}")
                             await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url)
                             await asyncio.sleep(10)
 
                 elif result["data"][0]["errorMsg"] == "文件下载失败 请求被中断，请重试":
                     if task_type.lower() == "clash":
-                        print("clash下载失败")
+                        logger.error("clash下载失败")
                         clash_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                           app_url=clash_install_url)
-                        print(clash_result)
+                        logger.info(clash_result)
                     else:
-                        print("脚本下载失败")
+                        logger.error("脚本下载失败")
                         script_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                           app_url=script_install_url)
-                        print(script_result)
+                        logger.info(script_result)
                     await asyncio.sleep(10)
 
                 elif result["data"][0]["errorMsg"] == "任务已超时，当前设备状态为离线状态。":
@@ -418,7 +431,7 @@ async def check_task_status(task_id, task_type):
                 await asyncio.sleep(1)
 
     except asyncio.TimeoutError:
-        print(f"{task_type} task {task_id}: Installation timed out after {TIMEOUT_SECONDS} seconds")
+        logger.info(f"{task_type} task {task_id}: 安装超时后 {TIMEOUT_SECONDS} seconds")
         try:
             pad_code = result["data"][0]["padCode"]
             async with lock:
@@ -427,10 +440,10 @@ async def check_task_status(task_id, task_type):
                     task.cancel()
                     del operations[pad_code]
             replace_result = await replace_pad([pad_code], template_id=random.choice(temple_id_list))
-            print(replace_result)
-            print("因为长时间安装不上，已移除任务")
+            logger.error(replace_result)
+            logger.error("因为长时间安装不上，已移除任务")
         except (NameError, KeyError, IndexError) as e:
-            print(f"无法处理超时：{e}，任务ID：{task_id}")
+            logger.error(f"无法处理超时：{e}，任务ID：{task_id}")
         return
 
 
@@ -499,7 +512,7 @@ async def set_proxy(proxy_request: ProxyRequest):
             break
     
     if not found:
-        raise HTTPException(status_code=404, detail=f"未找到国家代码为 {proxy_request.country_code} 的代理信息")
+        return HTTPException(status_code=404, detail=f"未找到国家代码为 {proxy_request.country_code} 的代理信息")
     
     return {
         "proxy": proxy_url,
@@ -524,7 +537,7 @@ async def startup():
     
     # 一键新机
     result = await replace_pad(pad_code_list, template_id=random.choice(temple_id_list))
-    print(result)
+    logger.info(result)
     
     # 创建数据库表
     async with engine.begin() as conn:

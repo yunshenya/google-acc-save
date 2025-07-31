@@ -5,7 +5,7 @@ import hmac
 import json
 import aiohttp
 import requests
-
+from loguru import logger
 
 class VmosUtil(object):
     def __init__(self, url, data):
@@ -20,7 +20,7 @@ class VmosUtil(object):
 
     def _get_signature(self):
         json_string = json.dumps(self._data, separators=(',', ':'), ensure_ascii=False)
-        print(json_string)
+        logger.info(json_string)
 
         # 计算SHA-256哈希值
         hash_object = hashlib.sha256(json_string.encode())
