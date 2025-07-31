@@ -1,5 +1,4 @@
 import asyncio
-import csv
 import random
 from asyncio import Task
 from collections import defaultdict
