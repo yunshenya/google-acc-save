@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Google 账户实时更新</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 10px; border-bottom: 1px solid #ddd; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: inline-block; width: 100px; }
+        input, select { padding: 5px; margin-right: 10px; }
+        button { padding: 5px 10px; }
+    </style>
+</head>
+<body>
+<div class="input-group">
+    <label for="account">账户</label>
+    <input id="account" type="text" placeholder="输入账户名">
+    <label for="password">密码</label>
+    <input id="password" type="password" placeholder="输入密码">
+    <label for="type">类型</label>
+    <select id="type">
+        <option value="0">普通</option>
+        <option value="1">高级</option>
+    </select>
+    <label for="status">状态</label>
+    <select id="status">
+        <option value="0">未激活</option>
+        <option value="1">已激活</option>
+    </select>
+    <label for="code">代码</label>
+    <input id="code" type="text" placeholder="输入代码（可选）">
+    <button onclick="addAccount()">添加</button>
+</div>
+<ul id="data-list"></ul>
+<script>
+    const dataList = document.getElementById("data-list");
+    const source = new EventSource("/events");
+
+    source.onmessage = event => {
+        const data = JSON.parse(event.data);
+        dataList.innerHTML = ""; // 清空旧数据
+        data.forEach(item => {
+            const li = document.createElement("li");
+            li.setAttribute("data-id", item.id);
+            li.textContent = `ID: ${item.id}, Account: ${item.account}, Type: ${item.type}, Status: ${item.status}, Code: ${item.code || 'N/A'}, Created: ${new Date(item.created_at).toLocaleString()}`;
+            dataList.appendChild(li);
+        });
+    };
+
+    source.onerror = () => {
+        console.error("SSE error, reconnecting...");
+        setTimeout(() => source.connect(), 5000); // 自动重连
+    };
+
+    async function addAccount() {
+        const account = document.getElementById("account").value;
+        const password = document.getElementById("password").value;
+        const type = parseInt(document.getElementById("type").value);
+        const status = parseInt(document.getElementById("status").value);
+        const code = document.getElementById("code").value || null;
+
+        if (!account || !password) {
+            alert("账户和密码不能为空！");
+            return;
+        }
+
+        try {
+            const response = await fetch("/add-account", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ account, password, type, status, code })
+            });
+            if (response.ok) {
+                document.getElementById("account").value = "";
+                document.getElementById("password").value = "";
+                document.getElementById("code").value = "";
+            } else {
+                alert("添加失败！");
+            }
+        } catch (error) {
+            console.error("添加错误:", error);
+            alert("添加失败！");
+        }
+    }
+</script>
+</body>
+</html>

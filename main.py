@@ -17,23 +17,24 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from utils import *
 
 Base = declarative_base()
-app = FastAPI()
+app = FastAPI(title="google账号管理系统")
 DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
 engine = create_async_engine(DATABASE_URL)
 SessionLocal = sessionmaker(class_=AsyncSession, bind=engine, autoflush=False, autocommit=False)
 pad_code_list = [
     "AC32010810553",
-    "ACP250317XGMWV7A",
     "ACP2504225QC6HMB",
     "ACP250417LHNDMCY",
     "ACP250417YKTB6VR",
     "ACP250417FRB7H9K",
-    "ACP2504175KEOO32"
+    "ACP2504175KEOO32",
+    "AC32010960163",
+    "ACP250317XGMWV7A"
 ]
 temple_id_list = [375]
 pkg_name = "com.aaee8h0kh.cejwrh616"
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
-script_install_url = "https://file.vmoscloud.com/userFile/f141faacb7f19a26f45b5dbcc6027262.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/b3295907c22b10ac632538b4e55bf18d.apk"
 # 默认代理设置
 default_proxy = {
     "country": "危地马拉",
@@ -546,6 +547,6 @@ async def startup():
 
 if __name__ == "__main__":
     asyncio.run(startup())
-    uvicorn.run("main:app", host="0.0.0.0", port=5000)
+    uvicorn.run(app, host="0.0.0.0", port=5000)
 
 
