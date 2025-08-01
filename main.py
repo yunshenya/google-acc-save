@@ -3,7 +3,7 @@ import csv
 import random
 from asyncio import Task
 from collections import defaultdict
-from typing import List
+from typing import Any, List
 from loguru import logger
 
 import uvicorn
@@ -19,16 +19,16 @@ from utils import *
 Base = declarative_base()
 app = FastAPI(title="google账号管理系统")
 DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
-engine = create_async_engine(DATABASE_URL)
+engine: Any = create_async_engine(DATABASE_URL)
 SessionLocal = sessionmaker(class_=AsyncSession, bind=engine, autoflush=False, autocommit=False)
 pad_code_list = [
     "AC32010810553",
-    "ACP2504225QC6HMB",
-    "ACP250417LHNDMCY",
-    "ACP250417YKTB6VR",
-    "ACP250417FRB7H9K",
-    "ACP2504175KEOO32",
-    "AC32010960163",
+    # "ACP2504225QC6HMB",
+    # "ACP250417LHNDMCY",
+    # "ACP250417YKTB6VR",
+    # "ACP250417FRB7H9K",
+    # "ACP2504175KEOO32",
+    # "AC32010960163",
     "ACP250317XGMWV7A"
 ]
 temple_id_list = [375]
@@ -243,7 +243,7 @@ async def status(android_code: AndroidPadCodeRequest):
     result = await replace_pad([android_code.pad_code], template_id=random.choice(temple_id_list))
     logger.info(result)
     async with lock:
-        task = operations.get(android_code.pad_code)
+        task: Any = operations.get(android_code.pad_code)
         if task is not None:
             task.cancel()
             del operations[android_code.pad_code]
@@ -282,36 +282,36 @@ async def callback(data: dict):
             return None
 
         case 1001:
-            logger.trace("1001接口回调")
+            logger.success("1001接口回调")
             return None
 
         case 1003:
-            logger.trace(f'安装成功接口回调 {data["apps"]["padCode"]}: 安装成功')
-            logger.trace(data)
+            logger.success(f'安装成功接口回调 {data["apps"]["padCode"]}: 安装成功')
+            logger.success(data)
             return None
 
 
         case 1004:
-            logger.trace(f"安装接口的回调{data}")
+            logger.success(f"安装接口的回调{data}")
             return None
 
         case 1006:
-            logger.trace("应用重启")
+            logger.success("应用重启")
             return None
 
         case 1007:
-            logger.trace("应用启动成功回调")
+            logger.success("应用启动成功回调")
             if data["taskStatus"] == 3:
                 logger.success("启动成功")
                 return None
 
             else:
                 task = data["taskStatus"]
-                logger.trace(f"应用启动等待中: {task}")
+                logger.success(f"应用启动等待中: {task}")
                 return None
 
         case 1009:
-            logger.trace("1009接口回调")
+            logger.success("1009接口回调")
             return None
 
         case 1124:
@@ -322,13 +322,13 @@ async def callback(data: dict):
                     async with lock:
                         if operations.get(pad_code_str) is not None:
                             return HTTPException(status_code=400, detail=f"Identifier {pad_code_str} is already in use")
-                    task = asyncio.create_task(handle_timeout(pad_code_str))
+                    task: Any = asyncio.create_task(handle_timeout(pad_code_str))
                     operations[pad_code_str] = task
                     logger.success("全局超时任务开启成功")
-                    clash_install_result = await install_app(pad_code_list=[data["padCode"]],
+                    clash_install_result: Any = await install_app(pad_code_list=[data["padCode"]],
                                                        app_url=clash_install_url)
                     logger.info(f"Clash 安装结果: {clash_install_result}")
-                    script_install_result = await install_app(pad_code_list=[data["padCode"]],
+                    script_install_result: Any = await install_app(pad_code_list=[data["padCode"]],
                                                         app_url=script_install_url)
                     logger.info(f"脚本安装结果: {script_install_result}")
                     clash_task = asyncio.create_task(
@@ -348,7 +348,7 @@ async def callback(data: dict):
                     logger.info(f'一键新机等待中 {data["taskStatus"]}')
             return None
         case _:
-            logger.trace(f"其他接口回调: {data}")
+            logger.success(f"其他接口回调: {data}")
             return None
 
 
@@ -362,7 +362,7 @@ async def check_task_status(task_id, task_type):
                 if result["data"][0]["errorMsg"] == "应用安装成功":
                     if task_type.lower() == "script":
                         logger.info(f'{task_type}安装成功')
-                        app_install_result = await get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
+                        app_install_result : Any = await get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
                         if len(app_install_result["data"][0]["apps"]) == 2:
                             logger.info("真安装成功")
                             root_result = await open_root(pad_code_list=[result["data"][0]["padCode"]], pkg_name=pkg_name)
@@ -436,7 +436,7 @@ async def check_task_status(task_id, task_type):
         try:
             pad_code = result["data"][0]["padCode"]
             async with lock:
-                task = operations.get(pad_code)
+                task: Any = operations.get(pad_code)
                 if task is not None:
                     task.cancel()
                     del operations[pad_code]
@@ -547,6 +547,6 @@ async def startup():
 
 if __name__ == "__main__":
     asyncio.run(startup())
-    uvicorn.run(app, host="0.0.0.0", port=5000)
+    uvicorn.run("main:app", host="0.0.0.0", port=5000)
 
 
