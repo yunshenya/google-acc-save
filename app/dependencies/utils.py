@@ -1,4 +1,4 @@
-from auth import VmosUtil
+from app.dependencies.auth import VmosUtil
 
 
 async def replace_pad(pad_code:list[str], template_id:int) -> dict[str, str]:
