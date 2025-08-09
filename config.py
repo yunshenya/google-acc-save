@@ -1,13 +1,6 @@
 DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
 
 pad_code_list = [
-    "AC32010810553",
-    # "ACP2504225QC6HMB",
-    # "ACP250417LHNDMCY",
-    # "ACP250417YKTB6VR",
-    # "ACP250417FRB7H9K",
-    # "ACP2504175KEOO32",
-    # "AC32010960163",
     "ACP250317XGMWV7A"
 ]
 

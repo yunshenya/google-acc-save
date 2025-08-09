@@ -8,10 +8,9 @@ if __name__ == '__main__':
     header = {"content-type" : "application/json"}
     #
     json = {
-        "country_code": "pl"
+        "country_code": "tw"
     }
     #
     re = requests.post(url, json=json, headers = header)
     #
     print(re.json())
-    # my_function(0, 0, 0)

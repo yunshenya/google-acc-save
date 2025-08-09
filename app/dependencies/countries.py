@@ -3,10 +3,11 @@ import csv
 from loguru import logger
 
 from config import default_proxy
-from globals import get_proxy_countries, set_proxy_countries, set_proxy_countries_list
+from globals import ProxyManager
 
 
 def load_proxy_countries():
+    manager = ProxyManager()
     try:
         with open("代理国家列表 - IPIDEA.csv", "r", encoding="utf-8") as f:
             reader = csv.reader(f)
@@ -24,9 +25,9 @@ def load_proxy_countries():
                     }
                     # 仅用于内部过滤，不包含在API响应中
                     if row[7] == "是":  # 只添加可用的代理
-                        set_proxy_countries(country_data)
-            logger.info(f"已加载 {len(get_proxy_countries())} 个代理国家信息")
+                        manager.add_proxy_country(country_data)
+            logger.info(f"已加载 {len(manager.get_proxy_countries())} 个代理国家信息")
     except Exception as e:
         logger.error(f"加载代理国家列表失败: {e}")
         # 如果加载失败，使用默认代理
-        set_proxy_countries_list(default_proxy)
+        manager.set_proxy_countries(default_proxy)

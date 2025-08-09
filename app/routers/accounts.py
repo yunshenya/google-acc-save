@@ -1,11 +1,11 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, APIRouter
 from loguru import logger
 from sqlalchemy.exc import IntegrityError
 
 from app.models.accounts import AccountResponse, AccountCreate, AccountUpdate
-from app.routers import router
 from app.services.database import SessionLocal, Account
 
+router = APIRouter()
 
 @router.post("/accounts", response_model=AccountResponse)
 async def create_account(account: AccountCreate):
