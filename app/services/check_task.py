@@ -95,9 +95,8 @@ class TaskManager:
 
         return False
 
-    async def check_task_status(self, task_id, task_type, timeout_seconds: int = 120, retry_interval: int = 10):
+    async def check_task_status(self, task_id, task_type, timeout_seconds: int = 180, retry_interval: int = 10):
         app_url = clash_install_url if task_type.lower() == "clash" else script_install_url
-        other_app_url = script_install_url if task_type.lower() == "clash" else clash_install_url
         try:
             async with asyncio.timeout(timeout_seconds):
                 while True:
