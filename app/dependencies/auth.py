@@ -81,23 +81,6 @@ class VmosUtil(object):
         return signature
 
 
-    # def _paas_url_util(self):
-    #     ShortDate = self._x_date[:8]
-    #     host = "openapi-hk.armcloud.net"
-    #     # 获取signature
-    #     signature = self._get_signature()
-    #     url = f"http://openapi-hk.armcloud.net{self._url}"
-    #     payload = json.dumps(self._data)
-    #     headers = {
-    #         'Content-Type': self._content_type,
-    #         'x-date': self._x_date,
-    #         'x-host': host,
-    #         'authorization': f"HMAC-SHA256 Credential={self._ak}/{ShortDate}/armcloud-paas/request, SignedHeaders=content-type;host;x-content-sha256;x-date, Signature={signature}"
-    #     }
-    #     response = requests.request("POST", url, headers=headers, data=payload)
-    #     return response.json()
-
-
     async def send(self):
         signature = self._get_signature()
         url = f"https://api.vmoscloud.com{self._url}"

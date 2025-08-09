@@ -51,7 +51,7 @@ class TaskManager:
                 return True
 
             elif len(app_install_result["data"][0]["apps"]) == 0:
-                logger.error("假安装成功，重新安装")
+                logger.warning("假安装成功，重新安装")
                 clash_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                                  app_url=clash_install_url)
                 logger.info(clash_result)
@@ -63,7 +63,7 @@ class TaskManager:
 
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
-                logger.error(f"安装成功一个:{app_result[0]}")
+                logger.warning(f"安装成功一个:{app_result[0]}")
                 await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url)
                 await asyncio.sleep(10)
                 return False
@@ -73,10 +73,9 @@ class TaskManager:
             logger.info(f"{task_type}安装成功")
             app_install_result = await get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
             if len(app_install_result["data"][0]["apps"]) == 2:
-                logger.success("真安装成功")
                 return True
             elif len(app_install_result["data"][0]["apps"]) == 0:
-                logger.error("假安装成功，重新安装")
+                logger.warning("假安装成功，重新安装")
                 clash_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                                  app_url=clash_install_url)
                 logger.info(clash_result)
@@ -108,11 +107,11 @@ class TaskManager:
                             if await self.handle_install_result(result, task_type):
                                 break
                         elif error_msg == TaskStatus.DOWNLOAD_FAILED.value:
-                            logger.error(f"{task_type}下载失败")
+                            logger.warning(f"{task_type}下载失败")
                             result = await install_app(pad_code_list=[result["data"][0]["padCode"]], app_url=app_url)
                             logger.info(result)
                         elif error_msg == TaskStatus.TIMEOUT_OFFLINE.value:
-                            logger.error("设备离线，停止安装")
+                            logger.warning("设备离线，停止安装")
                             break
                         await asyncio.sleep(retry_interval)
                     except Exception as e:
@@ -121,14 +120,14 @@ class TaskManager:
         except asyncio.TimeoutError:
             logger.info(f"{task_type} task {task_id}: 安装超时后 {timeout_seconds} seconds")
             if 'result' not in locals():
-                logger.error(f"任务 {task_id} 在首次检查前超时")
+                logger.warning(f"任务 {task_id} 在首次检查前超时")
                 return
             try:
                 pad_code = result["data"][0]["padCode"]
                 await self.remove_task(pad_code)
                 replace_result = await replace_pad([pad_code], template_id=random.choice(temple_id_list))
-                logger.error(replace_result)
-                logger.error("因为长时间安装不上，已移除任务")
+                logger.info(replace_result)
+                logger.warning("因为长时间安装不上，已移除任务")
             except (KeyError, IndexError) as e:
                 logger.error(f"无法处理超时：{e}，任务ID：{task_id}")
 
@@ -139,9 +138,9 @@ class TaskManager:
             if await self.get_task(pad_code_str) is None:
                 logger.info(f"标识符 {pad_code_str} 的任务已不存在，无需替换")
                 return
-            logger.info(f"标识符超时: {pad_code_str}")
+            logger.warning(f"标识符超时: {pad_code_str}")
             result = await replace_pad([pad_code_str], template_id=random.choice(temple_id_list))
             logger.info(f"正在一键新机: {result}")
             await self.remove_task(pad_code_str)
         except asyncio.CancelledError:
-            logger.error(f"标识符的超时任务: {pad_code_str} 被取消了.")
+            logger.warning(f"标识符的超时任务: {pad_code_str} 被取消了.")

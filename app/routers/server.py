@@ -11,8 +11,6 @@ from app.dependencies.utils import install_app, start_app, gps_in_ject_info, upd
 from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
 from config import script_install_url, clash_install_url, pad_code_list, pkg_name, temple_id_list
-from globals import ProxyManager
-
 
 router = APIRouter()
 task_manager = TaskManager()
