@@ -3,7 +3,7 @@ import csv
 from loguru import logger
 
 from config import default_proxy
-from globals import ProxyManager
+from app.dependencies.globals import ProxyManager
 
 manager = ProxyManager() ## 全局代理管理
 
