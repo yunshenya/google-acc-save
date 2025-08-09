@@ -44,8 +44,8 @@ async def set_proxy(proxy_request: ProxyRequest):
     for country in proxy_countries:
         if country.code.lower() == proxy_request.country_code.lower():
             manager.set_current_proxy(country)
-        found = True
-        break
+            found = True
+            break
 
     if not found:
         return HTTPException(status_code=404, detail=f"未找到国家代码为 {proxy_request.country_code} 的代理信息")

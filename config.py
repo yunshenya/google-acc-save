@@ -1,6 +1,6 @@
 DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
 
-pad_code_list = ["ACP2504225QC6HMB","ACP250417YKTB6VR","ACP250417LHNDMCY","ACP250417FRB7H9K","ACP2504175KEOO32"]
+pad_code_list = []
 
 pkg_name = "com.aaee8h0kh.cejwrh616"
 
