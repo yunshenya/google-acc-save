@@ -3,12 +3,11 @@ import random
 from collections import defaultdict
 from enum import Enum
 from typing import Any
-
 from loguru import logger
 
 from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, reboot, install_app, \
     replace_pad
-from config import clash_install_url, script_install_url, temple_id_list, pkg_name
+from config import clash_install_url, script_install_url, temple_id_list, pkg_name, md5
 
 
 class TaskStatus(Enum):
@@ -57,7 +56,7 @@ class TaskManager:
                                                  app_url=clash_install_url)
                 logger.info(clash_result)
                 script_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
-                                                  app_url=script_install_url)
+                                                  app_url=script_install_url, md5=md5)
                 logger.info(script_result)
                 await asyncio.sleep(10)
                 return False
@@ -82,7 +81,7 @@ class TaskManager:
                                                  app_url=clash_install_url)
                 logger.info(clash_result)
                 script_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
-                                                  app_url=script_install_url)
+                                                  app_url=script_install_url, md5=md5)
                 logger.info(script_result)
                 await asyncio.sleep(10)
                 return False
@@ -90,7 +89,7 @@ class TaskManager:
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
                 logger.info(f"安装成功一个:{app_result[0]}")
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url)
+                await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url, md5=md5)
                 await asyncio.sleep(10)
                 return False
 

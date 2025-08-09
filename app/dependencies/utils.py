@@ -24,13 +24,14 @@ async def update_language(language:str, country,pad_code_list:list[str]) -> dict
     return await VmosUtil(change_lang_url, set_lang_body).send()
 
 
-async def install_app(pad_code_list:list[str], app_url: str) -> dict[str, str]:
+async def install_app(pad_code_list:list[str], app_url: str, md5: str = None) -> dict[str, str]:
     install_app_url = "/vcpcloud/api/padApi/uploadFileV3"
     body = {
         "padCodes": pad_code_list,
         "autoInstall" : 1,
         "url": app_url,
-        "isAuthorization": True
+        "isAuthorization": True,
+        "md5": md5
     }
 
     return await VmosUtil(install_app_url, body).send()

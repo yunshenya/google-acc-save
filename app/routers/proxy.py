@@ -44,7 +44,7 @@ async def set_proxy(proxy_request: ProxyRequest):
     for country in proxy_countries:
         if country.code.lower() == proxy_request.country_code.lower():
             manager.set_current_proxy(country)
-            found = True
+        found = True
         break
 
     if not found:
