@@ -5,9 +5,9 @@ from loguru import logger
 from config import default_proxy
 from globals import ProxyManager
 
+manager = ProxyManager() ## 全局代理管理
 
 def load_proxy_countries():
-    manager = ProxyManager()
     try:
         with open("代理国家列表 - IPIDEA.csv", "r", encoding="utf-8") as f:
             reader = csv.reader(f)

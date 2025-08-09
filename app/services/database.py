@@ -21,13 +21,3 @@ class Account(Base):
     status = Column(Integer, default=0, nullable=False)
     code = Column(String(32), nullable=True)
 
-
-
-# async def get_db():
-#     async with SessionLocal() as db:
-#         try:
-#             yield db
-#         finally:
-#             await db.close()
-
-
