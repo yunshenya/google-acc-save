@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import HTTPException, APIRouter
 from loguru import logger
 
+from app.dependencies.countries import manager
 from app.dependencies.utils import install_app, start_app, gps_in_ject_info, update_time_zone, update_language, \
     replace_pad
 from app.models.accounts import AndroidPadCodeRequest
@@ -14,10 +15,10 @@ from globals import ProxyManager
 
 
 router = APIRouter()
+task_manager = TaskManager()
 
 @router.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
-    task_manager = TaskManager()
     await task_manager.remove_task(android_code.pad_code)
     logger.info("已在规定时间内完成， 超时任务已移除")
     result = await replace_pad([android_code.pad_code], template_id=random.choice(temple_id_list))
@@ -28,8 +29,6 @@ async def status(android_code: AndroidPadCodeRequest):
 @router.post("/callback")
 async def callback(data: dict):
     task_business_type = data.get("taskBusinessType")
-    task_manager = TaskManager()
-    manager = ProxyManager()
     current_proxy = manager.get_current_proxy()
     match int(task_business_type):
         case 1000:
