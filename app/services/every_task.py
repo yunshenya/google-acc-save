@@ -33,16 +33,18 @@ async def set_phone_state(current_proxy, package_name, pad_code):
 
 
 async def install_app_task(pad_code_str, task_manager):
+    script_md5 = script_install_url.split("/")[-1].replace(".apk", "")
+    clash_md5 = clash_install_url.split("/")[-1].replace(".apk", "")
     logger.success(f'{pad_code_str}: 一键新机成功')
     if await task_manager.get_task(pad_code_str) is not None:
         raise HTTPException(status_code=400, detail=f"标识符 {pad_code_str} 已在使用")
     task = asyncio.create_task(task_manager.handle_timeout(pad_code_str))
     await task_manager.add_task(pad_code_str, task)
     clash_install_result: Any = await install_app(pad_code_list=[pad_code_str],
-                                                  app_url=clash_install_url)
+                                                  app_url=clash_install_url, md5=clash_md5)
     logger.info(f"Clash 安装结果: {clash_install_result['msg']}")
     script_install_result: Any = await install_app(pad_code_list=[pad_code_str],
-                                                   app_url=script_install_url)
+                                                   app_url=script_install_url, md5=script_md5)
     logger.info(f"脚本安装结果: {script_install_result['msg']}")
     clash_task = asyncio.create_task(
         task_manager.check_task_status(clash_install_result["data"][0]["taskId"], "Clash"))
