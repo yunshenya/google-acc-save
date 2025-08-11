@@ -9,7 +9,8 @@ from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
-from app.services.task_status import process_task_status, reboot_task_status, replace_pad_stak_status
+from app.services.task_status import process_task_status, reboot_task_status, replace_pad_stak_status, \
+    app_install_task_status, app_start_task_status, app_uninstall_task_status
 from config import pad_code_list, pkg_name, temple_id_list
 
 router = APIRouter()
@@ -25,9 +26,8 @@ async def index(request: Request):
 @router.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
     await task_manager.remove_task(android_code.pad_code)
-    logger.info("已在规定时间内完成， 超时任务已移除")
-    result = await replace_pad([android_code.pad_code], template_id=random.choice(temple_id_list))
-    logger.info(result)
+    logger.success("已在规定时间内完成， 超时任务已移除")
+    await replace_pad([android_code.pad_code], template_id=random.choice(temple_id_list))
     return {"message": "Task cancelled"}
 
 
@@ -49,13 +49,12 @@ async def callback(data: dict):
             return "ok"
 
         case 1003:
-            logger.success(f'安装成功接口回调 {data["apps"]["padCode"]}: 安装成功')
-            process_task_status(data)
+            app_install_task_status(data)
             return "ok"
 
         case 1004:
-            logger.success(f"安装接口的回调{data}")
-            process_task_status(data)
+            logger.success(f"应用卸载的接口回调：{data}")
+            app_uninstall_task_status(data)
             return "ok"
 
         case 1006:
@@ -64,8 +63,7 @@ async def callback(data: dict):
             return "ok"
 
         case 1007:
-            logger.success("应用启动成功回调")
-            process_task_status(data)
+            app_start_task_status(data)
             return "ok"
 
         case 1009:

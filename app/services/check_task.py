@@ -33,7 +33,6 @@ class TaskManager:
         async with self._lock:
             task = self._operations.get(pad_code)
             if task is not None:
-                logger.success("移除任务成功")
                 task.cancel()
                 del self._operations[pad_code]
 

@@ -37,6 +37,32 @@ def process_task_status(data):
         logger.error(f"无效的任务状态值: {task_status}")
 
 
+def app_start_task_status(data):
+    task_status = data.get("taskStatus")
+    match TaskStatus(task_status):
+        case TaskStatus.COMPLETED:
+            logger.success("应用启动成功回调")
+            logger.warning(data)
+
+
+
+
+def app_install_task_status(data):
+    task_status = data.get("taskStatus")
+    pad_code = data["apps"]["padCode"]
+    match TaskStatus(task_status):
+        case TaskStatus.COMPLETED:
+            logger.success(f'安装成功接口回调 {pad_code}: 安装成功')
+
+
+def app_uninstall_task_status(data):
+    task_status = data.get("taskStatus")
+    pad_code = data["apps"]["padCode"]
+    match TaskStatus(task_status):
+        case TaskStatus.COMPLETED:
+            logger.success(f"{pad_code}: 卸载成功")
+
+
 async def reboot_task_status(data, current_proxy, package_name):
     task_status = data.get("taskStatus")
     pad_code = data.get("padCode")
@@ -70,4 +96,24 @@ async def replace_pad_stak_status(data, task_manager):
     match TaskStatus(task_status):
         case TaskStatus.COMPLETED:
             await install_app_task(pad_code_str=pad_code, task_manager=task_manager)
+
+        case TaskStatus.RUNNING:
+            logger.info(f"{pad_code}: 一键新机执行中")
+
+
+        case TaskStatus.PENDING:
+            logger.info(f"{pad_code}: 一键新机等待中")
+
+
+        case TaskStatus.CANCELLED:
+            logger.info(f"{pad_code}: 一键新机任务取消")
+
+
+        case TaskStatus.TIMEOUT:
+            logger.info(f"{pad_code}: 一键新机任务超时")
+
+
+        case TaskStatus.ALL_FAILED:
+            logger.info(f"{pad_code}: 一键新机任务失败")
+
 

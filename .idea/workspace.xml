@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化错误判断机制">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化日志">
       <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -373,7 +372,7 @@
       <workItem from="1754740041660" duration="6374000" />
       <workItem from="1754746599978" duration="9000" />
       <workItem from="1754746986741" duration="322000" />
-      <workItem from="1754875586982" duration="21659000" />
+      <workItem from="1754875586982" duration="22614000" />
     </task>
     <task id="LOCAL-00001" summary="初始化项目">
       <option name="closed" value="true" />
@@ -639,7 +638,23 @@
       <option name="project" value="LOCAL" />
       <updated>1754898479573</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="优化日志">
+      <option name="closed" value="true" />
+      <created>1754898905162</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1754898905162</updated>
+    </task>
+    <task id="LOCAL-00035" summary="优化日志">
+      <option name="closed" value="true" />
+      <created>1754899596744</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1754899596744</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -678,6 +693,7 @@
     <MESSAGE value="添加前端页面" />
     <MESSAGE value="添加环境变量配置" />
     <MESSAGE value="优化错误判断机制" />
-    <option name="LAST_COMMIT_MESSAGE" value="优化错误判断机制" />
+    <MESSAGE value="优化日志" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化日志" />
   </component>
 </project>
