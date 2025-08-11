@@ -78,7 +78,7 @@ class TaskManager:
             if len(app_install_result["data"][0]["apps"]) == 2:
                 return True
             elif len(app_install_result["data"][0]["apps"]) == 0:
-                logger.warning("重新安装")
+                logger.warning(f"{pad_code}: 重新安装")
                 await install_app(pad_code_list=[pad_code],
                                                  app_url=clash_install_url,  md5=clash_md5)
 
