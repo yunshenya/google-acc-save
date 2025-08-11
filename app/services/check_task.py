@@ -44,21 +44,22 @@ class TaskManager:
     async def handle_install_result(result, task_type) -> bool:
         script_md5 = script_install_url.split("/")[-1].replace(".apk", "")
         clash_md5 = clash_install_url.split("/")[-1].replace(".apk", "")
+        pad_code = result["data"][0]["padCode"]
         if task_type.lower() == "script":
             logger.info(f'{task_type}安装成功')
-            app_install_result : Any = await get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
+            app_install_result : Any = await get_app_install_info([pad_code], "Clash for Android")
             if len(app_install_result["data"][0]["apps"]) == 2:
                 logger.success("安装成功")
-                await open_root(pad_code_list=[result["data"][0]["padCode"]], pkg_name=pkg_name)
+                await open_root(pad_code_list=[pad_code], pkg_name=pkg_name)
                 logger.info("开始重启")
-                await reboot(pad_code_list=[result["data"][0]["padCode"]])
+                await reboot(pad_code_list=[pad_code])
                 return True
 
             elif len(app_install_result["data"][0]["apps"]) == 0:
-                logger.warning("重新安装")
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],
+                logger.warning(f"{pad_code}: 重新安装")
+                await install_app(pad_code_list=[pad_code],
                                                  app_url=clash_install_url, md5=clash_md5)
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],
+                await install_app(pad_code_list=[pad_code],
                                                   app_url=script_install_url, md5=script_md5)
                 await asyncio.sleep(10)
                 return False
@@ -66,22 +67,22 @@ class TaskManager:
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
                 logger.warning(f"安装成功一个:{app_result[0]['appName']}")
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url, md5=clash_md5)
+                await install_app(pad_code_list=[pad_code],app_url=clash_install_url, md5=clash_md5)
                 await asyncio.sleep(10)
                 return False
 
 
         elif task_type.lower() == "clash":
             logger.info(f"{task_type}安装成功")
-            app_install_result = await get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
+            app_install_result = await get_app_install_info([pad_code], "Clash for Android")
             if len(app_install_result["data"][0]["apps"]) == 2:
                 return True
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning("重新安装")
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],
+                await install_app(pad_code_list=[pad_code],
                                                  app_url=clash_install_url,  md5=clash_md5)
 
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],
+                await install_app(pad_code_list=[pad_code],
                                                   app_url=script_install_url, md5=script_md5)
                 await asyncio.sleep(10)
                 return False
@@ -89,7 +90,7 @@ class TaskManager:
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
                 logger.info(f"安装成功一个:{app_result[0]['appName']}")
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url, md5=script_md5)
+                await install_app(pad_code_list=[pad_code],app_url=script_install_url, md5=script_md5)
                 await asyncio.sleep(10)
                 return False
         return False
