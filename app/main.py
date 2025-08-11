@@ -26,7 +26,7 @@ async def startup_event(app: FastAPI):
     app.include_router(server.router, prefix="")
     # 一键新机
     result = await replace_pad(pad_code_list, template_id=random.choice(temple_id_list))
-    logger.info(result)
+    logger.info(result["msg"])
 
     # 创建数据库表
     async with engine.begin() as conn:

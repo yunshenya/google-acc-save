@@ -59,6 +59,7 @@ async def callback(data: dict):
             return "ok"
 
         case 1006:
+            logger.warning("1006回调")
             process_task_status(data)
             return "ok"
 
@@ -68,6 +69,7 @@ async def callback(data: dict):
             return "ok"
 
         case 1009:
+            logger.warning("1009回调")
             process_task_status(data)
             return "ok"
 
