@@ -117,3 +117,22 @@ async def replace_pad_stak_status(data, task_manager):
             logger.info(f"{pad_code}: 一键新机任务失败")
 
 
+
+def adb_call_task_status(data):
+    task_status = data.get("taskStatus")
+    pad_code = data.get("padCode")
+    match TaskStatus(task_status):
+        case TaskStatus.COMPLETED:
+            logger.success(f"{pad_code}: 调用adb成功")
+
+        case TaskStatus.RUNNING:
+            logger.success(f"{pad_code}: 调用adb中")
+
+        case TaskStatus.PENDING:
+            logger.success(f"{pad_code}: 准备调用adb")
+
+        case TaskStatus.CANCELLED:
+            logger.success(f"{pad_code}: adb调用任务关闭")
+
+        case TaskStatus.TIMEOUT:
+            logger.warning(f"{pad_code}: adb调用超时")

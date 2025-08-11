@@ -10,7 +10,7 @@ from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
 from app.services.task_status import process_task_status, reboot_task_status, replace_pad_stak_status, \
-    app_install_task_status, app_start_task_status, app_uninstall_task_status
+    app_install_task_status, app_start_task_status, app_uninstall_task_status, adb_call_task_status
 from config import pad_code_list, pkg_name, temple_id_list
 
 router = APIRouter()
@@ -45,7 +45,7 @@ async def callback(data: dict):
             return "ok"
 
         case 1002:
-            logger.success("调用了adb")
+            adb_call_task_status(data)
             return "ok"
 
         case 1003:
