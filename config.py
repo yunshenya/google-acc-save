@@ -10,8 +10,6 @@ pad_code_list =  [] if DEBUG else ["ACP250605DG51WR4","ACP250417JIWWZSL","AC2025
 
 pkg_name = "com.aaee8h0kh.cejwrh616"
 
-md5 = "c66545e6545ca30503abefa5921d56c4"
-
 default_proxy = {
     "country": "新加坡",
     "code": "sg",
@@ -26,7 +24,7 @@ temple_id_list = [614, 624]
 
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
 
-script_install_url = "https://file.vmoscloud.com/userFile/c66545e6545ca30503abefa5921d56c4.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/463d1f80adf309a304c83a622115b438.apk"
 
 global_timeout_minute = 8
 

@@ -7,7 +7,7 @@ from loguru import logger
 
 from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, reboot, install_app, \
     replace_pad
-from config import clash_install_url, script_install_url, temple_id_list, pkg_name, md5, global_timeout_minute, \
+from config import clash_install_url, script_install_url, temple_id_list, pkg_name, global_timeout_minute, \
     check_task_timeout_minute
 
 
@@ -42,6 +42,8 @@ class TaskManager:
 
     @staticmethod
     async def handle_install_result(result, task_type) -> bool:
+        script_md5 = script_install_url.split("/")[-1].replace(".apk", "")
+        clash_md5 = clash_install_url.split("/")[-1].replace(".apk", "")
         if task_type.lower() == "script":
             logger.info(f'{task_type}安装成功')
             app_install_result : Any = await get_app_install_info([result["data"][0]["padCode"]], "Clash for Android")
@@ -55,16 +57,16 @@ class TaskManager:
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning("重新安装")
                 await install_app(pad_code_list=[result["data"][0]["padCode"]],
-                                                 app_url=clash_install_url)
+                                                 app_url=clash_install_url, md5=clash_md5)
                 await install_app(pad_code_list=[result["data"][0]["padCode"]],
-                                                  app_url=script_install_url, md5=md5)
+                                                  app_url=script_install_url, md5=script_md5)
                 await asyncio.sleep(10)
                 return False
 
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
                 logger.warning(f"安装成功一个:{app_result[0]['appName']}")
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url)
+                await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url, md5=clash_md5)
                 await asyncio.sleep(10)
                 return False
 
@@ -77,17 +79,17 @@ class TaskManager:
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning("重新安装")
                 await install_app(pad_code_list=[result["data"][0]["padCode"]],
-                                                 app_url=clash_install_url)
+                                                 app_url=clash_install_url,  md5=clash_md5)
 
                 await install_app(pad_code_list=[result["data"][0]["padCode"]],
-                                                  app_url=script_install_url, md5=md5)
+                                                  app_url=script_install_url, md5=script_md5)
                 await asyncio.sleep(10)
                 return False
 
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
                 logger.info(f"安装成功一个:{app_result[0]['appName']}")
-                await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url, md5=md5)
+                await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url, md5=script_md5)
                 await asyncio.sleep(10)
                 return False
         return False
@@ -95,6 +97,7 @@ class TaskManager:
 
     async def check_task_status(self, task_id, task_type, timeout_seconds: int = (check_task_timeout_minute * 60), retry_interval: int = 5):
         app_url = clash_install_url if task_type.lower() == "clash" else script_install_url
+        app_mod5 = app_url.split("/")[-1].replace(".apk", "")
         try:
             async with asyncio.timeout(timeout_seconds):
                 while True:
@@ -128,7 +131,7 @@ class TaskManager:
                             case InstallTaskStatus.SOME_FAILED:
                                 logger.warning(f"{task_type}下载失败")
                                 logger.warning(result["data"][0]["errorMsg"])
-                                result = await install_app(pad_code_list=[pad_code], app_url=app_url)
+                                result = await install_app(pad_code_list=[pad_code], app_url=app_url, md5=app_mod5)
                                 logger.info(result["data"][0]["errorMsg"])
 
                             case InstallTaskStatus.ALL_FAILED:
