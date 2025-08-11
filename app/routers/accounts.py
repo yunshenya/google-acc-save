@@ -38,7 +38,7 @@ async def get_accounts():
         accounts = result.scalars().all()
         return accounts
 
-
+## 获取之后就会删除之前那条数据
 @router.get("/account/unique", response_model=AccountResponse)
 async def get_unique_account():
     async with SessionLocal() as db:
@@ -52,9 +52,8 @@ async def get_unique_account():
         if account is None:
             raise HTTPException(status_code=404, detail="没有可用的账号（status=0）")
 
-        account.status = 1
+        await db.delete(account)
         await db.commit()
-        await db.refresh(account)
         return account
 
 
