@@ -1,5 +1,8 @@
+from typing import cast
+
 from fastapi import HTTPException, APIRouter
 from loguru import logger
+from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
 
 from app.models.accounts import AccountResponse, AccountCreate, AccountUpdate
@@ -42,7 +45,7 @@ async def get_unique_account():
         from sqlalchemy import select
 
         # 使用select语句并添加锁
-        stmt = select(Account).filter(Account.status == 0).with_for_update()
+        stmt = select(Account).filter(cast(ColumnElement[bool], Account.status == 0)).with_for_update()
         result = await db.execute(stmt)
         account = result.scalars().first()
 
@@ -59,7 +62,7 @@ async def get_unique_account():
 async def get_account(account_id: int):
     async with SessionLocal() as db:
         from sqlalchemy import select
-        stmt = select(Account).filter(Account.id == account_id)
+        stmt = select(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
@@ -72,7 +75,7 @@ async def update_account(account_id: int, account_update: AccountUpdate):
     async with SessionLocal() as db:
         try:
             from sqlalchemy import select
-            stmt = select(Account).filter(Account.id == account_id)
+            stmt = select(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
             result = await db.execute(stmt)
             db_account = result.scalars().first()
             if db_account is None:
@@ -102,13 +105,13 @@ async def update_account(account_id: int, account_update: AccountUpdate):
 async def delete_account(account_id: int):
     async with SessionLocal() as db:
         from sqlalchemy import select, delete
-        stmt = select(Account).filter(Account.id == account_id)
+        stmt = select(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
             raise HTTPException(status_code=404, detail="账号不存在")
 
-        await db.execute(delete(Account).filter(Account.id == account_id))
+        await db.execute(delete(Account).filter(cast(ColumnElement[bool], Account.id == account_id)))
         await db.commit()
         logger.success(f"账号 {account_id} 删除成功")
         return {"detail": "账号删除成功"}
