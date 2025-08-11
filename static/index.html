@@ -2,88 +2,164 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>Google 账户实时更新</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>欢迎来到二次元世界</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        ul { list-style: none; padding: 0; }
-        li { padding: 10px; border-bottom: 1px solid #ddd; }
-        .input-group { margin-bottom: 20px; }
-        .input-group label { display: inline-block; width: 100px; }
-        input, select { padding: 5px; margin-right: 10px; }
-        button { padding: 5px 10px; }
+        body {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+            background-size: 400%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Noto Sans SC', sans-serif;
+            overflow-x: hidden;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .title {
+            font-family: 'Press Start 2P', cursive;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .character {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0); }
+        }
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            animation: sparkle 1.5s infinite;
+            opacity: 0;
+        }
+        @keyframes sparkle {
+            0% { transform: scale(0); opacity: 0.8; }
+            50% { transform: scale(1.5); opacity: 0.4; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        .account-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
-<body>
-<div class="input-group">
-    <label for="account">账户</label>
-    <input id="account" type="text" placeholder="输入账户名">
-    <label for="password">密码</label>
-    <input id="password" type="password" placeholder="输入密码">
-    <label for="type">类型</label>
-    <select id="type">
-        <option value="0">普通</option>
-        <option value="1">高级</option>
-    </select>
-    <label for="status">状态</label>
-    <select id="status">
-        <option value="0">未激活</option>
-        <option value="1">已激活</option>
-    </select>
-    <label for="code">代码</label>
-    <input id="code" type="text" placeholder="输入代码（可选）">
-    <button onclick="addAccount()">添加</button>
+<body class="min-h-screen flex flex-col items-center justify-center text-white p-6">
+<div class="text-center max-w-2xl">
+    <h1 class="title text-5xl md:text-6xl text-pink-300 mb-6"> 查询当前数据库的数据 </h1>
 </div>
-<ul id="data-list"></ul>
+
+<!-- 账户信息展示区域 -->
+<div class="w-full max-w-2xl mt-8">
+    <h2 class="text-2xl text-pink-200 mb-4">账户信息</h2>
+    <div class="flex space-x-4 mb-4">
+        <button id="fetchAll" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">获取全部账户</button>
+        <button id="fetchUnique" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">获取单个（加锁）</button>
+        <div class="flex items-center space-x-2">
+            <input id="accountId" type="number" min="0" placeholder="输入账户ID" class="p-2 rounded text-black">
+            <button id="fetchById" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">获取单个（不加锁）</button>
+        </div>
+    </div>
+    <div id="accountInfo" class="account-card"></div>
+</div>
+
+<img src="https://via.placeholder.com/200x300.png?text=二次元角色" class="character w-32 md:w-48" alt="二次元角色">
+<div class="sparkle" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+<div class="sparkle" style="top: 30%; left: 80%; animation-delay: 0.5s;"></div>
+<div class="sparkle" style="top: 60%; left: 20%; animation-delay: 1s;"></div>
+
 <script>
-    const dataList = document.getElementById("data-list");
-    const source = new EventSource("/events");
+    // 动态添加更多闪烁效果
+    const sparkleContainer = document.body;
+    for (let i = 0; i < 10; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.top = `${Math.random() * 100}%`;
+        sparkle.style.left = `${Math.random() * 100}%`;
+        sparkle.style.animationDelay = `${Math.random() * 2}s`;
+        sparkleContainer.appendChild(sparkle);
+    }
 
-    source.onmessage = event => {
-        const data = JSON.parse(event.data);
-        dataList.innerHTML = ""; // 清空旧数据
-        data.forEach(item => {
-            const li = document.createElement("li");
-            li.setAttribute("data-id", item.id);
-            li.textContent = `ID: ${item.id}, Account: ${item.account}, Type: ${item.type}, Status: ${item.status}, Code: ${item.code || 'N/A'}, Created: ${new Date(item.created_at).toLocaleString()}`;
-            dataList.appendChild(li);
-        });
-    };
+    // API 调用逻辑
+    const accountInfoDiv = document.getElementById('accountInfo');
+    const fetchAllButton = document.getElementById('fetchAll');
+    const fetchUniqueButton = document.getElementById('fetchUnique');
+    const fetchByIdButton = document.getElementById('fetchById');
+    const accountIdInput = document.getElementById('accountId');
 
-    source.onerror = () => {
-        console.error("SSE error, reconnecting...");
-        setTimeout(() => source.connect(), 5000); // 自动重连
-    };
-
-    async function addAccount() {
-        const account = document.getElementById("account").value;
-        const password = document.getElementById("password").value;
-        const type = parseInt(document.getElementById("type").value);
-        const status = parseInt(document.getElementById("status").value);
-        const code = document.getElementById("code").value || null;
-
-        if (!account || !password) {
-            alert("账户和密码不能为空！");
-            return;
-        }
-
+    async function fetchData(url) {
         try {
-            const response = await fetch("/add-account", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ account, password, type, status, code })
-            });
-            if (response.ok) {
-                document.getElementById("account").value = "";
-                document.getElementById("password").value = "";
-                document.getElementById("code").value = "";
-            } else {
-                alert("添加失败！");
-            }
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP错误: ${response.status}`);
+            const data = await response.json();
+            return data;
         } catch (error) {
-            console.error("添加错误:", error);
-            alert("添加失败！");
+            accountInfoDiv.innerHTML = `<p class="text-red-300">错误: ${error.message}</p>`;
+            return null;
         }
     }
+
+    function displayAccounts(data) {
+        if (!data) return;
+        accountInfoDiv.innerHTML = '';
+        if (Array.isArray(data)) {
+            data.forEach(account => {
+                accountInfoDiv.innerHTML += `
+                        <div class="mb-2 p-2 bg-pink-200 text-black rounded">
+                            <p>ID: ${account.id || '未知'}</p>
+                            <p>用户名: ${account.username || '未知'}</p>
+                            <p>状态: ${account.status || '未知'}</p>
+                        </div>`;
+            });
+        } else {
+            accountInfoDiv.innerHTML = `
+                    <div class="p-2 bg-pink-200 text-black rounded">
+                        <p>ID: ${data.id || '未知'}</p>
+                        <p>用户名: ${data.username || '未知'}</p>
+                        <p>状态: ${data.status || '未知'}</p>
+                    </div>`;
+        }
+    }
+
+    fetchAllButton.addEventListener('click', async () => {
+        const data = await fetchData('http://127.0.0.1:5000/accounts');
+        displayAccounts(data);
+    });
+
+    fetchUniqueButton.addEventListener('click', async () => {
+        const data = await fetchData('http://127.0.0.1:5000/account/unique');
+        displayAccounts(data);
+    });
+
+    fetchByIdButton.addEventListener('click', async () => {
+        const accountId = accountIdInput.value;
+        if (!accountId || accountId < 0) {
+            accountInfoDiv.innerHTML = '<p class="text-red-300">请输入有效的账户ID</p>';
+            return;
+        }
+        const data = await fetchData(`http://127.0.0.1:5000/accounts/${accountId}`);
+        displayAccounts(data);
+    });
 </script>
 </body>
 </html>

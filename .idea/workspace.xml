@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="解决类型报错问题">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加前端页面">
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/static/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -100,9 +100,9 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
       <recent name="D:\Document\PythonProjects\google-acc-save" />
       <recent name="D:\Document\PythonProjects\google-acc-save\app" />
+      <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
       <recent name="D:\Document\PythonProjects\google-acc-save\tests" />
       <recent name="D:\Document\PythonProjects\google-acc-save\src\utils" />
     </key>
@@ -214,28 +214,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="proxy" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="google-acc-save" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app/routers" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/routers/proxy.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="google-acc-save" />
       <option name="ENV_FILES" value="" />
@@ -304,16 +282,14 @@
     </configuration>
     <list>
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.proxy" />
       <item itemvalue="Python.test" />
       <item itemvalue="数据库脚本.data.sql" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.proxy" />
-        <item itemvalue="Python.main" />
         <item itemvalue="数据库脚本.data.sql" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -398,7 +374,7 @@
       <workItem from="1754740041660" duration="6374000" />
       <workItem from="1754746599978" duration="9000" />
       <workItem from="1754746986741" duration="322000" />
-      <workItem from="1754875586982" duration="5821000" />
+      <workItem from="1754875586982" duration="9961000" />
     </task>
     <task id="LOCAL-00001" summary="初始化项目">
       <option name="closed" value="true" />
@@ -608,7 +584,15 @@
       <option name="project" value="LOCAL" />
       <updated>1754878824961</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="添加前端页面">
+      <option name="closed" value="true" />
+      <created>1754881490715</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1754881490715</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -644,6 +628,7 @@
     <MESSAGE value="调整日志等级" />
     <MESSAGE value="新增删除接口" />
     <MESSAGE value="解决类型报错问题" />
-    <option name="LAST_COMMIT_MESSAGE" value="解决类型报错问题" />
+    <MESSAGE value="添加前端页面" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加前端页面" />
   </component>
 </project>

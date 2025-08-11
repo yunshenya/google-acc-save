@@ -1,10 +1,10 @@
 DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
 
-pad_code_list = []
+pad_code_list = ["ACP250605DG51WR4","ACP250417JIWWZSL","AC20250226GBVI6P","ACP250417FRB7H9K","ACP2504175KEOO32"]
 
 pkg_name = "com.aaee8h0kh.cejwrh616"
 
-md5 = "02a44fc0dc9483850774ce1ad15c493e"
+md5 = "d918272e71f99c7a1b835c5d3c138f4a"
 
 default_proxy = {
     "country": "新加坡",
@@ -19,4 +19,4 @@ default_proxy = {
 temple_id_list = [614, 624]
 
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
-script_install_url = "https://file.vmoscloud.com/userFile/02a44fc0dc9483850774ce1ad15c493e.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/d918272e71f99c7a1b835c5d3c138f4a.apk"
