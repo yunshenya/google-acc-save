@@ -5,7 +5,6 @@ import hmac
 import json
 
 import aiohttp
-from loguru import logger
 
 
 class VmosUtil(object):
