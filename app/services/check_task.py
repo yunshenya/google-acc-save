@@ -94,7 +94,7 @@ class TaskManager:
 
         return False
 
-    async def check_task_status(self, task_id, task_type, timeout_seconds: int = 180, retry_interval: int = 10):
+    async def check_task_status(self, task_id, task_type, timeout_seconds: int = 240, retry_interval: int = 5):
         app_url = clash_install_url if task_type.lower() == "clash" else script_install_url
         try:
             async with asyncio.timeout(timeout_seconds):
@@ -131,7 +131,7 @@ class TaskManager:
             except (KeyError, IndexError) as e:
                 logger.error(f"无法处理超时：{e}，任务ID：{task_id}")
 
-    async def handle_timeout(self, pad_code_str: str, timeout_seconds: int = 360):
+    async def handle_timeout(self, pad_code_str: str, timeout_seconds: int = 600):
         logger.success("全局超时任务开启成功")
         try:
             await asyncio.sleep(timeout_seconds)

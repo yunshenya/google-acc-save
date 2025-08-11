@@ -96,7 +96,7 @@ async def callback(data: dict):
                     pad_code_str = data.get("padCode")
                     logger.info(f'{data["padCode"]}: 一键新机成功')
                     if await task_manager.get_task(pad_code_str) is not None:
-                        return HTTPException(status_code=400, detail=f"Identifier {pad_code_str} is already in use")
+                        raise HTTPException(status_code=400, detail=f"Identifier {pad_code_str} is already in use")
                     task = asyncio.create_task(task_manager.handle_timeout(pad_code_str))
                     await task_manager.add_task(pad_code_str, task)
                     clash_install_result: Any = await install_app(pad_code_list=[data["padCode"]],

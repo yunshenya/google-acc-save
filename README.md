@@ -1,0 +1,12 @@
+获取全部
+~~~
+http://103.118.254.151/accounts
+~~~
+获取单个，加锁
+~~~
+http://103.118.254.151/account/unique
+~~~
+获取单个不加锁，account_id为数据库id顺序0到当前最大值
+~~~
+http://103.118.254.151/accounts/{account_id}
+~~~

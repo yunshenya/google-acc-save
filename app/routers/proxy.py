@@ -48,7 +48,7 @@ async def set_proxy(proxy_request: ProxyRequest):
             break
 
     if not found:
-        return HTTPException(status_code=404, detail=f"未找到国家代码为 {proxy_request.country_code} 的代理信息")
+        raise HTTPException(status_code=404, detail=f"未找到国家代码为 {proxy_request.country_code} 的代理信息")
 
     current_proxy = manager.get_current_proxy()
     return {

@@ -24,7 +24,7 @@ async def create_account(account: AccountCreate):
             return db_account
         except IntegrityError:
             await db.rollback()
-            return HTTPException(status_code=400, detail="账号已存在")
+            raise HTTPException(status_code=400, detail="账号已存在")
 
 
 @router.get("/accounts", response_model=list[AccountResponse])
@@ -63,7 +63,7 @@ async def get_account(account_id: int):
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
-            return HTTPException(status_code=404, detail="账号不存在")
+            raise HTTPException(status_code=404, detail="账号不存在")
         return account
 
 
@@ -76,7 +76,7 @@ async def update_account(account_id: int, account_update: AccountUpdate):
             result = await db.execute(stmt)
             db_account = result.scalars().first()
             if db_account is None:
-                return HTTPException(status_code=404, detail="账号不存在")
+                raise HTTPException(status_code=404, detail="账号不存在")
 
             # 仅更新提供的字段
             if account_update.account is not None:
@@ -95,6 +95,20 @@ async def update_account(account_id: int, account_update: AccountUpdate):
             return db_account
         except IntegrityError:
             await db.rollback()
-            return HTTPException(status_code=400, detail="账号已存在")
+            raise HTTPException(status_code=400, detail="账号已存在")
 
 
+@router.delete("/accounts/{account_id}", response_model=dict)
+async def delete_account(account_id: int):
+    async with SessionLocal() as db:
+        from sqlalchemy import select, delete
+        stmt = select(Account).filter(Account.id == account_id)
+        result = await db.execute(stmt)
+        account = result.scalars().first()
+        if account is None:
+            raise HTTPException(status_code=404, detail="账号不存在")
+
+        await db.execute(delete(Account).filter(Account.id == account_id))
+        await db.commit()
+        logger.success(f"账号 {account_id} 删除成功")
+        return {"detail": "账号删除成功"}

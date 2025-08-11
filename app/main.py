@@ -12,6 +12,7 @@ from app.services.database import engine, Base
 from config import pad_code_list, temple_id_list
 
 
+# noinspection PyShadowingNames
 @asynccontextmanager
 async def startup_event(app: FastAPI):
     """
@@ -20,7 +21,9 @@ async def startup_event(app: FastAPI):
     """
     # 加载代理国家列表
     load_proxy_countries()
-
+    app.include_router(accounts.router, prefix="")
+    app.include_router(proxy.router, prefix="")
+    app.include_router(server.router, prefix="")
     # 一键新机
     result = await replace_pad(pad_code_list, template_id=random.choice(temple_id_list))
     logger.info(result)
@@ -31,11 +34,7 @@ async def startup_event(app: FastAPI):
     yield
     logger.info("application shutdown")
 
-
 app = FastAPI(title="google账号管理系统", lifespan=startup_event)
-app.include_router(accounts.router, prefix="")
-app.include_router(proxy.router, prefix="")
-app.include_router(server.router, prefix="")
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=5000)
