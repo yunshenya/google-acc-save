@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欢迎来到二次元世界</title>
+    <title>google后台统计</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
@@ -15,9 +15,9 @@
             overflow-x: hidden;
         }
         @keyframes gradient {
-            0% { background-position: 0% 50%; }
+            0% { background-position: 0 50%; }
             50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+            100% { background-position: 0 50%; }
         }
         .title {
             font-family: 'Press Start 2P', cursive;
@@ -76,7 +76,7 @@
         <button id="fetchAll" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">获取全部账户</button>
         <button id="fetchUnique" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">获取单个（加锁）</button>
         <div class="flex items-center space-x-2">
-            <input id="accountId" type="number" min="0" placeholder="输入账户ID" class="p-2 rounded text-black">
+            <label for="accountId"></label><input id="accountId" type="number" min="0" placeholder="输入账户ID" class="p-2 rounded text-black">
             <button id="fetchById" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">获取单个（不加锁）</button>
         </div>
     </div>
@@ -111,8 +111,7 @@
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`HTTP错误: ${response.status}`);
-            const data = await response.json();
-            return data;
+            return await response.json();
         } catch (error) {
             accountInfoDiv.innerHTML = `<p class="text-red-300">错误: ${error.message}</p>`;
             return null;
