@@ -21,8 +21,6 @@ class VmosUtil(object):
 
     def _get_signature(self):
         json_string = json.dumps(self._data, separators=(',', ':'), ensure_ascii=False)
-        logger.info(json_string)
-
         # 计算SHA-256哈希值
         hash_object = hashlib.sha256(json_string.encode())
         x_content_sha256 = hash_object.hexdigest()
