@@ -101,30 +101,41 @@ class TaskManager:
                 while True:
                     try:
                         result: Any = await get_cloud_file_task_info([str(task_id)])
-                        logger.info(f"{task_type} 任务 {task_id}: {result}")
+                        error_message: Any = result["data"][0]["errorMsg"]
+                        if error_message:
+                            logger.info(f"{task_type} 安装任务: {error_message}")
+
                         task_status = result["data"][0]["taskStatus"]
+                        pad_code = result["data"][0]["padCode"]
                         match InstallTaskStatus(task_status):
                             case InstallTaskStatus.PENDING:
+                                logger.info(f"{pad_code}:{task_type}等待安装中")
                                 message = result["data"][0]["errorMsg"]
-                                logger.warning(f"{task_status}: {message}")
+                                if message:
+                                    logger.warning(f"{task_status}: {message}")
 
                             case InstallTaskStatus.RUNNING:
+                                logger.info(f"{pad_code}:{task_type}安装中")
                                 message = result["data"][0]["errorMsg"]
-                                logger.warning(f"{task_status}: {message}")
+                                if message:
+                                    logger.warning(f"{task_status}: {message}")
 
                             case InstallTaskStatus.TIMEOUT:
+                                logger.info(f"{pad_code}:{task_type}安装超时")
                                 message = result["data"][0]["errorMsg"]
-                                logger.warning(f"{task_status}: {message}")
+                                if message:
+                                    logger.warning(f"{task_status}: {message}")
 
                             case InstallTaskStatus.SOME_FAILED:
                                 logger.warning(f"{task_type}下载失败")
                                 logger.warning(result["data"][0]["errorMsg"])
-                                result = await install_app(pad_code_list=[result["data"][0]["padCode"]], app_url=app_url)
+                                result = await install_app(pad_code_list=[pad_code], app_url=app_url)
                                 logger.info(result["data"][0]["errorMsg"])
 
                             case InstallTaskStatus.ALL_FAILED:
                                 message = result["data"][0]["errorMsg"]
-                                logger.warning(f"{task_status}: {message}")
+                                if message:
+                                    logger.warning(f"{task_status}: {message}")
 
                             case InstallTaskStatus.COMPLETED:
                                 if await self.handle_install_result(result, task_type):
@@ -146,8 +157,9 @@ class TaskManager:
             try:
                 pad_code = result["data"][0]["padCode"]
                 await self.remove_task(pad_code)
-                replace_result = await replace_pad([pad_code], template_id=random.choice(temple_id_list))
-                logger.info(replace_result)
+                temple_id = random.choice(temple_id_list)
+                replace_result = await replace_pad([pad_code], template_id=temple_id)
+                logger.info(f"{pad_code}：正在一键新机，使用的模板为: {temple_id}")
                 logger.warning("因为长时间安装不上，已移除任务")
             except (KeyError, IndexError) as e:
                 logger.error(f"无法处理超时：{e}，任务ID：{task_id}")
@@ -159,8 +171,9 @@ class TaskManager:
                 logger.info(f"标识符 {pad_code_str} 的任务已不存在，无需替换")
                 return
             logger.warning(f"标识符超时: {pad_code_str}")
-            result = await replace_pad([pad_code_str], template_id=random.choice(temple_id_list))
-            logger.info(f"正在一键新机: {result}")
+            temple_id = random.choice(temple_id_list)
+            result = await replace_pad([pad_code_str], template_id=temple_id)
+            logger.info(f"{pad_code_str}：正在一键新机，使用的模板为: {temple_id},运行结果为: {result['msg']}")
             await self.remove_task(pad_code_str)
         except asyncio.CancelledError:
             logger.info(f"标识符的超时任务: {pad_code_str} 被取消了.")
