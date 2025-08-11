@@ -4,6 +4,8 @@ from typing import Any
 
 from fastapi import HTTPException, APIRouter
 from loguru import logger
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 
 from app.dependencies.countries import manager
 from app.dependencies.utils import install_app, start_app, gps_in_ject_info, update_time_zone, update_language, \
@@ -24,21 +26,24 @@ async def status(android_code: AndroidPadCodeRequest):
     return {"message": "Task cancelled"}
 
 
-@router.post("/callback")
+@router.post("/callback", response_model= str)
 async def callback(data: dict):
     task_business_type = data.get("taskBusinessType")
     current_proxy = manager.get_current_proxy()
     match int(task_business_type):
         case 1000:
             if data["taskStatus"] == 3:
-                _id = data.get("padCode")
-                logger.success(f"{_id}: 重启成功")
-                logger.info(f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
+                pad_code = data.get("padCode")
+                logger.success(f"{pad_code}: 重启成功")
+                logger.info(
+                    f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
                 # 设置语言
-                lang_result = await update_language("en", country=current_proxy['code'], pad_code_list=[data["padCode"]])
+                lang_result = await update_language("en", country=current_proxy['code'],
+                                                    pad_code_list=[data["padCode"]])
                 logger.info(f"语言更新结果: {lang_result}")
                 # 设置时区
-                tz_result = await update_time_zone(pad_code_list=[data["padCode"]], time_zone=current_proxy["time_zone"])
+                tz_result = await update_time_zone(pad_code_list=[data["padCode"]],
+                                                   time_zone=current_proxy["time_zone"])
                 logger.info(f"时区更新结果: {tz_result}")
                 # 设置GPS信息
                 gps_result = await gps_in_ject_info(
@@ -48,47 +53,47 @@ async def callback(data: dict):
                 )
                 logger.info(f"GPS注入结果: {gps_result}")
                 await asyncio.sleep(2)
-                logger.success(f"{_id}: 开始启动app")
+                logger.success(f"{pad_code}: 开始启动app")
                 app_result = await start_app(pad_code_list=[data["padCode"]], pkg_name=pkg_name)
                 logger.info(f"Start app result: {app_result}")
-            return None
+            return "ok"
 
         case 1001:
             logger.success("1001接口回调")
-            return None
+            return "ok"
 
         case 1002:
             logger.success("调用了adb")
-            return None
+            return "ok"
 
         case 1003:
             logger.success(f'安装成功接口回调 {data["apps"]["padCode"]}: 安装成功')
             logger.success(data)
-            return None
-
+            return "ok"
 
         case 1004:
             logger.success(f"安装接口的回调{data}")
-            return None
+            return "ok"
 
         case 1006:
             logger.success("应用重启")
-            return None
+            return "ok"
 
         case 1007:
             logger.success("应用启动成功回调")
-            if data["taskStatus"] == 3:
-                logger.success("启动成功")
-                return None
+            match int(data["taskStatus"]):
+                case 2:
+                    task = data["taskStatus"]
+                    logger.success(f"应用启动等待中: {task}")
 
-            else:
-                task = data["taskStatus"]
-                logger.success(f"应用启动等待中: {task}")
-                return None
+                case 3:
+                    logger.success("启动成功")
+
+            return "ok"
 
         case 1009:
             logger.success("1009接口回调")
-            return None
+            return "ok"
 
         case 1124:
             if data.get("padCode") in pad_code_list:
@@ -120,12 +125,14 @@ async def callback(data: dict):
                             script_task.cancel()
                 else:
                     logger.info(f'一键新机等待中 {data["taskStatus"]}')
-            return None
+
+            return "ok"
         case _:
             logger.success(f"其他接口回调: {data}")
-            return None
+            return "ok"
 
 
 @router.get("/")
-async def index():
-    return {"status": "ok"}
+async def index(request: Request):
+    templates = Jinja2Templates(directory="static")
+    return templates.TemplateResponse("index.html", {"request": request})

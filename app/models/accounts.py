@@ -13,8 +13,8 @@ class AndroidPadCodeRequest(BaseModel):
 
 
 class AccountUpdate(BaseModel):
-    account: str | None = None
-    password: str | None = None
+    account: str
+    password: str
     type: int | None = None
     status: int | None = None
     code: str | None = None
