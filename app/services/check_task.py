@@ -63,7 +63,7 @@ class TaskManager:
 
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
-                logger.warning(f"安装成功一个:{app_result[0]}")
+                logger.warning(f"安装成功一个:{app_result[0]['appName']}")
                 await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=clash_install_url)
                 await asyncio.sleep(10)
                 return False
@@ -76,18 +76,17 @@ class TaskManager:
                 return True
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning("重新安装")
-                clash_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
+                await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                                  app_url=clash_install_url)
-                logger.info(clash_result)
-                script_result = await install_app(pad_code_list=[result["data"][0]["padCode"]],
+
+                await install_app(pad_code_list=[result["data"][0]["padCode"]],
                                                   app_url=script_install_url, md5=md5)
-                logger.info(script_result)
                 await asyncio.sleep(10)
                 return False
 
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
-                logger.info(f"安装成功一个:{app_result[0]}")
+                logger.info(f"安装成功一个:{app_result[0]['appName']}")
                 await install_app(pad_code_list=[result["data"][0]["padCode"]],app_url=script_install_url, md5=md5)
                 await asyncio.sleep(10)
                 return False

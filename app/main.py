@@ -1,3 +1,4 @@
+import logging
 import random
 from contextlib import asynccontextmanager
 
@@ -11,6 +12,15 @@ from app.routers import accounts,proxy,server
 from app.services.database import engine, Base
 from config import pad_code_list, temple_id_list
 
+#日志拦截器
+class InterceptHandler(logging.Handler):
+    def emit(self, record):
+        # 获取 Loguru 对应的日志级别
+        level = logger.level(record.levelname).name
+        # 将日志记录传递给 Loguru
+        logger.opt(depth=6, exception=record.exc_info).log(level, record.getMessage())
+
+
 
 # noinspection PyShadowingNames
 @asynccontextmanager
@@ -19,6 +29,10 @@ async def startup_event(app: FastAPI):
 
     :type app: FastAPI
     """
+    # 将 Uvicorn 的日志处理器替换为我们的拦截器
+    logging.getLogger("uvicorn.access").handlers = [InterceptHandler()]
+    logging.getLogger("uvicorn.error").handlers = [InterceptHandler()]
+    logging.getLogger("uvicorn.error").propagate = False # 避免重复输出
     # 加载代理国家列表
     load_proxy_countries()
     app.include_router(accounts.router, prefix="")
@@ -35,6 +49,8 @@ async def startup_event(app: FastAPI):
     logger.info("application shutdown")
 
 app = FastAPI(title="google账号管理系统", lifespan=startup_event)
+
+
 
 if __name__ == "__main__":
     uvicorn.run("app.main:app", host="0.0.0.0", port=5000)
