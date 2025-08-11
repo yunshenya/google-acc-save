@@ -69,15 +69,15 @@ async def reboot_task_status(data, current_proxy, package_name):
     try:
         match TaskStatus(task_status):
             case TaskStatus.ALL_FAILED:
-                logger.error("任务全失败")
+                logger.error(f"{pad_code}: 重启任务全失败")
             case TaskStatus.CANCELLED:
-                logger.warning("任务取消")
+                logger.warning(f"{pad_code}: 重启任务取消")
             case TaskStatus.TIMEOUT:
-                logger.warning("任务超时")
+                logger.warning(f"{pad_code}: 重启任务超时")
             case TaskStatus.PENDING:
-                logger.warning("任务待执行")
+                logger.warning(f"{pad_code}: 重启任务待执行")
             case TaskStatus.RUNNING:
-                logger.info("任务执行中")
+                logger.info(f"{pad_code}: 重启任务执行中")
             case TaskStatus.COMPLETED:
                 logger.success(f"{pad_code}: 重启成功")
                 await set_phone_state(current_proxy, package_name, pad_code)
