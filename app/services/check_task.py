@@ -111,19 +111,19 @@ class TaskManager:
                                 logger.info(f"{pad_code}:{task_type}等待安装中")
                                 message = result["data"][0]["errorMsg"]
                                 if message:
-                                    logger.warning(f"{task_status}: {message}")
+                                    logger.warning(f"{pad_code}: {message}")
 
                             case InstallTaskStatus.RUNNING:
                                 logger.info(f"{pad_code}:{task_type}安装中")
                                 message = result["data"][0]["errorMsg"]
                                 if message:
-                                    logger.warning(f"{task_status}: {message}")
+                                    logger.warning(f"{pad_code}: {message}")
 
                             case InstallTaskStatus.TIMEOUT:
                                 logger.info(f"{pad_code}:{task_type}安装超时")
                                 message = result["data"][0]["errorMsg"]
                                 if message:
-                                    logger.warning(f"{task_status}: {message}")
+                                    logger.warning(f"{pad_code}: {message}")
 
                             case InstallTaskStatus.SOME_FAILED:
                                 logger.warning(f"{task_type}下载失败")
@@ -134,7 +134,7 @@ class TaskManager:
                             case InstallTaskStatus.ALL_FAILED:
                                 message = result["data"][0]["errorMsg"]
                                 if message:
-                                    logger.warning(f"{task_status}: {message}")
+                                    logger.warning(f"{pad_code}: {message}")
 
                             case InstallTaskStatus.COMPLETED:
                                 if await self.handle_install_result(result, task_type):
