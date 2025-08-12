@@ -54,6 +54,21 @@ def app_install_task_status(data):
         case TaskStatus.COMPLETED:
             logger.success(f'安装成功接口回调 {pad_code}: 安装成功')
 
+        case TaskStatus.RUNNING:
+            logger.info(f"{pad_code}: 安装中")
+
+        case TaskStatus.PENDING:
+            logger.info(f"{pad_code}: 正在准备安装")
+
+        case TaskStatus.ALL_FAILED:
+            logger.error(f"{pad_code}: 安装失败")
+
+        case TaskStatus.TIMEOUT:
+            logger.warning(f"{pad_code}: 安装超时")
+
+        case TaskStatus.CANCELLED:
+            logger.warning(f"{pad_code}: 安装任务关闭")
+
 
 def app_uninstall_task_status(data):
     task_status = data.get("taskStatus")
@@ -136,3 +151,6 @@ def adb_call_task_status(data):
 
         case TaskStatus.TIMEOUT:
             logger.warning(f"{pad_code}: adb调用超时")
+
+        case TaskStatus.ALL_FAILED:
+            logger.error(f"{pad_code}: adb调用失败")

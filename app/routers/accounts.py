@@ -34,7 +34,7 @@ async def create_account(account: AccountCreate):
 async def get_accounts():
     async with SessionLocal() as db:
         from sqlalchemy import select
-        result = await db.execute(select(Account))
+        result = await db.execute(select(Account).order_by(cast(ColumnElement[bool], Account.id)))
         accounts = result.scalars().all()
         return accounts
 
