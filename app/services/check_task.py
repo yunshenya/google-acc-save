@@ -112,13 +112,13 @@ class TaskManager:
                         pad_code = result["data"][0]["padCode"]
                         match InstallTaskStatus(task_status):
                             case InstallTaskStatus.PENDING:
-                                logger.info(f"{pad_code}:{task_type}等待安装中")
+                                logger.info(f"{pad_code}:{task_type}: 等待安装中")
                                 message = result["data"][0]["errorMsg"]
                                 if message:
                                     logger.warning(f"{pad_code}: {message}")
 
                             case InstallTaskStatus.RUNNING:
-                                logger.info(f"{pad_code}:{task_type}安装中")
+                                logger.info(f"{pad_code}:{task_type}:安装中")
                                 message = result["data"][0]["errorMsg"]
                                 if message:
                                     logger.warning(f"{pad_code}: {message}")
@@ -130,7 +130,7 @@ class TaskManager:
                                     logger.warning(f"{pad_code}: {message}")
 
                             case InstallTaskStatus.SOME_FAILED:
-                                logger.warning(f"{task_type}下载失败")
+                                logger.warning(f"{task_type}: 下载失败")
                                 logger.warning(result["data"][0]["errorMsg"])
                                 result = await install_app(pad_code_list=[pad_code], app_url=app_url, md5=app_mod5)
                                 logger.info(result["data"][0]["errorMsg"])
@@ -138,7 +138,7 @@ class TaskManager:
                             case InstallTaskStatus.ALL_FAILED:
                                 message = result["data"][0]["errorMsg"]
                                 if message:
-                                    logger.warning(f"{pad_code}: {message}")
+                                    logger.error(f"全失败: {pad_code}: {message}")
 
                             case InstallTaskStatus.COMPLETED:
                                 if await self.handle_install_result(result, task_type):

@@ -4,7 +4,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from loguru import logger
-from starlette.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.config import pad_code_list, temple_id_list
 from app.dependencies.countries import load_proxy_countries
@@ -54,4 +55,10 @@ async def startup_event(app: FastAPI):
 
 app = FastAPI(title="google账号管理系统", lifespan=startup_event)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
