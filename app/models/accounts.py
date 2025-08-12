@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel
 
 
@@ -27,3 +29,4 @@ class AccountResponse(BaseModel):
     type: int
     status: int
     code: str | None
+    created_at: datetime

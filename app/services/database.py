@@ -1,6 +1,7 @@
+import datetime
 from typing import Any
 
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -20,4 +21,5 @@ class Account(Base):
     type = Column(Integer, default=0, nullable=False)
     status = Column(Integer, default=0, nullable=False)
     code = Column(String(32), nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)
 
