@@ -6,7 +6,8 @@ CREATE TABLE google_account (
                                 password VARCHAR(100) NOT NULL,
                                 type INT DEFAULT 0,
                                 status INT DEFAULT 0,
-                                code VARCHAR(32)
+                                code VARCHAR(32),
+                                create_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE google_account OWNER TO postgres;
