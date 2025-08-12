@@ -2,15 +2,16 @@ import logging
 import random
 from contextlib import asynccontextmanager
 
-import uvicorn
 from fastapi import FastAPI
 from loguru import logger
+from starlette.staticfiles import StaticFiles
 
+from app.config import pad_code_list, temple_id_list
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.utils import replace_pad
-from app.routers import accounts,proxy,server
+from app.routers import accounts, proxy, server
 from app.services.database import engine, Base
-from config import pad_code_list, temple_id_list
+
 
 #日志拦截器
 class InterceptHandler(logging.Handler):
@@ -35,6 +36,7 @@ async def startup_event(app: FastAPI):
     logging.getLogger("uvicorn.error").propagate = False # 避免重复输出
     # 加载代理国家列表
     load_proxy_countries()
+    app.mount("/static", StaticFiles(directory="static"), name="static")
     app.include_router(accounts.router, prefix="")
     app.include_router(proxy.router, prefix="")
     app.include_router(server.router, prefix="")
@@ -48,11 +50,8 @@ async def startup_event(app: FastAPI):
     yield
     logger.info("application shutdown")
 
+
+
 app = FastAPI(title="google账号管理系统", lifespan=startup_event)
-
-
-
-if __name__ == "__main__":
-    uvicorn.run("app.main:app", host="0.0.0.0", port=5000)
 
 

@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from loguru import logger
 
 from app.dependencies.utils import update_language, update_time_zone, gps_in_ject_info, start_app, install_app
-from config import clash_install_url, script_install_url
+from app.config import clash_install_url, script_install_url
 
 
 async def set_phone_state(current_proxy, package_name, pad_code):

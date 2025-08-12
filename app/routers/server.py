@@ -3,6 +3,7 @@ import random
 from fastapi import APIRouter
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import FileResponse
 from loguru import logger
 
 from app.dependencies.countries import manager
@@ -11,7 +12,7 @@ from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
 from app.services.task_status import process_task_status, reboot_task_status, replace_pad_stak_status, \
     app_install_task_status, app_start_task_status, app_uninstall_task_status, adb_call_task_status
-from config import pad_code_list, pkg_name, temple_id_list
+from app.config import pad_code_list, pkg_name, temple_id_list
 
 router = APIRouter()
 task_manager = TaskManager()
@@ -19,8 +20,12 @@ task_manager = TaskManager()
 
 @router.get("/")
 async def index(request: Request):
-    templates = Jinja2Templates(directory="static")
+    templates = Jinja2Templates(directory="templates")
     return templates.TemplateResponse("index.html", {"request": request})
+
+@router.get("/favicon.ico")
+async def favicon():
+    return FileResponse("static/favicon.ico")
 
 
 @router.post("/status")

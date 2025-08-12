@@ -1,6 +1,6 @@
 from typing import List, Dict, Union
 from app.models.proxy import ProxyCountry
-from config import default_proxy
+from app.config import default_proxy
 import threading
 
 class ProxyManager:

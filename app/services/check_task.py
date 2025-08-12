@@ -7,7 +7,7 @@ from loguru import logger
 
 from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, reboot, install_app, \
     replace_pad
-from config import clash_install_url, script_install_url, temple_id_list, pkg_name, global_timeout_minute, \
+from app.config import clash_install_url, script_install_url, temple_id_list, pkg_name, global_timeout_minute, \
     check_task_timeout_minute
 
 
