@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化日志">
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="获取之后删除数据">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,54 +43,54 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.config.executor": "Run",
-    "Python.main (1).executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.proxy.executor": "Run",
-    "Python.test (1).executor": "Run",
-    "Python.test.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.rust.reset.selective.auto.import": "true",
-    "WebServerToolWindowPanel.toolwindow.highlight.mappings": "true",
-    "WebServerToolWindowPanel.toolwindow.highlight.symlinks": "true",
-    "WebServerToolWindowPanel.toolwindow.show.date": "false",
-    "WebServerToolWindowPanel.toolwindow.show.permissions": "false",
-    "WebServerToolWindowPanel.toolwindow.show.size": "false",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "junie.onboarding.icon.badge.shown": "true",
-    "last_opened_file_path": "D:/Document/PythonProjects/google-acc-save",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
-    "org.rust.first.attach.projects": "true",
-    "settings.editor.selected.configurable": "Errors",
-    "to.speed.mode.migration.done": "true",
-    "vue.rearranger.settings.migration": "true",
-    "数据库脚本.data.sql.executor": "Run"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.config.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.proxy.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.highlight.mappings&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.highlight.symlinks&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.show.date&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.show.permissions&quot;: &quot;false&quot;,
+    &quot;WebServerToolWindowPanel.toolwindow.show.size&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Document/PythonProjects/google-acc-save&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;,
+    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
+    &quot;数据库脚本.data.sql.executor&quot;: &quot;Run&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql",
-      "mysql_aurora"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;,
+      &quot;mysql_aurora&quot;
     ],
-    "RunConfigurationTargetLRU": [
-      "b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\"google-manager\"/schema/\"public\"",
-      "bee75e2c-7daf-4c88-afe8-d45a6d17d75c",
-      "bee75e2c-7daf-4c88-afe8-d45a6d17d75c/database/\"postgres\""
+    &quot;RunConfigurationTargetLRU&quot;: [
+      &quot;b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\&quot;google-manager\&quot;/schema/\&quot;public\&quot;&quot;,
+      &quot;bee75e2c-7daf-4c88-afe8-d45a6d17d75c&quot;,
+      &quot;bee75e2c-7daf-4c88-afe8-d45a6d17d75c/database/\&quot;postgres\&quot;&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Document\PythonProjects\google-acc-save" />
@@ -372,7 +372,8 @@
       <workItem from="1754740041660" duration="6374000" />
       <workItem from="1754746599978" duration="9000" />
       <workItem from="1754746986741" duration="322000" />
-      <workItem from="1754875586982" duration="22614000" />
+      <workItem from="1754875586982" duration="40641000" />
+      <workItem from="1754962190741" duration="605000" />
     </task>
     <task id="LOCAL-00001" summary="初始化项目">
       <option name="closed" value="true" />
@@ -654,7 +655,103 @@
       <option name="project" value="LOCAL" />
       <updated>1754899596744</updated>
     </task>
-    <option name="localTasksCounter" value="36" />
+    <task id="LOCAL-00036" summary="优化日志">
+      <option name="closed" value="true" />
+      <created>1754901439809</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1754901439809</updated>
+    </task>
+    <task id="LOCAL-00037" summary="优化日志">
+      <option name="closed" value="true" />
+      <created>1754903251904</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1754903251904</updated>
+    </task>
+    <task id="LOCAL-00038" summary="添加日志拦截器">
+      <option name="closed" value="true" />
+      <created>1754905339900</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1754905339900</updated>
+    </task>
+    <task id="LOCAL-00039" summary="添加日志拦截器">
+      <option name="closed" value="true" />
+      <created>1754906692265</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1754906692265</updated>
+    </task>
+    <task id="LOCAL-00040" summary="添加日志拦截器">
+      <option name="closed" value="true" />
+      <created>1754909894112</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1754909894112</updated>
+    </task>
+    <task id="LOCAL-00041" summary="日志优化">
+      <option name="closed" value="true" />
+      <created>1754911724114</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1754911724114</updated>
+    </task>
+    <task id="LOCAL-00042" summary="日志优化">
+      <option name="closed" value="true" />
+      <created>1754912744196</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1754912744196</updated>
+    </task>
+    <task id="LOCAL-00043" summary="新增加md5">
+      <option name="closed" value="true" />
+      <created>1754915199752</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1754915199752</updated>
+    </task>
+    <task id="LOCAL-00044" summary="新增加md5">
+      <option name="closed" value="true" />
+      <created>1754915388575</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1754915388575</updated>
+    </task>
+    <task id="LOCAL-00045" summary="减少取值次数优化性能">
+      <option name="closed" value="true" />
+      <created>1754916073462</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1754916073462</updated>
+    </task>
+    <task id="LOCAL-00046" summary="减少取值次数优化性能">
+      <option name="closed" value="true" />
+      <created>1754916412039</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1754916412039</updated>
+    </task>
+    <task id="LOCAL-00047" summary="获取之后删除数据">
+      <option name="closed" value="true" />
+      <created>1754918320277</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1754918320277</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -672,8 +769,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="初始化项目" />
-    <MESSAGE value="提交" />
     <MESSAGE value="应用安装成功" />
     <MESSAGE value="完美全流程跑通" />
     <MESSAGE value="全流程跑通" />
@@ -694,6 +789,11 @@
     <MESSAGE value="添加环境变量配置" />
     <MESSAGE value="优化错误判断机制" />
     <MESSAGE value="优化日志" />
-    <option name="LAST_COMMIT_MESSAGE" value="优化日志" />
+    <MESSAGE value="添加日志拦截器" />
+    <MESSAGE value="日志优化" />
+    <MESSAGE value="新增加md5" />
+    <MESSAGE value="减少取值次数优化性能" />
+    <MESSAGE value="获取之后删除数据" />
+    <option name="LAST_COMMIT_MESSAGE" value="获取之后删除数据" />
   </component>
 </project>

@@ -49,9 +49,9 @@ class TaskManager:
             logger.info(f'{task_type}安装成功')
             app_install_result : Any = await get_app_install_info([pad_code], "Clash for Android")
             if len(app_install_result["data"][0]["apps"]) == 2:
-                logger.success("安装成功")
+                logger.success(f"{pad_code}: 安装成功")
                 await open_root(pad_code_list=[pad_code], pkg_name=pkg_name)
-                logger.info("开始重启")
+                logger.info(f"{pad_code}: 开始重启")
                 await reboot(pad_code_list=[pad_code])
                 return True
 
