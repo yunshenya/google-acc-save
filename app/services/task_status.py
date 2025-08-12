@@ -3,6 +3,7 @@ from enum import IntEnum
 
 from loguru import logger
 
+from app.curd.status import update_cloud_status
 from app.services.every_task import set_phone_state, install_app_task
 
 
@@ -110,47 +111,60 @@ async def replace_pad_stak_status(data, task_manager):
     pad_code = data.get("padCode")
     match TaskStatus(task_status):
         case TaskStatus.COMPLETED:
+            await update_cloud_status(pad_code=pad_code, current_status= "正在安装app")
             await install_app_task(pad_code_str=pad_code, task_manager=task_manager)
-
         case TaskStatus.RUNNING:
+            await update_cloud_status(pad_code=pad_code, current_status= "一键新机执行中")
             logger.info(f"{pad_code}: 一键新机执行中")
 
 
+
+
         case TaskStatus.PENDING:
+            await update_cloud_status(pad_code=pad_code, current_status= "一键新机等待中")
             logger.info(f"{pad_code}: 一键新机等待中")
 
 
         case TaskStatus.CANCELLED:
+            await update_cloud_status(pad_code=pad_code, current_status= "一键新机任务取消")
             logger.info(f"{pad_code}: 一键新机任务取消")
 
 
         case TaskStatus.TIMEOUT:
+            await update_cloud_status(pad_code=pad_code, current_status= "一键新机任务超时")
             logger.info(f"{pad_code}: 一键新机任务超时")
 
 
         case TaskStatus.ALL_FAILED:
+            await update_cloud_status(pad_code=pad_code, current_status= "一键新机任务失败")
             logger.info(f"{pad_code}: 一键新机任务失败")
 
 
 
-def adb_call_task_status(data):
+async def adb_call_task_status(data):
     task_status = data.get("taskStatus")
     pad_code = data.get("padCode")
     match TaskStatus(task_status):
         case TaskStatus.COMPLETED:
+            await update_cloud_status(pad_code=pad_code, current_status= "调用adb成功")
             logger.success(f"{pad_code}: 调用adb成功")
 
         case TaskStatus.RUNNING:
+            await update_cloud_status(pad_code=pad_code, current_status= "调用adb中")
             logger.success(f"{pad_code}: 调用adb中")
 
         case TaskStatus.PENDING:
+            await update_cloud_status(pad_code=pad_code, current_status= "准备调用adb")
             logger.success(f"{pad_code}: 准备调用adb")
 
         case TaskStatus.CANCELLED:
+            await update_cloud_status(pad_code=pad_code, current_status= "adb调用任务关闭")
             logger.success(f"{pad_code}: adb调用任务关闭")
 
         case TaskStatus.TIMEOUT:
+            await update_cloud_status(pad_code=pad_code, current_status= "adb调用超时")
             logger.warning(f"{pad_code}: adb调用超时")
 
         case TaskStatus.ALL_FAILED:
+            await update_cloud_status(pad_code=pad_code, current_status= "adb调用失败")
             logger.error(f"{pad_code}: adb调用失败")

@@ -2,15 +2,15 @@ import requests
 
 
 if __name__ == '__main__':
-    url = "http://103.118.254.151/proxy/set"
-    # url = "http://127.0.0.1:5000/callback"
+    url = "http://127.0.0.1:5000/status_update"
     header = {"content-type" : "application/json"}
     #
     json = {
-       "country_code":"tw"
+       "pad_code": "123",
+        "current_status": "test"
     }
 
     #
-    re = requests.post(url, json=json, headers = header)
+    re = requests.put(url, json=json, headers = header)
     #
     print(re.json())

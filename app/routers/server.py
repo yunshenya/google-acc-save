@@ -31,7 +31,7 @@ async def favicon():
 @router.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
     await task_manager.remove_task(android_code.pad_code)
-    logger.success("已在规定时间内完成， 超时任务已移除")
+    logger.success("超时任务已移除")
     await replace_pad([android_code.pad_code], template_id=random.choice(temple_id_list))
     return {"message": "Task cancelled"}
 
@@ -50,7 +50,7 @@ async def callback(data: dict):
             return "ok"
 
         case 1002:
-            adb_call_task_status(data)
+            await adb_call_task_status(data)
             return "ok"
 
         case 1003:

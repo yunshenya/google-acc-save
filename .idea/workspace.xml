@@ -4,9 +4,20 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="获取之后删除数据">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="解决跨域问题，以及增加前端页面">
+      <change afterPath="$PROJECT_DIR$/app/curd/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/status.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/status.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/status.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,6 +50,9 @@
   &quot;associatedIndex&quot;: 4
 }</component>
   <component name="ProjectId" id="30PVUkgPlvMwDaomPonMlNRi6bY" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -52,6 +66,7 @@
     &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.proxy.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run.executor&quot;: &quot;Run&quot;,
     &quot;Python.test (1).executor&quot;: &quot;Run&quot;,
     &quot;Python.test.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -63,10 +78,11 @@
     &quot;WebServerToolWindowPanel.toolwindow.show.date&quot;: &quot;false&quot;,
     &quot;WebServerToolWindowPanel.toolwindow.show.permissions&quot;: &quot;false&quot;,
     &quot;WebServerToolWindowPanel.toolwindow.show.size&quot;: &quot;false&quot;,
+    &quot;database.data.extractors.current.export.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Document/PythonProjects/google-acc-save&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Document/PythonProjects/google-acc-save/static&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -77,7 +93,8 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;Errors&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;数据库脚本.data.sql.executor&quot;: &quot;Run&quot;
+    &quot;数据库脚本.data.sql.executor&quot;: &quot;Run&quot;,
+    &quot;数据库脚本.status.sql.executor&quot;: &quot;Run&quot;
   },
   &quot;keyToStringList&quot;: {
     &quot;DatabaseDriversLRU&quot;: [
@@ -85,6 +102,8 @@
       &quot;mysql_aurora&quot;
     ],
     &quot;RunConfigurationTargetLRU&quot;: [
+      &quot;b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\&quot;google-manager\&quot;&quot;,
+      &quot;c5a3980d-5ed6-4bef-8027-60388d38edf8/database/\&quot;google-manager\&quot;/schema/\&quot;public\&quot;&quot;,
       &quot;b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\&quot;google-manager\&quot;/schema/\&quot;public\&quot;&quot;,
       &quot;bee75e2c-7daf-4c88-afe8-d45a6d17d75c&quot;,
       &quot;bee75e2c-7daf-4c88-afe8-d45a6d17d75c/database/\&quot;postgres\&quot;&quot;
@@ -93,15 +112,16 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Document\PythonProjects\google-acc-save\static" />
       <recent name="D:\Document\PythonProjects\google-acc-save" />
       <recent name="D:\Document\PythonProjects\google-acc-save\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="D:\Document\PythonProjects\google-acc-save" />
+      <recent name="D:\Document\PythonProjects\google-acc-save\templates" />
       <recent name="D:\Document\PythonProjects\google-acc-save\app" />
+      <recent name="D:\Document\PythonProjects\google-acc-save" />
       <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
       <recent name="D:\Document\PythonProjects\google-acc-save\tests" />
-      <recent name="D:\Document\PythonProjects\google-acc-save\src\utils" />
     </key>
   </component>
   <component name="RunManager" selected="Python.test">
@@ -109,6 +129,7 @@
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
       <data-source id="b11d5334-a1ec-4ad7-b714-9c084d1bbdd4" namespace="database/&quot;google-manager&quot;/schema/&quot;public&quot;" />
+      <data-source id="c5a3980d-5ed6-4bef-8027-60388d38edf8" namespace="database/&quot;google-manager&quot;/schema/&quot;public&quot;" />
       <method v="2" />
     </configuration>
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
@@ -121,6 +142,12 @@
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
       <data-source id="b11d5334-a1ec-4ad7-b714-9c084d1bbdd4" namespace="database/&quot;google-manager&quot;/schema/&quot;public&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="status.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/database/status.sql" />
+      <script-mode>FILE</script-mode>
+      <data-source id="b11d5334-a1ec-4ad7-b714-9c084d1bbdd4" namespace="database/&quot;google-manager&quot;" />
       <method v="2" />
     </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -212,6 +239,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="run" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="google-acc-save" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/run.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="google-acc-save" />
       <option name="ENV_FILES" value="" />
@@ -279,15 +328,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.run" />
       <item itemvalue="Python.test" />
       <item itemvalue="Python.main" />
+      <item itemvalue="数据库脚本.status.sql" />
       <item itemvalue="数据库脚本.data.sql" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.main" />
+        <item itemvalue="Python.run" />
+        <item itemvalue="数据库脚本.status.sql" />
         <item itemvalue="数据库脚本.data.sql" />
+        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -374,39 +427,8 @@
       <workItem from="1754746986741" duration="322000" />
       <workItem from="1754875586982" duration="40641000" />
       <workItem from="1754962190741" duration="4516000" />
-      <workItem from="1754976459418" duration="2170000" />
-    </task>
-    <task id="LOCAL-00001" summary="初始化项目">
-      <option name="closed" value="true" />
-      <created>1753709275037</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1753709275038</updated>
-    </task>
-    <task id="LOCAL-00002" summary="提交">
-      <option name="closed" value="true" />
-      <created>1753756808127</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1753756808127</updated>
-    </task>
-    <task id="LOCAL-00003" summary="应用安装成功">
-      <option name="closed" value="true" />
-      <created>1753793878933</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1753793878933</updated>
-    </task>
-    <task id="LOCAL-00004" summary="全流程跑通">
-      <option name="closed" value="true" />
-      <created>1753867090324</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1753867090324</updated>
+      <workItem from="1754976459418" duration="20578000" />
+      <workItem from="1755000961776" duration="1983000" />
     </task>
     <task id="LOCAL-00005" summary="完美全流程跑通">
       <option name="closed" value="true" />
@@ -760,7 +782,47 @@
       <option name="project" value="LOCAL" />
       <updated>1754962979302</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="添加一个创建时间字段">
+      <option name="closed" value="true" />
+      <created>1754984781371</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1754984781371</updated>
+    </task>
+    <task id="LOCAL-00050" summary="增加一个创建时间字段">
+      <option name="closed" value="true" />
+      <created>1754985502040</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1754985502041</updated>
+    </task>
+    <task id="LOCAL-00051" summary="增加一些判断">
+      <option name="closed" value="true" />
+      <created>1754986310454</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1754986310454</updated>
+    </task>
+    <task id="LOCAL-00052" summary="更改目录结构">
+      <option name="closed" value="true" />
+      <created>1754988362291</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1754988362291</updated>
+    </task>
+    <task id="LOCAL-00053" summary="解决跨域问题，以及增加前端页面">
+      <option name="closed" value="true" />
+      <created>1754996157391</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1754996157391</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -778,11 +840,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="应用安装成功" />
-    <MESSAGE value="完美全流程跑通" />
-    <MESSAGE value="全流程跑通" />
-    <MESSAGE value="加上全局超时" />
-    <MESSAGE value="添加修改ip" />
     <MESSAGE value="添加日志系统" />
     <MESSAGE value="添加了一些无关紧要的东西" />
     <MESSAGE value="优化警告" />
@@ -803,6 +860,11 @@
     <MESSAGE value="新增加md5" />
     <MESSAGE value="减少取值次数优化性能" />
     <MESSAGE value="获取之后删除数据" />
-    <option name="LAST_COMMIT_MESSAGE" value="获取之后删除数据" />
+    <MESSAGE value="添加一个创建时间字段" />
+    <MESSAGE value="增加一个创建时间字段" />
+    <MESSAGE value="增加一些判断" />
+    <MESSAGE value="更改目录结构" />
+    <MESSAGE value="解决跨域问题，以及增加前端页面" />
+    <option name="LAST_COMMIT_MESSAGE" value="解决跨域问题，以及增加前端页面" />
   </component>
 </project>

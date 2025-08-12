@@ -8,9 +8,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.config import pad_code_list, temple_id_list
+from app.curd.status import add_cloud_status
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.utils import replace_pad
-from app.routers import accounts, proxy, server
+from app.routers import accounts, proxy, server, status
 from app.services.database import engine, Base
 
 
@@ -41,7 +42,10 @@ async def startup_event(app: FastAPI):
     app.include_router(accounts.router, prefix="")
     app.include_router(proxy.router, prefix="")
     app.include_router(server.router, prefix="")
+    app.include_router(status.router, prefix="")
     # 一键新机
+    for pad_code in pad_code_list:
+        await add_cloud_status(pad_code)
     result = await replace_pad(pad_code_list, template_id=random.choice(temple_id_list))
     logger.info(f"已启动: {len(pad_code_list)} 台云机，执行结果为: {result['msg']}")
 
