@@ -24,7 +24,7 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @router.get("/favicon.ico")
-async def favicon():
+async def favicon() -> FileResponse:
     return FileResponse("static/favicon.ico")
 
 
@@ -37,7 +37,7 @@ async def status(android_code: AndroidPadCodeRequest):
 
 
 @router.post("/callback", response_model= str)
-async def callback(data: dict):
+async def callback(data: dict) -> str:
     current_proxy = manager.get_current_proxy()
     task_business_type = data.get("taskBusinessType")
     match int(task_business_type):

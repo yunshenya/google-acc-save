@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加云机状态">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/proxy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -319,11 +320,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="数据库脚本.data.sql" />
-      <item itemvalue="数据库脚本.status.sql" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.run" />
       <item itemvalue="Python.test" />
+      <item itemvalue="数据库脚本.data.sql" />
+      <item itemvalue="数据库脚本.status.sql" />
     </list>
     <recent_temporary>
       <list>
@@ -425,14 +426,9 @@
       <workItem from="1755048857857" duration="11000" />
       <workItem from="1755049535088" duration="1135000" />
       <workItem from="1755053092482" duration="80000" />
-    </task>
-    <task id="LOCAL-00006" summary="全流程跑通">
-      <option name="closed" value="true" />
-      <created>1753930710945</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1753930710945</updated>
+      <workItem from="1755054743249" duration="149000" />
+      <workItem from="1755055239317" duration="323000" />
+      <workItem from="1755058035041" duration="606000" />
     </task>
     <task id="LOCAL-00007" summary="加上全局超时">
       <option name="closed" value="true" />
@@ -818,7 +814,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755003270593</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="增加云机状态">
+      <option name="closed" value="true" />
+      <created>1755054877073</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1755054877073</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

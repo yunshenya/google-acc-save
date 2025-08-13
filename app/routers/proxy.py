@@ -22,7 +22,7 @@ async def get_proxy():
     }
 
 @router.get("/proxy/countries", response_model=List[ProxyCountry])
-async def get_proxy_countries():
+async def get_proxy_countries() -> List[ProxyCountry]:
     proxy_countries = manager.get_proxy_countries()
     """获取所有可用的代理国家列表"""
     # 如果代理国家列表为空，尝试加载
@@ -32,7 +32,7 @@ async def get_proxy_countries():
 
 
 @router.post("/proxy/set", response_model=ProxyResponse)
-async def set_proxy(proxy_request: ProxyRequest):
+async def set_proxy(proxy_request: ProxyRequest) -> ProxyResponse:
     """根据国家代码设置代理"""
     proxy_countries = manager.get_proxy_countries()
     # 如果代理国家列表为空，尝试加载
@@ -51,12 +51,12 @@ async def set_proxy(proxy_request: ProxyRequest):
         raise HTTPException(status_code=404, detail=f"未找到国家代码为 {proxy_request.country_code} 的代理信息")
 
     current_proxy = manager.get_current_proxy()
-    return {
-        "proxy": current_proxy["proxy_url"],
-        "country": current_proxy["country"],
-        "code": current_proxy["code"],
-        "time_zone": current_proxy["time_zone"],
-        "language": current_proxy["language"],
-        "latitude": current_proxy["latitude"],
-        "longitude": current_proxy["longitude"]
-    }
+    return ProxyResponse(
+        proxy= current_proxy["proxy_url"],
+        country= current_proxy["country"],
+        code = current_proxy["code"],
+        time_zone = current_proxy["time_zone"],
+        language = current_proxy["language"],
+        latitude = current_proxy["latitude"],
+        longitude = current_proxy["longitude"]
+    )

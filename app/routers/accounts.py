@@ -11,7 +11,7 @@ from app.services.database import SessionLocal, Account
 router = APIRouter()
 
 @router.post("/accounts", response_model=AccountResponse)
-async def create_account(account: AccountCreate):
+async def create_account(account: AccountCreate) -> AccountResponse:
     async with SessionLocal() as db:
         try:
             db_account = Account(
@@ -31,7 +31,7 @@ async def create_account(account: AccountCreate):
 
 
 @router.get("/accounts", response_model=list[AccountResponse])
-async def get_accounts():
+async def get_accounts() -> list[AccountResponse]:
     async with SessionLocal() as db:
         from sqlalchemy import select
         result = await db.execute(select(Account).order_by(cast(ColumnElement[bool], Account.id)))
@@ -40,7 +40,7 @@ async def get_accounts():
 
 ## 获取之后就会删除之前那条数据
 @router.get("/account/unique", response_model=AccountResponse)
-async def get_unique_account():
+async def get_unique_account() -> AccountResponse:
     async with SessionLocal() as db:
         from sqlalchemy import select
 
@@ -58,7 +58,7 @@ async def get_unique_account():
 
 
 @router.get("/accounts/{account_id}", response_model=AccountResponse)
-async def get_account(account_id: int):
+async def get_account(account_id: int) -> AccountResponse:
     async with SessionLocal() as db:
         from sqlalchemy import select
         stmt = select(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
@@ -70,7 +70,7 @@ async def get_account(account_id: int):
 
 
 @router.put("/accounts/{account_id}", response_model=AccountResponse)
-async def update_account(account_id: int, account_update: AccountUpdate):
+async def update_account(account_id: int, account_update: AccountUpdate) -> AccountResponse:
     async with SessionLocal() as db:
         try:
             from sqlalchemy import select
@@ -101,7 +101,7 @@ async def update_account(account_id: int, account_update: AccountUpdate):
 
 
 @router.delete("/accounts/{account_id}", response_model=dict)
-async def delete_account(account_id: int):
+async def delete_account(account_id: int) -> dict:
     async with SessionLocal() as db:
         from sqlalchemy import select, delete
         stmt = select(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
