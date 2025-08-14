@@ -16,26 +16,15 @@ class TaskStatus(IntEnum):
     COMPLETED = 3    # 完成
 
 
-def process_task_status(data):
-    task_status = data.get("taskStatus")
-    try:
-        match TaskStatus(task_status):
-            case TaskStatus.ALL_FAILED:
-                logger.error("任务全失败")
-            case TaskStatus.CANCELLED:
-                logger.warning("任务取消")
-            case TaskStatus.TIMEOUT:
-                logger.warning("任务超时")
-            case TaskStatus.PENDING:
-                logger.warning("任务待执行")
-            case TaskStatus.RUNNING:
-                logger.info("任务执行中")
-            case TaskStatus.COMPLETED:
-                logger.info("任务执行完成")
-            case _:
-                logger.error(f"未知任务状态: {task_status}")
-    except ValueError:
-        logger.error(f"无效的任务状态值: {task_status}")
+def fileUpdate_task_status(data):
+    pad_code = data.get("padCode")
+    logger.warning(f"{pad_code} : {data}")
+    # match TaskStatus(taskStatus):
+    #     case TaskStatus.COMPLETED:
+    #         logger.success("文件上传成功")
+    #
+    #     case _ :
+    #         logger.warning(f"{pad_code}:未知id {taskStatus}")
 
 
 def app_start_task_status(data):
@@ -43,6 +32,8 @@ def app_start_task_status(data):
     match TaskStatus(task_status):
         case TaskStatus.COMPLETED:
             logger.success("应用启动成功回调")
+
+        case _:
             logger.warning(data)
 
 
@@ -86,16 +77,26 @@ async def reboot_task_status(data, current_proxy, package_name):
         match TaskStatus(task_status):
             case TaskStatus.ALL_FAILED:
                 logger.error(f"{pad_code}: 重启任务全失败")
+                await update_cloud_status(pad_code=pad_code, current_status="重启任务全失败")
+
             case TaskStatus.CANCELLED:
                 logger.warning(f"{pad_code}: 重启任务取消")
+                await update_cloud_status(pad_code=pad_code, current_status="重启任务取消")
+
             case TaskStatus.TIMEOUT:
                 logger.warning(f"{pad_code}: 重启任务超时")
+                await update_cloud_status(pad_code=pad_code, current_status="重启任务超时")
+
             case TaskStatus.PENDING:
                 logger.warning(f"{pad_code}: 重启任务待执行")
+                await update_cloud_status(pad_code=pad_code, current_status="重启任务待执行")
+
             case TaskStatus.RUNNING:
                 logger.info(f"{pad_code}: 重启任务执行中")
+                await update_cloud_status(pad_code=pad_code, current_status="重启任务执行中")
             case TaskStatus.COMPLETED:
                 logger.success(f"{pad_code}: 重启成功")
+                await update_cloud_status(pad_code=pad_code, current_status="重启成功")
                 await set_phone_state(current_proxy, package_name, pad_code)
 
             case _:
@@ -104,6 +105,16 @@ async def reboot_task_status(data, current_proxy, package_name):
     except ValueError:
         logger.error(f"无效的任务状态值: {task_status}")
 
+
+def app_reboot_task_status(data):
+    pad_code = data.get("padCode")
+    task_status = data.get("taskStatus")
+    match TaskStatus(task_status):
+        case TaskStatus.COMPLETED:
+            logger.success("应用重启成功")
+
+        case _:
+            logger.warning(f"{pad_code}: 未知重启id {task_status}")
 
 
 async def replace_pad_stak_status(data, task_manager):
@@ -116,9 +127,6 @@ async def replace_pad_stak_status(data, task_manager):
         case TaskStatus.RUNNING:
             await update_cloud_status(pad_code=pad_code, current_status= "一键新机执行中")
             logger.info(f"{pad_code}: 一键新机执行中")
-
-
-
 
         case TaskStatus.PENDING:
             await update_cloud_status(pad_code=pad_code, current_status= "一键新机等待中")
@@ -147,7 +155,7 @@ async def adb_call_task_status(data):
     match TaskStatus(task_status):
         case TaskStatus.COMPLETED:
             await update_cloud_status(pad_code=pad_code, current_status= "调用adb成功")
-            logger.success(f"{pad_code}: 调用adb成功")
+            logger.success(f"{pad_code}: 获取root权限成功")
 
         case TaskStatus.RUNNING:
             await update_cloud_status(pad_code=pad_code, current_status= "调用adb中")

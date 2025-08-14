@@ -13,7 +13,9 @@ async def set_phone_state(current_proxy, package_name, pad_code):
     logger.info(
         f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
     # 设置语言
-    await update_cloud_status(pad_code=pad_code, current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))", country=current_proxy["country"])
+    await update_cloud_status(pad_code=pad_code,
+                              current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))",
+                              country=current_proxy["country"])
     lang_result = await update_language("en", country=current_proxy['code'],
                                         pad_code_list=[pad_code])
     logger.info(f"语言更新结果: {lang_result['msg']}")
@@ -30,7 +32,7 @@ async def set_phone_state(current_proxy, package_name, pad_code):
     logger.info(f"GPS注入结果: {gps_result['msg']}")
     await asyncio.sleep(2)
     logger.success(f"{pad_code}: 开始启动app")
-    await update_cloud_status(pad_code=pad_code, current_status="开始启动app")
+    await update_cloud_status(pad_code=pad_code, current_status="开始启动脚本")
     app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
     logger.info(f"Start app result: {app_result['msg']}")
 

@@ -8,7 +8,7 @@ from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
 from app.config import pad_code_list, temple_id_list
-from app.curd.status import add_cloud_status
+from app.curd.status import add_cloud_status, remove_cloud_status
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.utils import replace_pad
 from app.routers import accounts, proxy, server, status
@@ -54,6 +54,8 @@ async def startup_event(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    for pad_code in pad_code_list:
+        await remove_cloud_status(pad_code)
     logger.info("application shutdown")
 
 

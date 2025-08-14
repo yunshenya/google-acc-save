@@ -17,7 +17,6 @@ class StatusResponse(BaseModel):
 class StatusRequest(BaseModel):
     pad_code: str
     current_status: str | None = None
-    number_of_run: int | None = None
     phone_number_counts: int | None = None
 
 class GetOneCloudStatus(BaseModel):

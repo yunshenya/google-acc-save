@@ -2,18 +2,19 @@ import random
 
 from fastapi import APIRouter
 from fastapi import Request
-from fastapi.templating import Jinja2Templates
 from fastapi.responses import FileResponse
+from fastapi.templating import Jinja2Templates
 from loguru import logger
 
+from app.config import pad_code_list, pkg_name, temple_id_list
 from app.curd.status import update_cloud_status
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
-from app.services.task_status import process_task_status, reboot_task_status, replace_pad_stak_status, \
-    app_install_task_status, app_start_task_status, app_uninstall_task_status, adb_call_task_status
-from app.config import pad_code_list, pkg_name, temple_id_list
+from app.services.task_status import reboot_task_status, replace_pad_stak_status, \
+    app_install_task_status, app_start_task_status, app_uninstall_task_status, adb_call_task_status, \
+    fileUpdate_task_status, app_reboot_task_status
 
 router = APIRouter()
 task_manager = TaskManager()
@@ -65,8 +66,7 @@ async def callback(data: dict) -> str:
             return "ok"
 
         case 1006:
-            logger.warning("1006回调")
-            process_task_status(data)
+            app_reboot_task_status(data)
             return "ok"
 
         case 1007:
@@ -74,8 +74,7 @@ async def callback(data: dict) -> str:
             return "ok"
 
         case 1009:
-            logger.warning("1009回调")
-            process_task_status(data)
+            fileUpdate_task_status(data)
             return "ok"
 
         case 1124:
