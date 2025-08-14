@@ -7,14 +7,18 @@ class StatusResponse(BaseModel):
     pad_code: str
     current_status: str | None = None
     number_of_run: int
+    temple_id: int
     phone_number_counts: int
     country: str | None = None
+    updated_at: datetime
     created_at: datetime
 
 
 class StatusRequest(BaseModel):
     pad_code: str
-    current_status: str
+    current_status: str | None = None
+    number_of_run: int | None = None
+    phone_number_counts: int | None = None
 
 class GetOneCloudStatus(BaseModel):
     pad_code: str

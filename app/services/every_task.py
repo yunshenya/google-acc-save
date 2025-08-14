@@ -4,6 +4,7 @@ from typing import Any
 from fastapi import HTTPException
 from loguru import logger
 
+from app.curd.status import update_cloud_status
 from app.dependencies.utils import update_language, update_time_zone, gps_in_ject_info, start_app, install_app
 from app.config import clash_install_url, script_install_url
 
@@ -12,6 +13,7 @@ async def set_phone_state(current_proxy, package_name, pad_code):
     logger.info(
         f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
     # 设置语言
+    await update_cloud_status(pad_code=pad_code, current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))", country=current_proxy["country"])
     lang_result = await update_language("en", country=current_proxy['code'],
                                         pad_code_list=[pad_code])
     logger.info(f"语言更新结果: {lang_result['msg']}")
@@ -28,6 +30,7 @@ async def set_phone_state(current_proxy, package_name, pad_code):
     logger.info(f"GPS注入结果: {gps_result['msg']}")
     await asyncio.sleep(2)
     logger.success(f"{pad_code}: 开始启动app")
+    await update_cloud_status(pad_code=pad_code, current_status="开始启动app")
     app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
     logger.info(f"Start app result: {app_result['msg']}")
 
@@ -36,6 +39,7 @@ async def install_app_task(pad_code_str, task_manager):
     script_md5 = script_install_url.split("/")[-1].replace(".apk", "")
     clash_md5 = clash_install_url.split("/")[-1].replace(".apk", "")
     logger.success(f'{pad_code_str}: 一键新机成功')
+    await update_cloud_status(pad_code=pad_code_str,current_status="一键新机成功")
     if await task_manager.get_task(pad_code_str) is not None:
         raise HTTPException(status_code=400, detail=f"标识符 {pad_code_str} 已在使用")
     task = asyncio.create_task(task_manager.handle_timeout(pad_code_str))

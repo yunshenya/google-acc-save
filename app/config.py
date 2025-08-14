@@ -20,7 +20,7 @@ default_proxy = {
     "longitude": 103.8566
 }
 
-temple_id_list = [614, 624]
+temple_id_list = [610]
 
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
 

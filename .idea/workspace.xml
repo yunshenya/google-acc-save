@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加云机状态" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="完善了获取云机的api">
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/status.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/status.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -88,8 +101,8 @@
       &quot;mysql_aurora&quot;
     ],
     &quot;RunConfigurationTargetLRU&quot;: [
-      &quot;b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\&quot;google-manager\&quot;&quot;,
       &quot;c5a3980d-5ed6-4bef-8027-60388d38edf8/database/\&quot;google-manager\&quot;/schema/\&quot;public\&quot;&quot;,
+      &quot;b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\&quot;google-manager\&quot;&quot;,
       &quot;b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\&quot;google-manager\&quot;/schema/\&quot;public\&quot;&quot;,
       &quot;bee75e2c-7daf-4c88-afe8-d45a6d17d75c&quot;,
       &quot;bee75e2c-7daf-4c88-afe8-d45a6d17d75c/database/\&quot;postgres\&quot;&quot;
@@ -323,8 +336,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.run" />
         <item itemvalue="数据库脚本.status.sql" />
+        <item itemvalue="Python.run" />
         <item itemvalue="数据库脚本.data.sql" />
         <item itemvalue="Python.main" />
       </list>
@@ -424,14 +437,8 @@
       <workItem from="1755055239317" duration="323000" />
       <workItem from="1755058035041" duration="606000" />
       <workItem from="1755076445119" duration="888000" />
-    </task>
-    <task id="LOCAL-00008" summary="加上全局超时">
-      <option name="closed" value="true" />
-      <created>1753943766390</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1753943766390</updated>
+      <workItem from="1755084932485" duration="4536000" />
+      <workItem from="1755134939632" duration="2139000" />
     </task>
     <task id="LOCAL-00009" summary="添加修改ip">
       <option name="closed" value="true" />
@@ -817,7 +824,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755076458514</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="完善了获取云机的api">
+      <option name="closed" value="true" />
+      <created>1755090501830</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1755090501830</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -835,7 +850,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="添加了一些无关紧要的东西" />
     <MESSAGE value="优化警告" />
     <MESSAGE value="项目化以及解耦" />
     <MESSAGE value="修复了已弃用的start_event事件，使用上下文调度的方式，实现启动事件" />
@@ -860,6 +874,7 @@
     <MESSAGE value="更改目录结构" />
     <MESSAGE value="解决跨域问题，以及增加前端页面" />
     <MESSAGE value="增加云机状态" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加云机状态" />
+    <MESSAGE value="完善了获取云机的api" />
+    <option name="LAST_COMMIT_MESSAGE" value="完善了获取云机的api" />
   </component>
 </project>

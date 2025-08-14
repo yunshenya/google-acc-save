@@ -5,6 +5,7 @@ from enum import IntEnum
 from typing import Any
 from loguru import logger
 
+from app.curd.status import update_cloud_status
 from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, reboot, install_app, \
     replace_pad
 from app.config import clash_install_url, script_install_url, temple_id_list, pkg_name, global_timeout_minute, \
@@ -46,10 +47,10 @@ class TaskManager:
         clash_md5 = clash_install_url.split("/")[-1].replace(".apk", "")
         pad_code = result["data"][0]["padCode"]
         if task_type.lower() == "script":
-            logger.info(f'{task_type}安装成功')
             app_install_result : Any = await get_app_install_info([pad_code], "Clash for Android")
             if len(app_install_result["data"][0]["apps"]) == 2:
                 logger.success(f"{pad_code}: 安装成功")
+                await update_cloud_status(pad_code=pad_code, current_status= "安装成功")
                 await open_root(pad_code_list=[pad_code], pkg_name=pkg_name)
                 logger.info(f"{pad_code}: 开始重启")
                 await reboot(pad_code_list=[pad_code])
@@ -57,6 +58,7 @@ class TaskManager:
 
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning(f"{pad_code}: 重新安装")
+                await update_cloud_status(pad_code=pad_code, current_status= "重新安装")
                 await install_app(pad_code_list=[pad_code],
                                                  app_url=clash_install_url, md5=clash_md5)
                 await install_app(pad_code_list=[pad_code],
@@ -67,18 +69,19 @@ class TaskManager:
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
                 logger.warning(f"安装成功一个:{app_result[0]['appName']}")
+                await update_cloud_status(pad_code=pad_code, current_status= f"安装成功一个:{app_result[0]['appName']}")
                 await install_app(pad_code_list=[pad_code],app_url=clash_install_url, md5=clash_md5)
                 await asyncio.sleep(10)
                 return False
 
 
         elif task_type.lower() == "clash":
-            logger.info(f"{task_type}安装成功")
             app_install_result = await get_app_install_info([pad_code], "Clash for Android")
             if len(app_install_result["data"][0]["apps"]) == 2:
                 return True
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning(f"{pad_code}: 重新安装")
+                await update_cloud_status(pad_code=pad_code, current_status= "安装失败，重新安装")
                 await install_app(pad_code_list=[pad_code],
                                                  app_url=clash_install_url,  md5=clash_md5)
 
@@ -90,6 +93,7 @@ class TaskManager:
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
                 logger.info(f"安装成功一个:{app_result[0]['appName']}")
+                await update_cloud_status(pad_code=pad_code, current_status= f"安装成功一个:{app_result[0]['appName']}")
                 await install_app(pad_code_list=[pad_code],app_url=script_install_url, md5=script_md5)
                 await asyncio.sleep(10)
                 return False
@@ -105,47 +109,48 @@ class TaskManager:
                     try:
                         result: Any = await get_cloud_file_task_info([str(task_id)])
                         error_message: Any = result["data"][0]["errorMsg"]
-                        if error_message:
-                            logger.info(f"{task_type} 安装任务: {error_message}")
-
                         task_status = result["data"][0]["taskStatus"]
                         pad_code = result["data"][0]["padCode"]
                         match InstallTaskStatus(task_status):
                             case InstallTaskStatus.PENDING:
                                 logger.info(f"{pad_code}:{task_type}: 等待安装中")
-                                message = result["data"][0]["errorMsg"]
-                                if message:
-                                    logger.warning(f"{pad_code}: {message}")
+                                if error_message:
+                                    logger.warning(f"{pad_code}: {error_message}")
+                                    await update_cloud_status(pad_code=pad_code, current_status= error_message)
 
                             case InstallTaskStatus.RUNNING:
                                 logger.info(f"{pad_code}:{task_type}:安装中")
-                                message = result["data"][0]["errorMsg"]
-                                if message:
-                                    logger.warning(f"{pad_code}: {message}")
+                                if error_message:
+                                    logger.warning(f"{pad_code}: {error_message}")
+                                    await update_cloud_status(pad_code=pad_code, current_status= error_message)
 
                             case InstallTaskStatus.TIMEOUT:
                                 logger.info(f"{pad_code}:{task_type}安装超时")
-                                message = result["data"][0]["errorMsg"]
-                                if message:
-                                    logger.warning(f"{pad_code}: {message}")
+                                if error_message:
+                                    logger.warning(f"{pad_code}: {error_message}")
+                                    await update_cloud_status(pad_code=pad_code, current_status= error_message)
 
                             case InstallTaskStatus.SOME_FAILED:
                                 logger.warning(f"{task_type}: 下载失败")
-                                logger.warning(result["data"][0]["errorMsg"])
+                                if error_message:
+                                    logger.warning(error_message)
+                                    await update_cloud_status(pad_code=pad_code, current_status= error_message)
                                 result = await install_app(pad_code_list=[pad_code], app_url=app_url, md5=app_mod5)
                                 logger.info(result["data"][0]["errorMsg"])
 
                             case InstallTaskStatus.ALL_FAILED:
-                                message = result["data"][0]["errorMsg"]
-                                if message:
-                                    logger.error(f"全失败: {pad_code}: {message}")
+                                if error_message:
+                                    logger.error(f"全失败: {pad_code}: {error_message}")
+                                    await update_cloud_status(pad_code=pad_code, current_status= f"全失败: {error_message}")
 
                             case InstallTaskStatus.COMPLETED:
                                 if await self.handle_install_result(result, task_type):
                                     break
 
                             case InstallTaskStatus.TIMEOUT:
-                                logger.warning("设备离线，停止安装")
+                                if error_message:
+                                    logger.warning(f"{pad_code}: {error_message}")
+                                    await update_cloud_status(pad_code=pad_code, current_status= error_message)
                                 break
                         await asyncio.sleep(retry_interval)
                     except Exception as e:
@@ -162,6 +167,7 @@ class TaskManager:
                 await self.remove_task(pad_code)
                 temple_id = random.choice(temple_id_list)
                 replace_result = await replace_pad([pad_code], template_id=temple_id)
+                await update_cloud_status(pad_code=pad_code, current_status= "由于长时间安装失败，正在一键新机", temple_id=temple_id)
                 logger.info(f"{pad_code}：正在一键新机，使用的模板为: {temple_id}")
                 logger.warning("因为长时间安装不上，已移除任务")
             except (KeyError, IndexError) as e:
@@ -176,6 +182,7 @@ class TaskManager:
             logger.warning(f"标识符超时: {pad_code_str}")
             temple_id = random.choice(temple_id_list)
             result = await replace_pad([pad_code_str], template_id=temple_id)
+            await update_cloud_status(pad_code=pad_code_str, current_status= "任务超时，正在一键新机中", temple_id=temple_id)
             logger.info(f"{pad_code_str}：正在一键新机，使用的模板为: {temple_id},运行结果为: {result['msg']}")
             await self.remove_task(pad_code_str)
         except asyncio.CancelledError:

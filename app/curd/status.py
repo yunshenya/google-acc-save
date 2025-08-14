@@ -1,20 +1,21 @@
-from sqlite3 import IntegrityError
 from typing import cast
 
 from fastapi import HTTPException
 from loguru import logger
 from sqlalchemy import ColumnElement
+from sqlalchemy.exc import IntegrityError
 
-from app.models.status import StatusRequest
+from app.models.status import StatusResponse
 from app.services.database import SessionLocal, Status
 
 
-async def add_cloud_status(pad_code: str, current_status: str = "新机中"):
+async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = "新机中"):
     async with SessionLocal() as db:
         try:
             db_account = Status(
                 pad_code=pad_code,
-                current_status =current_status
+                current_status=current_status,
+                temple_id=temple_id,
             )
             db.add(db_account)
             await db.commit()
@@ -22,7 +23,8 @@ async def add_cloud_status(pad_code: str, current_status: str = "新机中"):
             logger.success("云机状态上传成功")
         except IntegrityError:
             await db.rollback()
-            logger.warning("云机已存在")
+            await update_cloud_status(pad_code=pad_code, current_status="新机中")
+            logger.warning(f"云机已存在: {pad_code}")
 
 
 async def remove_cloud_status(pad_code: str):
@@ -38,9 +40,12 @@ async def remove_cloud_status(pad_code: str):
         logger.success(f"云机数据 {pad_code} : 删除成功")
 
 
-
-
-async def update_cloud_status(pad_code: str, current_status: str) -> StatusRequest:
+async def update_cloud_status(pad_code: str,
+                              current_status: str = None,
+                              country: str = None,
+                              number_of_run: int = None,
+                              temple_id: int = None,
+                              phone_number_counts: int = None) -> StatusResponse:
     async with SessionLocal() as db:
         try:
             from sqlalchemy import select
@@ -51,9 +56,21 @@ async def update_cloud_status(pad_code: str, current_status: str) -> StatusReque
                 raise HTTPException(status_code=404, detail="云机状态不存在")
             if current_status is not None:
                 db_status.current_status = current_status
+            if country is not None:
+                db_status.country = country
+
+            if number_of_run is not None:
+                db_status.number_of_run += number_of_run
+
+            if phone_number_counts is not None:
+                db_status.phone_number_counts += phone_number_counts
+
+            if temple_id is not None:
+                db_status.temple_id = temple_id
+
             await db.commit()
             await db.refresh(db_status)
-            return StatusRequest(msg="ok", data=db_status)
+            return db_status
         except IntegrityError:
             await db.rollback()
             raise HTTPException(status_code=400, detail="云机状态已存在")

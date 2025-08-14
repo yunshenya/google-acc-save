@@ -28,9 +28,11 @@ class Account(Base):
 class Status(Base):
     __tablename__ = "cloud_status"
     id = Column(Integer, primary_key=True, index=True)
-    pad_code = Column(String(100), nullable=False)
+    pad_code = Column(String(100), nullable=True, unique=True)
     country = Column(String(100), nullable=False)
+    temple_id = Column(Integer, nullable=True)
     current_status = Column(String(200), default=0, nullable=False)
     number_of_run = Column(Integer, default=0, nullable=False)
     phone_number_counts = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)
+    updated_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)
