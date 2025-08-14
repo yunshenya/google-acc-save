@@ -81,15 +81,6 @@ async def gps_in_ject_info(pad_code_list:list[str], longitude:float, latitude:fl
     return await VmosUtil(set_local_url, body).send()
 
 
-async def get_cloud_task_info(tasks_list: list[str]):
-    file_task = "/vcpcloud/api/padApi/fileTaskDetail"
-    body = {
-        "taskIds": tasks_list
-    }
-    return await VmosUtil(file_task, body).send()
-
-
-
 async def get_cloud_file_task_info(tasks_list: list[str]):
     file_task = "/vcpcloud/api/padApi/padTaskDetail"
     body = {

@@ -75,7 +75,7 @@ async def callback(data: dict) -> str:
             return "ok"
 
         case 1009:
-            fileUpdate_task_status(data)
+            await fileUpdate_task_status(data)
             return "ok"
 
         case 1124:

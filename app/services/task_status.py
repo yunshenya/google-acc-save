@@ -1,9 +1,11 @@
 # 定义任务状态枚举
 from enum import IntEnum
+from typing import Any
 
 from loguru import logger
 
 from app.curd.status import update_cloud_status
+from app.dependencies.utils import get_cloud_file_task_info
 from app.services.every_task import set_phone_state, install_app_task
 
 
@@ -16,15 +18,13 @@ class TaskStatus(IntEnum):
     COMPLETED = 3    # 完成
 
 
-def fileUpdate_task_status(data):
+async def fileUpdate_task_status(data):
     pad_code = data.get("padCode")
-    logger.warning(f"{pad_code} : {data}")
-    # match TaskStatus(taskStatus):
-    #     case TaskStatus.COMPLETED:
-    #         logger.success("文件上传成功")
-    #
-    #     case _ :
-    #         logger.warning(f"{pad_code}:未知id {taskStatus}")
+    task_id = data.get("taskId")
+    result = await get_cloud_file_task_info([task_id])
+    error_message: Any = result["data"][0]["errorMsg"]
+    if error_message:
+        logger.info(f"{pad_code}: {error_message}")
 
 
 def app_start_task_status(data):
