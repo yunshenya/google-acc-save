@@ -153,7 +153,7 @@ class TaskManager:
                     await asyncio.sleep(retry_interval)
 
         except asyncio.TimeoutError:
-            logger.info(f"{task_type} task {task_id}: 安装超时后 {timeout_seconds} seconds")
+            logger.info(f"{task_type} task {task_id}: 安装超时 {timeout_seconds} seconds")
             if 'result' not in locals():
                 logger.warning(f"任务 {task_id} 在首次检查前超时")
                 return
