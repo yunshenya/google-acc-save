@@ -29,9 +29,10 @@ async def fileUpdate_task_status(data):
 
 def app_start_task_status(data):
     task_status = data.get("taskStatus")
+    pad_code = data.get("padCode")
     match TaskStatus(task_status):
         case TaskStatus.COMPLETED:
-            logger.success("应用启动成功回调")
+            logger.success(f"{pad_code}: 应用启动成功回调")
 
         case _:
             logger.warning(data)

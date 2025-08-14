@@ -62,7 +62,6 @@ async def callback(data: dict) -> str:
             return "ok"
 
         case 1004:
-            logger.success(f"应用卸载的接口回调：{data}")
             app_uninstall_task_status(data)
             return "ok"
 

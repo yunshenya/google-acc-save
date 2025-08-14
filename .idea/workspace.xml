@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="完善了获取云机的api">
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -430,15 +429,8 @@
       <workItem from="1755076445119" duration="888000" />
       <workItem from="1755084932485" duration="4536000" />
       <workItem from="1755134939632" duration="11977000" />
-      <workItem from="1755150612409" duration="436000" />
-    </task>
-    <task id="LOCAL-00016" summary="修复了已弃用的start_event事件，使用上下文调度的方式，实现启动事件">
-      <option name="closed" value="true" />
-      <created>1754719882670</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1754719882670</updated>
+      <workItem from="1755150612409" duration="858000" />
+      <workItem from="1755160123468" duration="594000" />
     </task>
     <task id="LOCAL-00017" summary="添加全局代理管理器">
       <option name="closed" value="true" />
@@ -824,7 +816,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755150634505</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="完善了获取云机的api">
+      <option name="closed" value="true" />
+      <created>1755151266465</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1755151266465</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

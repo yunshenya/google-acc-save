@@ -101,7 +101,7 @@ class TaskManager:
         return False
 
 
-    async def check_task_status(self, task_id, task_type, timeout_seconds: int = (check_task_timeout_minute * 60), retry_interval: int = 5):
+    async def check_task_status(self, task_id, task_type, timeout_seconds: int = (check_task_timeout_minute * 60), retry_interval: int = 10):
         app_url = clash_install_url if task_type.lower() == "clash" else script_install_url
         app_mod5 = app_url.split("/")[-1].replace(".apk", "")
         try:
@@ -132,8 +132,7 @@ class TaskManager:
                             if error_message:
                                 logger.warning(error_message)
                                 await update_cloud_status(pad_code=pad_code, current_status= error_message)
-                            result = await install_app(pad_code_list=[pad_code], app_url=app_url, md5=app_mod5)
-                            logger.info(error_message)
+                            await install_app(pad_code_list=[pad_code], app_url=app_url, md5=app_mod5)
 
                         case InstallTaskStatus.ALL_FAILED:
                             if error_message:
@@ -146,9 +145,6 @@ class TaskManager:
                                 break
 
                         case InstallTaskStatus.TIMEOUT:
-                            if error_message:
-                                logger.warning(f"{pad_code}: {error_message}")
-                                await update_cloud_status(pad_code=pad_code, current_status= error_message)
                             break
                     await asyncio.sleep(retry_interval)
 
