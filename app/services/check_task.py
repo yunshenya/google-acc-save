@@ -126,12 +126,6 @@ class TaskManager:
                                 logger.warning(f"{pad_code}: {error_message}")
                                 await update_cloud_status(pad_code=pad_code, current_status= error_message)
 
-                        case InstallTaskStatus.TIMEOUT:
-                            logger.info(f"{pad_code}:{task_type}安装超时")
-                            if error_message:
-                                logger.warning(f"{pad_code}: {error_message}")
-                                await update_cloud_status(pad_code=pad_code, current_status= error_message)
-
                         case InstallTaskStatus.SOME_FAILED:
                             logger.warning(f"{task_type}: 下载失败")
                             await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}下载失败")
