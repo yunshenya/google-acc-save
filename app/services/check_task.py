@@ -162,7 +162,7 @@ class TaskManager:
                 await self.remove_task(pad_code)
                 temple_id = random.choice(temple_id_list)
                 replace_result = await replace_pad([pad_code], template_id=temple_id)
-                await update_cloud_status(pad_code=pad_code, current_status= "由于长时间安装失败，正在一键新机", temple_id=temple_id, number_of_run=1)
+                await update_cloud_status(pad_code=pad_code, current_status= "由于长时间安装失败，正在一键新机", temple_id=temple_id, number_of_run=1, country="")
                 logger.info(f"{pad_code}：正在一键新机，使用的模板为: {temple_id}")
                 logger.warning("因为长时间安装不上，已移除任务")
             except (KeyError, IndexError) as e:
@@ -177,7 +177,7 @@ class TaskManager:
             logger.warning(f"标识符超时: {pad_code_str}")
             temple_id = random.choice(temple_id_list)
             result = await replace_pad([pad_code_str], template_id=temple_id)
-            await update_cloud_status(pad_code=pad_code_str, current_status= "任务超时，正在一键新机中", temple_id=temple_id, number_of_run=1)
+            await update_cloud_status(pad_code=pad_code_str, current_status= "任务超时，正在一键新机中", temple_id=temple_id, number_of_run=1, country="")
             logger.info(f"{pad_code_str}：正在一键新机，使用的模板为: {temple_id},运行结果为: {result['msg']}")
             await self.remove_task(pad_code_str)
         except asyncio.CancelledError:

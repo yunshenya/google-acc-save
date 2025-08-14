@@ -154,7 +154,7 @@ async def adb_call_task_status(data):
     pad_code = data.get("padCode")
     match TaskStatus(task_status):
         case TaskStatus.COMPLETED:
-            await update_cloud_status(pad_code=pad_code, current_status= "调用adb成功")
+            await update_cloud_status(pad_code=pad_code, current_status= "获取root权限成功")
             logger.success(f"{pad_code}: 获取root权限成功")
 
         case TaskStatus.RUNNING:

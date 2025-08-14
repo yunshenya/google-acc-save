@@ -23,7 +23,7 @@ async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = 
             logger.success("云机状态上传成功")
         except IntegrityError:
             await db.rollback()
-            await update_cloud_status(pad_code=pad_code, current_status="新机中")
+            await update_cloud_status(pad_code=pad_code, current_status="新机中", country="")
             logger.warning(f"云机已存在: {pad_code}")
 
 
