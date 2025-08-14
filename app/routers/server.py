@@ -15,6 +15,7 @@ from app.services.check_task import TaskManager
 from app.services.task_status import reboot_task_status, replace_pad_stak_status, \
     app_install_task_status, app_start_task_status, app_uninstall_task_status, adb_call_task_status, \
     fileUpdate_task_status, app_reboot_task_status
+from app.config import DEBUG
 
 router = APIRouter()
 task_manager = TaskManager()
@@ -23,7 +24,7 @@ task_manager = TaskManager()
 @router.get("/")
 async def index(request: Request):
     templates = Jinja2Templates(directory="templates")
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request, "debug": "true" if DEBUG else "false"})
 
 @router.get("/favicon.ico")
 async def favicon() -> FileResponse:

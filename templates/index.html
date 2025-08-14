@@ -377,7 +377,8 @@
         const paginationInfo = document.getElementById('paginationInfo');
         const progressBar = document.getElementById('progressBar');
 
-        const BASE_URL = 'http://103.118.254.151';
+        const debug = {{debug}};
+        const BASE_URL = debug ? 'http://127.0.0.1:5000': 'http://103.118.254.151';
 
         // 状态变量
         let allAccounts = [];
