@@ -15,7 +15,7 @@ async def set_phone_state(current_proxy, package_name, pad_code):
     # 设置语言
     await update_cloud_status(pad_code=pad_code,
                               current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))",
-                              country=current_proxy["country"])
+                              country=f"{current_proxy['country']}({current_proxy['code']})")
     lang_result = await update_language("en", country=current_proxy['code'],
                                         pad_code_list=[pad_code])
     logger.info(f"语言更新结果: {lang_result['msg']}")
