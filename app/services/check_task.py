@@ -43,8 +43,10 @@ class TaskManager:
 
     @staticmethod
     async def handle_install_result(result, task_type) -> bool:
-        script_md5 = script_install_url.split("/")[-1].replace(".apk", "")
-        clash_md5 = clash_install_url.split("/")[-1].replace(".apk", "")
+        script_md5_list: Any = script_install_url.split("/")
+        script_md5 = script_md5_list[-1].replace(".apk", "")
+        clash_md5_list: Any = clash_install_url.split("/")
+        clash_md5 = clash_md5_list[-1].replace(".apk", "")
         pad_code = result["data"][0]["padCode"]
         if task_type.lower() == "script":
             app_install_result : Any = await get_app_install_info([pad_code], "Clash for Android")
@@ -103,7 +105,8 @@ class TaskManager:
 
     async def check_task_status(self, task_id, task_type, timeout_seconds: int = (check_task_timeout_minute * 60), retry_interval: int = 10):
         app_url = clash_install_url if task_type.lower() == "clash" else script_install_url
-        app_mod5 = app_url.split("/")[-1].replace(".apk", "")
+        app_mod5_list: Any = app_url.split("/")
+        app_mod5 = app_mod5_list[-1].replace(".apk", "")
         try:
             async with asyncio.timeout(timeout_seconds):
                 while True:

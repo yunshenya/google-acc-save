@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="完善了获取云机的api">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +61,7 @@
     &quot;Python.test.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowPanel.toolwindow.highlight.mappings&quot;: &quot;true&quot;,
@@ -78,8 +80,9 @@
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
+    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
     &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;settings.sync&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
     &quot;数据库脚本.data.sql.executor&quot;: &quot;Run&quot;,
@@ -113,7 +116,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\tests" />
     </key>
   </component>
-  <component name="RunManager" selected="数据库脚本.status.sql">
+  <component name="RunManager" selected="Python.run">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
@@ -325,9 +328,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.run" />
         <item itemvalue="数据库脚本.status.sql" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.run" />
         <item itemvalue="数据库脚本.data.sql" />
         <item itemvalue="Python.main" />
       </list>
@@ -431,22 +434,13 @@
       <workItem from="1755134939632" duration="11977000" />
       <workItem from="1755150612409" duration="858000" />
       <workItem from="1755160123468" duration="594000" />
-    </task>
-    <task id="LOCAL-00017" summary="添加全局代理管理器">
-      <option name="closed" value="true" />
-      <created>1754723574970</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1754723574970</updated>
-    </task>
-    <task id="LOCAL-00018" summary="添加代理管理器">
-      <option name="closed" value="true" />
-      <created>1754728174016</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1754728174016</updated>
+      <workItem from="1755176331727" duration="1540000" />
+      <workItem from="1755178096884" duration="25000" />
+      <workItem from="1755255716793" duration="29000" />
+      <workItem from="1755256736427" duration="160000" />
+      <workItem from="1755256911335" duration="126000" />
+      <workItem from="1755309088337" duration="555000" />
+      <workItem from="1755482017991" duration="442000" />
     </task>
     <task id="LOCAL-00019" summary="添加代理管理器">
       <option name="closed" value="true" />
@@ -824,7 +818,23 @@
       <option name="project" value="LOCAL" />
       <updated>1755151266465</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="完善了获取云机的api">
+      <option name="closed" value="true" />
+      <created>1755177554648</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1755177554648</updated>
+    </task>
+    <task id="LOCAL-00067" summary="完善了获取云机的api">
+      <option name="closed" value="true" />
+      <created>1755177640494</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1755177640494</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

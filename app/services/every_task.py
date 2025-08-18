@@ -38,8 +38,10 @@ async def set_phone_state(current_proxy, package_name, pad_code):
 
 
 async def install_app_task(pad_code_str, task_manager):
-    script_md5 = script_install_url.split("/")[-1].replace(".apk", "")
-    clash_md5 = clash_install_url.split("/")[-1].replace(".apk", "")
+    script_md5_list: Any = script_install_url.split("/")
+    script_md5 = script_md5_list[-1].replace(".apk", "")
+    clash_md5_list: Any = clash_install_url.split("/")
+    clash_md5 = clash_md5_list[-1].replace(".apk", "")
     logger.success(f'{pad_code_str}: 一键新机成功')
     await update_cloud_status(pad_code=pad_code_str,current_status="一键新机成功")
     if await task_manager.get_task(pad_code_str) is not None:
