@@ -31,24 +31,27 @@ async def set_phone_state(current_proxy, package_name, pad_code):
         longitude=current_proxy["longitude"]
     )
     logger.info(f"GPS注入结果: {gps_result['msg']}")
-    await asyncio.sleep(2)
+    await asyncio.sleep(5)
     logger.success(f"{pad_code}: 开始启动app")
     await update_cloud_status(pad_code=pad_code, current_status="开始启动脚本")
+    total_try_count = 0
     try:
-        while True:
+        while total_try_count < 6:
             app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
             taskid= app_result["data"][0]["taskId"]
             if await check_padTaskDetail([taskid]):
                 logger.success(f"{pad_code}: 启动app成功")
                 break
+            total_try_count += 1
 
     except IndexError:
-        while True:
+        while total_try_count < 6:
             app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
             taskid= app_result["data"][0]["taskId"]
             if await check_padTaskDetail([taskid]):
                 logger.success(f"{pad_code}: 启动app成功")
                 break
+            total_try_count += 1
 
 
 

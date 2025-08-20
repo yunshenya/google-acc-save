@@ -4,13 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="完善了获取云机的api">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="提高控制的精细度">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -451,15 +448,7 @@
       <workItem from="1755499701571" duration="172000" />
       <workItem from="1755501940783" duration="9000" />
       <workItem from="1755516273492" duration="230000" />
-      <workItem from="1755653585098" duration="16697000" />
-    </task>
-    <task id="LOCAL-00020" summary="添加代理管理器">
-      <option name="closed" value="true" />
-      <created>1754732302075</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1754732302075</updated>
+      <workItem from="1755653585098" duration="17864000" />
     </task>
     <task id="LOCAL-00021" summary="移除无用的参数，简化耦合性">
       <option name="closed" value="true" />
@@ -845,7 +834,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755482463620</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="提高控制的精细度">
+      <option name="closed" value="true" />
+      <created>1755671878254</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1755671878254</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -863,7 +860,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="优化警告" />
     <MESSAGE value="项目化以及解耦" />
     <MESSAGE value="修复了已弃用的start_event事件，使用上下文调度的方式，实现启动事件" />
     <MESSAGE value="添加全局代理管理器" />
@@ -888,6 +884,7 @@
     <MESSAGE value="解决跨域问题，以及增加前端页面" />
     <MESSAGE value="增加云机状态" />
     <MESSAGE value="完善了获取云机的api" />
-    <option name="LAST_COMMIT_MESSAGE" value="完善了获取云机的api" />
+    <MESSAGE value="提高控制的精细度" />
+    <option name="LAST_COMMIT_MESSAGE" value="提高控制的精细度" />
   </component>
 </project>

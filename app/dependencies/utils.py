@@ -127,37 +127,37 @@ async def check_padTaskDetail(tasks_list: list[str]) -> bool:
         match task_status:
             case -1:
                 if errorMsg:
-                    logger.error(f"{padCode}：{errorMsg}")
+                    logger.error(f"{task_status}: {padCode}：{errorMsg}")
                 return False
 
             case -2:
                 if errorMsg:
-                    logger.warning(f"{padCode}：{errorMsg}")
+                    logger.warning(f"{task_status}： {padCode}：{errorMsg}")
                 return False
 
             case -3:
                 if errorMsg:
-                    logger.warning(f"{padCode}：{errorMsg}")
+                    logger.warning(f"{task_status}: {padCode}：{errorMsg}")
                 return False
 
             case -4:
                 if errorMsg:
-                    logger.warning(f"{padCode}：{errorMsg}")
+                    logger.warning(f"{task_status}: {padCode}：{errorMsg}")
                 return False
 
             case 1:
                 if errorMsg:
-                    logger.info(f"{padCode}：{errorMsg}")
+                    logger.info(f"{task_status}: {padCode}：{errorMsg}")
                 return False
 
             case 2:
                 if errorMsg:
-                    logger.info(f"{padCode}：{errorMsg}")
+                    logger.info(f"{task_status}: {padCode}：{errorMsg}")
                 return False
 
             case 3:
                 if errorMsg:
-                    logger.success(f"{padCode}：{errorMsg}")
+                    logger.success(f"{task_status}: {padCode}：{errorMsg}")
                 return True
         return False
 
