@@ -46,7 +46,7 @@ async def callback(data: dict) -> str:
     task_business_type = data.get("taskBusinessType")
     match int(task_business_type):
         case 1000:
-            await reboot_task_status(data, current_proxy, pkg_name)
+            await reboot_task_status(data, current_proxy, pkg_name, task_manager)
             return "ok"
 
         case 1001:

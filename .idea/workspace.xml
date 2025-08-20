@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="提高控制的精细度">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -448,15 +450,7 @@
       <workItem from="1755499701571" duration="172000" />
       <workItem from="1755501940783" duration="9000" />
       <workItem from="1755516273492" duration="230000" />
-      <workItem from="1755653585098" duration="17864000" />
-    </task>
-    <task id="LOCAL-00021" summary="移除无用的参数，简化耦合性">
-      <option name="closed" value="true" />
-      <created>1754736569012</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1754736569012</updated>
+      <workItem from="1755653585098" duration="19761000" />
     </task>
     <task id="LOCAL-00022" summary="调整日志等级">
       <option name="closed" value="true" />
@@ -842,7 +836,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755671878254</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="提高控制的精细度">
+      <option name="closed" value="true" />
+      <created>1755673023455</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1755673023455</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

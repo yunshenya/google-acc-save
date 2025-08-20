@@ -1,16 +1,17 @@
 import asyncio
+import random
 from typing import Any
 
 from fastapi import HTTPException
 from loguru import logger
 
-from app.config import clash_install_url, script_install_url
+from app.config import clash_install_url, script_install_url, temple_id_list
 from app.curd.status import update_cloud_status
 from app.dependencies.utils import update_language, update_time_zone, gps_in_ject_info, start_app, install_app, \
-    check_padTaskDetail
+    check_padTaskDetail, replace_pad
 
 
-async def set_phone_state(current_proxy, package_name, pad_code):
+async def set_phone_state(current_proxy, package_name, pad_code, task_manager):
     logger.info(
         f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
     # 设置语言
@@ -43,6 +44,14 @@ async def set_phone_state(current_proxy, package_name, pad_code):
                 logger.success(f"{pad_code}: 启动app成功")
                 break
             total_try_count += 1
+            logger.success(f"{pad_code}: 启动app中...")
+            await asyncio.sleep(1)
+
+        if total_try_count > 6:
+            logger.error("失败")
+            temple_id = random.choice(temple_id_list)
+            await replace_pad([pad_code], template_id=temple_id)
+            await task_manager.remove_task(pad_code)
 
     except IndexError:
         while total_try_count < 6:
@@ -52,6 +61,12 @@ async def set_phone_state(current_proxy, package_name, pad_code):
                 logger.success(f"{pad_code}: 启动app成功")
                 break
             total_try_count += 1
+
+        if total_try_count > 6:
+            logger.error("失败")
+            temple_id = random.choice(temple_id_list)
+            await replace_pad([pad_code], template_id=temple_id)
+            await task_manager.remove_task(pad_code)
 
 
 
