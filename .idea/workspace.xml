@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="提高控制的精细度">
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/auth.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
@@ -320,6 +321,7 @@
     </configuration>
     <list>
       <item itemvalue="Python.config" />
+      <item itemvalue="Python.main" />
       <item itemvalue="Python.run" />
       <item itemvalue="Python.test" />
       <item itemvalue="数据库脚本.data.sql" />
@@ -448,23 +450,11 @@
       <workItem from="1755499701571" duration="172000" />
       <workItem from="1755501940783" duration="9000" />
       <workItem from="1755516273492" duration="230000" />
-      <workItem from="1755653585098" duration="22607000" />
-    </task>
-    <task id="LOCAL-00023" summary="调整日志等级">
-      <option name="closed" value="true" />
-      <created>1754739019313</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1754739019313</updated>
-    </task>
-    <task id="LOCAL-00024" summary="调整日志等级">
-      <option name="closed" value="true" />
-      <created>1754740061537</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1754740061537</updated>
+      <workItem from="1755653585098" duration="22643000" />
+      <workItem from="1755678207964" duration="73000" />
+      <workItem from="1755679145703" duration="1680000" />
+      <workItem from="1755683902840" duration="6000" />
+      <workItem from="1755684200101" duration="1853000" />
     </task>
     <task id="LOCAL-00025" summary="新增删除接口">
       <option name="closed" value="true" />
@@ -842,7 +832,23 @@
       <option name="project" value="LOCAL" />
       <updated>1755674928168</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="提高控制的精细度">
+      <option name="closed" value="true" />
+      <created>1755677779482</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1755677779483</updated>
+    </task>
+    <task id="LOCAL-00073" summary="提高控制的精细度">
+      <option name="closed" value="true" />
+      <created>1755677782245</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1755677782245</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -86,6 +86,7 @@ class TaskManager:
             app_install_result = await get_app_install_info([pad_code], "Clash for Android")
             if len(app_install_result["data"][0]["apps"]) == 2:
                 return True
+
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning(f"{pad_code}: 重新安装")
                 await update_cloud_status(pad_code=pad_code, current_status= "安装失败，重新安装")

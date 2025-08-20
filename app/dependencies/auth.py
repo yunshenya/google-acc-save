@@ -3,6 +3,7 @@ import datetime
 import hashlib
 import hmac
 import json
+from typing import Any
 
 import aiohttp
 
@@ -19,13 +20,13 @@ class VmosUtil(object):
         self._host = "api.vmoscloud.com"
 
     def _get_signature(self):
-        json_string = json.dumps(self._data, separators=(',', ':'), ensure_ascii=False)
+        json_string :Any = json.dumps(self._data, separators=(',', ':'), ensure_ascii=False)
         # 计算SHA-256哈希值
         hash_object = hashlib.sha256(json_string.encode())
         x_content_sha256 = hash_object.hexdigest()
 
         # 使用f-string构建canonicalStringBuilder
-        canonical_string_builder = (
+        canonical_string_builder: Any = (
             f"host:{self._host}\n"
             f"x-date:{self._x_date}\n"
             f"content-type:{self._content_type}\n"
@@ -57,12 +58,12 @@ class VmosUtil(object):
         service = "armcloud-paas"  # 服务名
 
         # 第一次hmacSHA256
-        first_hmac = hmac.new(self._sk.encode(), digestmod=hashlib.sha256)
+        first_hmac: Any = hmac.new(self._sk.encode(), digestmod=hashlib.sha256)
         first_hmac.update(short_x_date.encode())
         first_hmac_result = first_hmac.digest()
 
         # 第二次hmacSHA256
-        second_hmac = hmac.new(first_hmac_result, digestmod=hashlib.sha256)
+        second_hmac: Any = hmac.new(first_hmac_result, digestmod=hashlib.sha256)
         second_hmac.update(service.encode())
         second_hmac_result = second_hmac.digest()
 
@@ -70,7 +71,7 @@ class VmosUtil(object):
         signing_key = hmac.new(second_hmac_result, b'request', digestmod=hashlib.sha256).digest()
 
         # 使用signing_key和string_to_sign计算HMAC-SHA256
-        signature_bytes = hmac.new(signing_key, string_to_sign.encode(), hashlib.sha256).digest()
+        signature_bytes: Any = hmac.new(signing_key, string_to_sign.encode(), hashlib.sha256).digest()
 
         # 将HMAC-SHA256的结果转换为十六进制编码的字符串
         signature = binascii.hexlify(signature_bytes).decode()
