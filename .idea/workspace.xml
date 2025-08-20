@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="提高控制的精细度">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -454,15 +451,7 @@
       <workItem from="1755678207964" duration="73000" />
       <workItem from="1755679145703" duration="1680000" />
       <workItem from="1755683902840" duration="6000" />
-      <workItem from="1755684200101" duration="1853000" />
-    </task>
-    <task id="LOCAL-00025" summary="新增删除接口">
-      <option name="closed" value="true" />
-      <created>1754877685344</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1754877685344</updated>
+      <workItem from="1755684200101" duration="5914000" />
     </task>
     <task id="LOCAL-00026" summary="解决类型报错问题">
       <option name="closed" value="true" />
@@ -848,7 +837,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755677782245</updated>
     </task>
-    <option name="localTasksCounter" value="74" />
+    <task id="LOCAL-00074" summary="提高控制的精细度">
+      <option name="closed" value="true" />
+      <created>1755687345431</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1755687345431</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
