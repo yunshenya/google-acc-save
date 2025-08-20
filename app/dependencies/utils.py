@@ -1,5 +1,5 @@
 from app.dependencies.auth import VmosUtil
-
+from loguru import logger
 
 async def replace_pad(pad_code:list[str], template_id:int) -> dict[str, str]:
     pad_infos_url = '/vcpcloud/api/padApi/replacePad'
@@ -117,3 +117,49 @@ async def reboot(pad_code_list: list[str]):
     }
 
     return await VmosUtil(reboot_url, body).send()
+
+async def check_padTaskDetail(tasks_list: list[str]) -> bool:
+    try:
+        result = await get_cloud_file_task_info(tasks_list)
+        task_status = result["data"][0]["taskStatus"]
+        padCode = result["data"][0]["padCode"]
+        errorMsg = result["data"][0]["errorMsg"]
+        match task_status:
+            case -1:
+                if errorMsg:
+                    logger.error(f"{padCode}：{errorMsg}")
+                return False
+
+            case -2:
+                if errorMsg:
+                    logger.warning(f"{padCode}：{errorMsg}")
+                return False
+
+            case -3:
+                if errorMsg:
+                    logger.warning(f"{padCode}：{errorMsg}")
+                return False
+
+            case -4:
+                if errorMsg:
+                    logger.warning(f"{padCode}：{errorMsg}")
+                return False
+
+            case 1:
+                if errorMsg:
+                    logger.info(f"{padCode}：{errorMsg}")
+                return False
+
+            case 2:
+                if errorMsg:
+                    logger.info(f"{padCode}：{errorMsg}")
+                return False
+
+            case 3:
+                if errorMsg:
+                    logger.success(f"{padCode}：{errorMsg}")
+                return True
+        return False
+
+    except IndexError:
+        return False

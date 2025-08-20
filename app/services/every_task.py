@@ -4,9 +4,10 @@ from typing import Any
 from fastapi import HTTPException
 from loguru import logger
 
-from app.curd.status import update_cloud_status
-from app.dependencies.utils import update_language, update_time_zone, gps_in_ject_info, start_app, install_app
 from app.config import clash_install_url, script_install_url
+from app.curd.status import update_cloud_status
+from app.dependencies.utils import update_language, update_time_zone, gps_in_ject_info, start_app, install_app, \
+    check_padTaskDetail
 
 
 async def set_phone_state(current_proxy, package_name, pad_code):
@@ -33,8 +34,22 @@ async def set_phone_state(current_proxy, package_name, pad_code):
     await asyncio.sleep(2)
     logger.success(f"{pad_code}: 开始启动app")
     await update_cloud_status(pad_code=pad_code, current_status="开始启动脚本")
-    app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
-    logger.info(f"Start app result: {app_result['msg']}")
+    try:
+        while True:
+            app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
+            taskid= app_result["data"][0]["taskId"]
+            if await check_padTaskDetail([taskid]):
+                logger.success(f"{pad_code}: 启动app成功")
+                break
+
+    except IndexError:
+        while True:
+            app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
+            taskid= app_result["data"][0]["taskId"]
+            if await check_padTaskDetail([taskid]):
+                logger.success(f"{pad_code}: 启动app成功")
+                break
+
 
 
 async def install_app_task(pad_code_str, task_manager):

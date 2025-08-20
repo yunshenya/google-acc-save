@@ -41,8 +41,8 @@ class TaskManager:
         async with self._lock:
             return self._operations.get(pad_code)
 
-    @staticmethod
-    async def handle_install_result(result, task_type) -> bool:
+
+    async def handle_install_result(self, result, task_type) -> bool:
         script_md5_list: Any = script_install_url.split("/")
         script_md5 = script_md5_list[-1].replace(".apk", "")
         clash_md5_list: Any = clash_install_url.split("/")
@@ -51,13 +51,17 @@ class TaskManager:
         if task_type.lower() == "script":
             app_install_result : Any = await get_app_install_info([pad_code], "Clash for Android")
             if len(app_install_result["data"][0]["apps"]) == 2:
-                logger.success(f"{pad_code}: 安装成功")
-                await update_cloud_status(pad_code=pad_code, current_status= "安装成功")
-                await open_root(pad_code_list=[pad_code], pkg_name=pkg_name)
-                logger.info(f"{pad_code}: 开始重启")
-                await update_cloud_status(pad_code=pad_code, current_status= "开始重启")
-                await reboot(pad_code_list=[pad_code])
-                return True
+                while True:
+                    if await self.app_install_all_done(pad_code):
+                        logger.success(f"{pad_code}: 安装成功")
+                        await update_cloud_status(pad_code=pad_code, current_status= "安装成功")
+                        await open_root(pad_code_list=[pad_code], pkg_name=pkg_name)
+                        logger.info(f"{pad_code}: 开始重启")
+                        await update_cloud_status(pad_code=pad_code, current_status= "开始重启")
+                        await reboot(pad_code_list=[pad_code])
+                        return True
+                    else:
+                        await asyncio.sleep(1)
 
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning(f"{pad_code}: 重新安装")
@@ -181,3 +185,22 @@ class TaskManager:
             await self.remove_task(pad_code_str)
         except asyncio.CancelledError:
             logger.info(f"标识符的超时任务: {pad_code_str} 被取消了.")
+
+    @staticmethod
+    async def app_install_all_done(pad_code_str: str) -> bool:
+        install_done_list = []
+        app_install_result : Any = await get_app_install_info([pad_code_str], "Clash for Android")
+        apps_list = app_install_result["data"][0]["apps"]
+        for app in apps_list:
+            match app["appState"]:
+                case 0:
+                    install_done_list.append(app["appName"])
+                case 1:
+                    logger.info(f"{app['appName']} 安装中")
+                case 2:
+                    logger.info(f"{app['appName']}下载中")
+
+        if len(install_done_list) == 2:
+            return True
+        else:
+            return False

@@ -6,25 +6,25 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
 
-pad_code_list =  [] if DEBUG else ["ACP250605DG51WR4","ACP250417JIWWZSL","AC20250226GBVI6P","ACP250417FRB7H9K","ACP2504175KEOO32"]
+pad_code_list =  ["AC32010810553"] if DEBUG else ["ACP250605DG51WR4","ACP250417JIWWZSL","AC20250226GBVI6P","ACP2504175KEOO32"]
 
 pkg_name = "com.aaee8h0kh.cejwrh616"
 
 default_proxy = {
-    "country": "新加坡",
-    "code": "sg",
-    "proxy_url": "https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/sg.yaml",
-    "time_zone": "Asia/Singapore",
+    "country": "摩洛哥",
+    "code": "ma",
+    "proxy_url": "https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/ma.yaml",
+    "time_zone": "Africa/Casablanca",
     "language": "English",
-    "latitude": 1.3248,
-    "longitude": 103.8566
+    "latitude": 35.7758,
+    "longitude": -5.7909
 }
 
-temple_id_list = [461]
+temple_id_list = [679]
 
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
 
-script_install_url = "https://file.vmoscloud.com/userFile/3ccde428595e28284f8bb87feafc6c94.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/a879d3ce5608dad0689d6cbb5879802f.apk"
 
 global_timeout_minute = 8
 
