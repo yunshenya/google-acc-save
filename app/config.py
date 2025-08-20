@@ -20,12 +20,12 @@ default_proxy = {
     "longitude": -5.7909
 }
 
-temple_id_list = [679, 744]
+temple_id_list = [744]
 
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
 
 script_install_url = "https://file.vmoscloud.com/userFile/a879d3ce5608dad0689d6cbb5879802f.apk"
 
-global_timeout_minute = 8
+global_timeout_minute = 10
 
-check_task_timeout_minute = 4
+check_task_timeout_minute = 5

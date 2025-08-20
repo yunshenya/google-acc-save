@@ -114,46 +114,51 @@ class TaskManager:
         try:
             async with asyncio.timeout(timeout_seconds):
                 while True:
-                    result: Any = await get_cloud_file_task_info([str(task_id)])
-                    error_message: Any = result["data"][0]["errorMsg"]
-                    task_status = result["data"][0]["taskStatus"]
-                    pad_code = result["data"][0]["padCode"]
-                    match InstallTaskStatus(task_status):
-                        case InstallTaskStatus.PENDING:
-                            logger.info(f"{pad_code}:{task_type}: 等待安装中")
-                            await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}等待安装中")
-                            if error_message:
-                                logger.warning(f"{pad_code}: {error_message}")
-                                await update_cloud_status(pad_code=pad_code, current_status= error_message)
+                    try:
+                        result: Any = await get_cloud_file_task_info([str(task_id)])
+                        error_message: Any = result["data"][0]["errorMsg"]
+                        task_status = result["data"][0]["taskStatus"]
+                        pad_code = result["data"][0]["padCode"]
+                        match InstallTaskStatus(task_status):
+                            case InstallTaskStatus.PENDING:
+                                logger.info(f"{pad_code}:{task_type}: 等待安装中")
+                                await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}等待安装中")
+                                if error_message:
+                                    logger.warning(f"{pad_code}: {error_message}")
+                                    await update_cloud_status(pad_code=pad_code, current_status= error_message)
 
-                        case InstallTaskStatus.RUNNING:
-                            logger.info(f"{pad_code}:{task_type}:安装中")
-                            await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}安装中")
-                            if error_message:
-                                logger.warning(f"{pad_code}: {error_message}")
-                                await update_cloud_status(pad_code=pad_code, current_status= error_message)
+                            case InstallTaskStatus.RUNNING:
+                                logger.info(f"{pad_code}:{task_type}:安装中")
+                                await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}安装中")
+                                if error_message:
+                                    logger.warning(f"{pad_code}: {error_message}")
+                                    await update_cloud_status(pad_code=pad_code, current_status= error_message)
 
-                        case InstallTaskStatus.SOME_FAILED:
-                            logger.warning(f"{task_type}: 下载失败")
-                            await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}下载失败")
-                            if error_message:
-                                logger.warning(error_message)
-                                await update_cloud_status(pad_code=pad_code, current_status= error_message)
-                            await install_app(pad_code_list=[pad_code], app_url=app_url, md5=app_mod5)
+                            case InstallTaskStatus.SOME_FAILED:
+                                logger.warning(f"{task_type}: 下载失败")
+                                await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}下载失败")
+                                if error_message:
+                                    logger.warning(error_message)
+                                    await update_cloud_status(pad_code=pad_code, current_status= error_message)
+                                await install_app(pad_code_list=[pad_code], app_url=app_url, md5=app_mod5)
 
-                        case InstallTaskStatus.ALL_FAILED:
-                            if error_message:
-                                logger.error(f"全失败: {pad_code}: {error_message}")
-                                await update_cloud_status(pad_code=pad_code, current_status= f"全失败: {error_message}")
-                                raise asyncio.TimeoutError("强制超时")
+                            case InstallTaskStatus.ALL_FAILED:
+                                if error_message:
+                                    logger.error(f"全失败: {pad_code}: {error_message}")
+                                    await update_cloud_status(pad_code=pad_code, current_status= f"全失败: {error_message}")
+                                    raise asyncio.TimeoutError("强制超时")
 
-                        case InstallTaskStatus.COMPLETED:
-                            if await self.handle_install_result(result, task_type):
+                            case InstallTaskStatus.COMPLETED:
+                                if await self.handle_install_result(result, task_type):
+                                    break
+
+                            case InstallTaskStatus.TIMEOUT:
                                 break
+                        await asyncio.sleep(retry_interval)
 
-                        case InstallTaskStatus.TIMEOUT:
-                            break
-                    await asyncio.sleep(retry_interval)
+                    except TypeError:
+                        logger.error(f"{task_id}: 获取任务失败")
+                        await asyncio.sleep(retry_interval)
 
         except asyncio.TimeoutError:
             logger.info(f"{task_type} task {task_id}: 安装超时 {timeout_seconds} seconds")
