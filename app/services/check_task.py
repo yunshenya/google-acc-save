@@ -84,7 +84,7 @@ class TaskManager:
                         return True
                     else:
                         logger.info(f"{pad_code}: 安装中...")
-                        await asyncio.sleep(2)
+                        await asyncio.sleep(10)
 
             elif len(app_install_result["data"][0]["apps"]) == 0:
                 logger.warning(f"{pad_code}: 重新上传")

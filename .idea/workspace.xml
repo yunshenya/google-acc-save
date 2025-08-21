@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="修复多次设置新机的bug">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -453,15 +452,7 @@
       <workItem from="1755679145703" duration="1680000" />
       <workItem from="1755683902840" duration="6000" />
       <workItem from="1755684200101" duration="9415000" />
-      <workItem from="1755739713176" duration="11311000" />
-    </task>
-    <task id="LOCAL-00041" summary="日志优化">
-      <option name="closed" value="true" />
-      <created>1754911724114</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1754911724114</updated>
+      <workItem from="1755739713176" duration="11778000" />
     </task>
     <task id="LOCAL-00042" summary="日志优化">
       <option name="closed" value="true" />
@@ -847,7 +838,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755748985973</updated>
     </task>
-    <option name="localTasksCounter" value="90" />
+    <task id="LOCAL-00090" summary="修复多次设置新机的bug">
+      <option name="closed" value="true" />
+      <created>1755752692188</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1755752692188</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

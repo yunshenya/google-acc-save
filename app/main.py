@@ -44,11 +44,11 @@ async def startup_event(app: FastAPI):
     app.include_router(server.router, prefix="")
     app.include_router(status.router, prefix="")
     # 一键新机
-    template_id=random.choice(temple_id_list)
     for pad_code in pad_code_list:
+        template_id=random.choice(temple_id_list)
         await add_cloud_status(pad_code, template_id)
-    result = await replace_pad(pad_code_list, template_id=template_id)
-    logger.info(f"已启动: {len(pad_code_list)} 台云机，执行结果为: {result['msg']}")
+        result = await replace_pad(pad_code, template_id=template_id)
+        logger.info(f"已启动: {pad_code}，执行结果为: {result['msg']}")
 
     # 创建数据库表
     async with engine.begin() as conn:
