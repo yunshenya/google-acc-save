@@ -49,7 +49,7 @@ class TaskManager:
         clash_md5 = clash_md5_list[-1].replace(".apk", "")
         pad_code = result["data"][0]["padCode"]
         if task_type.lower() == "script":
-            app_install_result : Any = await get_app_install_info([pad_code], "Clash for Android")
+            app_install_result : Any = await get_app_install_info([pad_code])
             if len(app_install_result["data"][0]["apps"]) == 2:
                 while True:
                     if await self.app_install_all_done(pad_code):
@@ -83,7 +83,7 @@ class TaskManager:
 
 
         elif task_type.lower() == "clash":
-            app_install_result = await get_app_install_info([pad_code], "Clash for Android")
+            app_install_result = await get_app_install_info([pad_code])
             if len(app_install_result["data"][0]["apps"]) == 2:
                 return True
 
@@ -195,7 +195,7 @@ class TaskManager:
     @staticmethod
     async def app_install_all_done(pad_code_str: str) -> bool:
         install_done_list = []
-        app_install_result : Any = await get_app_install_info([pad_code_str], "Clash for Android")
+        app_install_result : Any = await get_app_install_info([pad_code_str])
         apps_list = app_install_result["data"][0]["apps"]
         for app in apps_list:
             match app["appState"]:

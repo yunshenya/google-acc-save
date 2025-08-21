@@ -89,11 +89,10 @@ async def get_cloud_file_task_info(tasks_list: list[str]):
 
     return await VmosUtil(file_task, body).send()
 
-async def get_app_install_info(pad_code_list: list[str], app_name: str) -> dict[str, str]:
+async def get_app_install_info(pad_code_list: list[str]) -> dict[str, str]:
     url  ="/vcpcloud/api/padApi/listInstalledApp"
     body = {
-        "padCodes" : pad_code_list,
-        "appName" : app_name
+        "padCodes" : pad_code_list
     }
 
     return await VmosUtil(url, body).send()
