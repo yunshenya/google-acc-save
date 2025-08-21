@@ -77,7 +77,7 @@ class TaskManager:
                             longitude=current_proxy["longitude"]
                         )
                         logger.info(f"GPS注入结果: {gps_result['msg']}")
-                        await asyncio.sleep(2)
+                        await asyncio.sleep(10)
                         logger.info(f"{pad_code}: 开始重启")
                         await update_cloud_status(pad_code=pad_code, current_status= "开始重启")
                         await reboot(pad_code_list=[pad_code])
