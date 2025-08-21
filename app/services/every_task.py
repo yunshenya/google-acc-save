@@ -11,28 +11,7 @@ from app.dependencies.utils import update_language, update_time_zone, gps_in_jec
     check_padTaskDetail, replace_pad
 
 
-async def set_phone_state(current_proxy, package_name, pad_code, task_manager):
-    logger.info(
-        f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
-    # 设置语言
-    await update_cloud_status(pad_code=pad_code,
-                              current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))",
-                              country=f"{current_proxy['country']}({current_proxy['code']})")
-    lang_result = await update_language("en", country=current_proxy['code'],
-                                        pad_code_list=[pad_code])
-    logger.info(f"语言更新结果: {lang_result['msg']}")
-    # 设置时区
-    tz_result = await update_time_zone(pad_code_list=[pad_code],
-                                       time_zone=current_proxy["time_zone"])
-    logger.info(f"时区更新结果: {tz_result['msg']}")
-    # 设置GPS信息
-    gps_result = await gps_in_ject_info(
-        pad_code_list=[pad_code],
-        latitude=current_proxy["latitude"],
-        longitude=current_proxy["longitude"]
-    )
-    logger.info(f"GPS注入结果: {gps_result['msg']}")
-    await asyncio.sleep(5)
+async def set_phone_state(package_name, pad_code, task_manager):
     logger.success(f"{pad_code}: 开始启动app")
     await update_cloud_status(pad_code=pad_code, current_status="开始启动脚本")
     total_try_count = 0

@@ -6,16 +6,15 @@ from fastapi.responses import FileResponse
 from fastapi.templating import Jinja2Templates
 from loguru import logger
 
+from app.config import DEBUG
 from app.config import pad_code_list, pkg_name, temple_id_list
 from app.curd.status import update_cloud_status
-from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
 from app.services.task_status import reboot_task_status, replace_pad_stak_status, \
     app_install_task_status, app_start_task_status, app_uninstall_task_status, adb_call_task_status, \
     fileUpdate_task_status, app_reboot_task_status
-from app.config import DEBUG
 
 router = APIRouter()
 task_manager = TaskManager()
@@ -42,11 +41,10 @@ async def status(android_code: AndroidPadCodeRequest):
 
 @router.post("/callback", response_model= str)
 async def callback(data: dict) -> str:
-    current_proxy = manager.get_current_proxy()
     task_business_type = data.get("taskBusinessType")
     match int(task_business_type):
         case 1000:
-            await reboot_task_status(data, current_proxy, pkg_name, task_manager)
+            await reboot_task_status(data, pkg_name, task_manager)
             return "ok"
 
         case 1001:

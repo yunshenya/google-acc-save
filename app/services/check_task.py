@@ -4,10 +4,10 @@ from collections import defaultdict
 from enum import IntEnum
 from typing import Any
 from loguru import logger
-
+from app.dependencies.countries import manager
 from app.curd.status import update_cloud_status
 from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, reboot, install_app, \
-    replace_pad
+    replace_pad, update_language, update_time_zone, gps_in_ject_info
 from app.config import clash_install_url, script_install_url, temple_id_list, pkg_name, global_timeout_minute, \
     check_task_timeout_minute
 
@@ -56,6 +56,28 @@ class TaskManager:
                         logger.success(f"{pad_code}: 安装成功")
                         await update_cloud_status(pad_code=pad_code, current_status= "安装成功")
                         await open_root(pad_code_list=[pad_code], pkg_name=pkg_name)
+                        current_proxy = manager.get_current_proxy()
+                        logger.info(
+                            f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))")
+# 设置语言
+                        await update_cloud_status(pad_code=pad_code,
+                                                  current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy['country']} ({current_proxy['code']}))",
+                                                  country=f"{current_proxy['country']}({current_proxy['code']})")
+                        lang_result = await update_language("en", country=current_proxy['code'],
+                                                            pad_code_list=[pad_code])
+                        logger.info(f"语言更新结果: {lang_result['msg']}")
+                        # 设置时区
+                        tz_result = await update_time_zone(pad_code_list=[pad_code],
+                                                           time_zone=current_proxy["time_zone"])
+                        logger.info(f"时区更新结果: {tz_result['msg']}")
+                        # 设置GPS信息
+                        gps_result = await gps_in_ject_info(
+                            pad_code_list=[pad_code],
+                            latitude=current_proxy["latitude"],
+                            longitude=current_proxy["longitude"]
+                        )
+                        logger.info(f"GPS注入结果: {gps_result['msg']}")
+                        await asyncio.sleep(2)
                         logger.info(f"{pad_code}: 开始重启")
                         await update_cloud_status(pad_code=pad_code, current_status= "开始重启")
                         await reboot(pad_code_list=[pad_code])

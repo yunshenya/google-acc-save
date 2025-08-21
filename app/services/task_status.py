@@ -71,7 +71,7 @@ def app_uninstall_task_status(data):
             logger.success(f"{pad_code}: 卸载成功")
 
 
-async def reboot_task_status(data, current_proxy, package_name, task_manager):
+async def reboot_task_status(data, package_name, task_manager):
     task_status = data.get("taskStatus")
     pad_code = data.get("padCode")
     try:
@@ -98,7 +98,7 @@ async def reboot_task_status(data, current_proxy, package_name, task_manager):
             case TaskStatus.COMPLETED:
                 logger.success(f"{pad_code}: 重启成功")
                 await update_cloud_status(pad_code=pad_code, current_status="重启成功")
-                await set_phone_state(current_proxy, package_name, pad_code, task_manager)
+                await set_phone_state(package_name, pad_code, task_manager)
 
             case _:
                 logger.error(f"未知任务状态: {task_status}")
