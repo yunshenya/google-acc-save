@@ -1,15 +1,6 @@
 from pydantic import BaseModel
 
 
-class ProxyCountry(BaseModel):
-    country: str
-    code: str
-    proxy_url: str
-    time_zone: str
-    language: str
-    latitude: float
-    longitude: float
-
 class ProxyResponse(BaseModel):
     proxy: str
     country: str
@@ -22,3 +13,7 @@ class ProxyResponse(BaseModel):
 class ProxyRequest(BaseModel):
     country_code: str
 
+
+class DbProxyRequest(BaseModel):
+    pad_code: str
+    country_code: str

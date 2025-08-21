@@ -17,7 +17,7 @@ def load_proxy_countries():
                     country_data =  {
                         "country": row[0],  # 国家名称
                         "code": row[1],    # 国家代码
-                        "proxy_url": row[2],  # 代理URL
+                        "proxy": row[2],  # 代理URL
                         "time_zone": row[3],  # 时区
                         "language": row[4],   # 语言
                         "latitude": float(row[5]),  # 纬度

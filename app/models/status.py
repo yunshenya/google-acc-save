@@ -12,6 +12,12 @@ class StatusResponse(BaseModel):
     country: str | None = None
     updated_at: datetime
     created_at: datetime
+    code: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    language: str | None = None
+    time_zone: str | None = None
+    proxy : str | None = None
 
 
 class StatusRequest(BaseModel):

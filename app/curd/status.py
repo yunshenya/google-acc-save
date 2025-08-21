@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from loguru import logger
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
-
+from app.models.proxy import ProxyResponse
 from app.models.status import StatusResponse
 from app.services.database import SessionLocal, Status
 
@@ -74,3 +74,39 @@ async def update_cloud_status(pad_code: str,
         except IntegrityError:
             await db.rollback()
             raise HTTPException(status_code=400, detail="云机状态已存在")
+
+
+async def set_proxy_status(pad_code: str, proxy_response: ProxyResponse) -> StatusResponse:
+    async with SessionLocal() as db:
+        try:
+            from sqlalchemy import select
+            stmt = select(Status).filter(cast(ColumnElement[bool], Status.pad_code == pad_code))
+            result = await db.execute(stmt)
+            db_status = result.scalars().first()
+            if db_status is None:
+                raise HTTPException(status_code=404, detail="云机状态不存在")
+
+            db_status.proxy = proxy_response.proxy
+            db_status.country = proxy_response.country
+            db_status.code  = proxy_response.code
+            db_status.time_zone = proxy_response.time_zone
+            db_status.latitude = proxy_response.latitude
+            db_status.longitude = proxy_response.longitude
+            db_status.language = proxy_response.language
+
+            await db.commit()
+            await db.refresh(db_status)
+            return db_status
+        except IntegrityError:
+            await db.rollback()
+            raise HTTPException(status_code=400, detail="设置代理失败")
+
+async def get_proxy_status(pad_code: str) -> ProxyResponse:
+    async with SessionLocal() as db:
+        from sqlalchemy import select
+        result = await db.execute(
+            select(Status).filter(cast(ColumnElement[bool], Status.pad_code == pad_code)))
+        status = result.scalars().first()
+        if status is None:
+            raise HTTPException(status_code=404, detail="云机不存在")
+        return status

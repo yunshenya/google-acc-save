@@ -1,7 +1,7 @@
 import datetime
 from typing import Any
 
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, Float
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -36,3 +36,9 @@ class Status(Base):
     phone_number_counts = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)
     updated_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)
+    proxy = Column(String(100), nullable=False)
+    code = Column(String(100), nullable=False)
+    time_zone = Column(String(100), nullable=False)
+    language = Column(String(100), nullable=False)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False)

@@ -8,9 +8,11 @@ from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
 from app.config import pad_code_list, temple_id_list
-from app.curd.status import add_cloud_status, remove_cloud_status
+from app.curd.status import add_cloud_status, remove_cloud_status, set_proxy_status
 from app.dependencies.countries import load_proxy_countries
+from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
+from app.models.proxy import ProxyResponse
 from app.routers import accounts, proxy, server, status
 from app.services.database import engine, Base
 
@@ -44,10 +46,12 @@ async def startup_event(app: FastAPI):
     app.include_router(server.router, prefix="")
     app.include_router(status.router, prefix="")
     # 一键新机
+    default_proxy: ProxyResponse = manager.get_current_proxy()
     for pad_code in pad_code_list:
         template_id=random.choice(temple_id_list)
         await add_cloud_status(pad_code, template_id)
-        result = await replace_pad(pad_code, template_id=template_id)
+        await set_proxy_status(pad_code, default_proxy)
+        result = await replace_pad([pad_code], template_id=template_id)
         logger.info(f"已启动: {pad_code}，执行结果为: {result['msg']}")
 
     # 创建数据库表
