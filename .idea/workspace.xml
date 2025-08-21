@@ -7,7 +7,7 @@
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="提高控制的精细度">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -455,15 +455,7 @@
       <workItem from="1755679145703" duration="1680000" />
       <workItem from="1755683902840" duration="6000" />
       <workItem from="1755684200101" duration="9415000" />
-      <workItem from="1755739713176" duration="6128000" />
-    </task>
-    <task id="LOCAL-00036" summary="优化日志">
-      <option name="closed" value="true" />
-      <created>1754901439809</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1754901439809</updated>
+      <workItem from="1755739713176" duration="7704000" />
     </task>
     <task id="LOCAL-00037" summary="优化日志">
       <option name="closed" value="true" />
@@ -849,7 +841,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755744858530</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="提高控制的精细度">
+      <option name="closed" value="true" />
+      <created>1755745887993</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1755745887993</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

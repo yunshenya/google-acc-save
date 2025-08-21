@@ -128,7 +128,6 @@ async def check_padTaskDetail(tasks_list: list[str]) -> int:
         match task_status:
             case -1:
                 if errorMsg:
-                    await reboot([padCode])
                     logger.error(f"{task_status}: {padCode}：{errorMsg}")
                 return -1
 
