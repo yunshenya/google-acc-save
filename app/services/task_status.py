@@ -1,4 +1,5 @@
 # 定义任务状态枚举
+import asyncio
 from enum import IntEnum
 from typing import Any
 
@@ -98,6 +99,7 @@ async def reboot_task_status(data, package_name, task_manager):
             case TaskStatus.COMPLETED:
                 logger.success(f"{pad_code}: 重启成功")
                 await update_cloud_status(pad_code=pad_code, current_status="重启成功")
+                await asyncio.sleep(5)
                 await start_app_state(package_name, pad_code, task_manager)
 
             case _:

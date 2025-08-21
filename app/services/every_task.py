@@ -29,7 +29,7 @@ async def start_app_state(package_name, pad_code, task_manager):
 
                 case 0:
                     logger.info(f"{pad_code}: 启动app中...")
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(2)
 
                 case 1:
                     logger.success(f"{pad_code}: 启动app成功")
@@ -49,7 +49,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                     break
                 case 0:
                     logger.info(f"{pad_code}: 启动app中...")
-                    await asyncio.sleep(1)
+                    await asyncio.sleep(2)
                 case 1:
                     logger.success(f"{pad_code}: 启动app成功")
                     break
