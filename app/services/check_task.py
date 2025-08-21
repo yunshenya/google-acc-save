@@ -63,8 +63,7 @@ class TaskManager:
                             f"设置语言、时区和GPS信息（使用代理国家: {current_proxy.country} ({current_proxy.code}))")
 
                         await update_cloud_status(pad_code=pad_code,
-                                                  current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy.country} ({current_proxy.code}))",
-                                                  country=f"{current_proxy.country}({current_proxy.code})")
+                                                  current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy.country} ({current_proxy.code}))")
                         lang_result = await update_language("en", country=current_proxy.code,
                                                             pad_code_list=[pad_code])
                         logger.info(f"语言更新结果: {lang_result['msg']}")
@@ -184,7 +183,7 @@ class TaskManager:
 
                     except TypeError:
                         logger.error(f"{task_id}: 获取任务失败")
-                        await asyncio.sleep(retry_interval)
+                        raise asyncio.TimeoutError("强制超时")
 
         except asyncio.TimeoutError:
             logger.info(f"{task_type} task {task_id}: 安装超时 {timeout_seconds} seconds")
@@ -197,7 +196,7 @@ class TaskManager:
                     await self.remove_task(pad_code)
                     temple_id = random.choice(temple_id_list)
                     replace_result = await replace_pad([pad_code], template_id=temple_id)
-                    await update_cloud_status(pad_code=pad_code, current_status= "由于长时间安装失败，正在一键新机", temple_id=temple_id, number_of_run=1, country="")
+                    await update_cloud_status(pad_code=pad_code, current_status= "由于长时间安装失败，正在一键新机", temple_id=temple_id, number_of_run=1)
                     logger.info(f"{pad_code}：正在一键新机，使用的模板为: {temple_id}")
                     logger.warning("因为长时间安装不上，已移除任务")
             except (KeyError, IndexError) as e:
@@ -213,7 +212,7 @@ class TaskManager:
             if await self.get_task(pad_code_str) is not None:
                 temple_id = random.choice(temple_id_list)
                 result = await replace_pad([pad_code_str], template_id=temple_id)
-                await update_cloud_status(pad_code=pad_code_str, current_status= "任务超时，正在一键新机中", temple_id=temple_id, number_of_run=1, country="")
+                await update_cloud_status(pad_code=pad_code_str, current_status= "任务超时，正在一键新机中", temple_id=temple_id, number_of_run=1)
                 logger.info(f"{pad_code_str}：正在一键新机，使用的模板为: {temple_id},运行结果为: {result['msg']}")
                 await self.remove_task(pad_code_str)
         except asyncio.CancelledError:

@@ -24,7 +24,7 @@ temple_id_list = [744, 832, 808, 804, 714, 864,781, 807]
 
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
 
-script_install_url = "https://file.vmoscloud.com/userFile/45d807ba4f16f6ddefd973276821d44c.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/e2e5a378f38fc62ebfecda5456875edb.apk"
 
 global_timeout_minute = 10
 

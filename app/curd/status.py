@@ -23,7 +23,7 @@ async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = 
             logger.success("云机状态上传成功")
         except IntegrityError:
             await db.rollback()
-            await update_cloud_status(pad_code=pad_code, current_status="新机中", country="")
+            await update_cloud_status(pad_code=pad_code, current_status="新机中")
             logger.warning(f"云机已存在: {pad_code}")
 
 
@@ -42,7 +42,6 @@ async def remove_cloud_status(pad_code: str):
 
 async def update_cloud_status(pad_code: str,
                               current_status: str = None,
-                              country: str = None,
                               number_of_run: int = None,
                               temple_id: int = None,
                               phone_number_counts: int = None) -> StatusResponse:
@@ -56,8 +55,6 @@ async def update_cloud_status(pad_code: str,
                 raise HTTPException(status_code=404, detail="云机状态不存在")
             if current_status is not None:
                 db_status.current_status = current_status
-            if country is not None:
-                db_status.country = country
 
             if number_of_run is not None:
                 db_status.number_of_run += number_of_run
