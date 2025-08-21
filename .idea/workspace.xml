@@ -4,18 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="开始时随机模板">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="设置单个代理">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/countries.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/countries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/proxy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/proxy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/status.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/proxy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/status.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/status.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -338,9 +330,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.test" />
+        <item itemvalue="数据库脚本.status.sql" />
         <item itemvalue="Python.config" />
         <item itemvalue="Python.run" />
-        <item itemvalue="数据库脚本.status.sql" />
         <item itemvalue="数据库脚本.data.sql" />
       </list>
     </recent_temporary>
@@ -468,15 +460,7 @@
       <workItem from="1755756275085" duration="63000" />
       <workItem from="1755756366917" duration="31000" />
       <workItem from="1755756447523" duration="4000" />
-      <workItem from="1755757386776" duration="6414000" />
-    </task>
-    <task id="LOCAL-00043" summary="新增加md5">
-      <option name="closed" value="true" />
-      <created>1754915199752</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1754915199752</updated>
+      <workItem from="1755757386776" duration="8291000" />
     </task>
     <task id="LOCAL-00044" summary="新增加md5">
       <option name="closed" value="true" />
@@ -862,7 +846,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755753293177</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="设置单个代理">
+      <option name="closed" value="true" />
+      <created>1755763843928</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1755763843928</updated>
+    </task>
+    <option name="localTasksCounter" value="93" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -880,7 +872,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="添加全局代理管理器" />
     <MESSAGE value="添加代理管理器" />
     <MESSAGE value="移除无用的参数，简化耦合性" />
     <MESSAGE value="调整日志等级" />
@@ -905,6 +896,7 @@
     <MESSAGE value="提高控制的精细度" />
     <MESSAGE value="修复多次设置新机的bug" />
     <MESSAGE value="开始时随机模板" />
-    <option name="LAST_COMMIT_MESSAGE" value="开始时随机模板" />
+    <MESSAGE value="设置单个代理" />
+    <option name="LAST_COMMIT_MESSAGE" value="设置单个代理" />
   </component>
 </project>

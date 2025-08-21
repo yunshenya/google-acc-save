@@ -4,23 +4,16 @@ from fastapi import APIRouter, HTTPException
 
 from app.curd.status import set_proxy_status, get_proxy_status
 from app.dependencies.countries import load_proxy_countries, manager
+from app.models.accounts import AndroidPadCodeRequest
 from app.models.proxy import ProxyResponse, DbProxyRequest
 
 router = APIRouter()
 
-@router.get("/proxy", response_model=ProxyResponse)
-async def get_proxy():
+@router.post("/proxy", response_model=ProxyResponse)
+async def get_proxy(android_pad_code: AndroidPadCodeRequest):
     """获取当前使用的代理信息"""
-    current_proxy = manager.get_current_proxy()
-    return {
-        "proxy": current_proxy["proxy_url"],
-        "country": current_proxy["country"],
-        "code": current_proxy["code"],
-        "time_zone": current_proxy["time_zone"],
-        "language": current_proxy["language"],
-        "latitude": current_proxy["latitude"],
-        "longitude": current_proxy["longitude"]
-    }
+    current_proxy: ProxyResponse = await get_proxy_status(android_pad_code.pad_code)
+    return current_proxy
 
 @router.get("/proxy/countries", response_model=List[ProxyResponse])
 async def get_proxy_countries() -> List[ProxyResponse]:
