@@ -167,10 +167,10 @@ class TaskManager:
                                 await install_app(pad_code_list=[pad_code], app_url=app_url, md5=app_mod5)
 
                             case InstallTaskStatus.ALL_FAILED:
-                                if error_message:
+                                if error_message and await self.get_task(pad_code) is not None:
                                     logger.error(f"全失败: {pad_code}: {error_message}")
                                     await update_cloud_status(pad_code=pad_code, current_status= f"全失败: {error_message}")
-                                    raise asyncio.TimeoutError("强制超时")
+                                raise asyncio.TimeoutError("强制超时")
 
                             case InstallTaskStatus.COMPLETED:
                                 if await self.handle_install_result(result, task_type):
