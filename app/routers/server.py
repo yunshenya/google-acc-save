@@ -32,7 +32,7 @@ async def favicon() -> FileResponse:
 
 @router.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
-    if task_manager.get_task(android_code.pad_code) is not None:
+    if await task_manager.get_task(android_code.pad_code) is not None:
         await task_manager.remove_task(android_code.pad_code)
         template_id=random.choice(temple_id_list)
         await update_cloud_status(android_code.pad_code, number_of_run=1, temple_id=template_id, current_status="任务已完成，正在一键新机中",country="")

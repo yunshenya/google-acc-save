@@ -93,7 +93,7 @@ class TaskManager:
                                                  app_url=clash_install_url, md5=clash_md5)
                 await install_app(pad_code_list=[pad_code],
                                                   app_url=script_install_url, md5=script_md5)
-                await asyncio.sleep(10)
+                await asyncio.sleep(20)
                 return False
 
             elif len(app_install_result["data"][0]["apps"]) == 1:

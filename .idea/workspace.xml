@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="提高控制的精细度">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="修复多次设置新机的bug">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -454,23 +454,7 @@
       <workItem from="1755679145703" duration="1680000" />
       <workItem from="1755683902840" duration="6000" />
       <workItem from="1755684200101" duration="9415000" />
-      <workItem from="1755739713176" duration="8446000" />
-    </task>
-    <task id="LOCAL-00038" summary="添加日志拦截器">
-      <option name="closed" value="true" />
-      <created>1754905339900</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1754905339900</updated>
-    </task>
-    <task id="LOCAL-00039" summary="添加日志拦截器">
-      <option name="closed" value="true" />
-      <created>1754906692265</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1754906692265</updated>
+      <workItem from="1755739713176" duration="9173000" />
     </task>
     <task id="LOCAL-00040" summary="添加日志拦截器">
       <option name="closed" value="true" />
@@ -848,7 +832,23 @@
       <option name="project" value="LOCAL" />
       <updated>1755747679876</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="修复多次设置新机的bug">
+      <option name="closed" value="true" />
+      <created>1755748280065</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1755748280065</updated>
+    </task>
+    <task id="LOCAL-00088" summary="修复多次设置新机的bug">
+      <option name="closed" value="true" />
+      <created>1755748472494</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1755748472494</updated>
+    </task>
+    <option name="localTasksCounter" value="89" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -866,7 +866,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="项目化以及解耦" />
     <MESSAGE value="修复了已弃用的start_event事件，使用上下文调度的方式，实现启动事件" />
     <MESSAGE value="添加全局代理管理器" />
     <MESSAGE value="添加代理管理器" />
@@ -891,6 +890,7 @@
     <MESSAGE value="增加云机状态" />
     <MESSAGE value="完善了获取云机的api" />
     <MESSAGE value="提高控制的精细度" />
-    <option name="LAST_COMMIT_MESSAGE" value="提高控制的精细度" />
+    <MESSAGE value="修复多次设置新机的bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="修复多次设置新机的bug" />
   </component>
 </project>
