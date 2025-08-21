@@ -11,7 +11,7 @@ from app.dependencies.utils import start_app, install_app, \
     check_padTaskDetail, replace_pad
 
 
-async def set_phone_state(package_name, pad_code, task_manager):
+async def start_app_state(package_name, pad_code, task_manager):
     logger.success(f"{pad_code}: 开始启动app")
     await update_cloud_status(pad_code=pad_code, current_status="开始启动脚本")
     total_try_count = 0
@@ -19,33 +19,41 @@ async def set_phone_state(package_name, pad_code, task_manager):
         while total_try_count < 6:
             app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
             taskid= app_result["data"][0]["taskId"]
-            if await check_padTaskDetail([taskid]):
-                logger.success(f"{pad_code}: 启动app成功")
-                break
-            total_try_count += 1
-            logger.success(f"{pad_code}: 启动app中...")
-            await asyncio.sleep(1)
+            match await check_padTaskDetail([taskid]):
+                case -1:
+                    logger.warning("正在一键新机")
+                    temple_id = random.choice(temple_id_list)
+                    await replace_pad([pad_code], template_id=temple_id)
+                    await task_manager.remove_task(pad_code)
+                    break
 
-        if total_try_count > 6:
-            logger.error("失败")
-            temple_id = random.choice(temple_id_list)
-            await replace_pad([pad_code], template_id=temple_id)
-            await task_manager.remove_task(pad_code)
+                case 0:
+                    logger.info(f"{pad_code}: 启动app中...")
+                    await asyncio.sleep(1)
+
+                case 1:
+                    logger.success(f"{pad_code}: 启动app成功")
+                    break
+            total_try_count += 1
 
     except IndexError:
         while total_try_count < 6:
             app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
             taskid= app_result["data"][0]["taskId"]
-            if await check_padTaskDetail([taskid]):
-                logger.success(f"{pad_code}: 启动app成功")
-                break
+            match await check_padTaskDetail([taskid]):
+                case -1:
+                    logger.warning("正在一键新机")
+                    temple_id = random.choice(temple_id_list)
+                    await replace_pad([pad_code], template_id=temple_id)
+                    await task_manager.remove_task(pad_code)
+                    break
+                case 0:
+                    logger.info(f"{pad_code}: 启动app中...")
+                    await asyncio.sleep(1)
+                case 1:
+                    logger.success(f"{pad_code}: 启动app成功")
+                    break
             total_try_count += 1
-
-        if total_try_count > 6:
-            logger.error("失败")
-            temple_id = random.choice(temple_id_list)
-            await replace_pad([pad_code], template_id=temple_id)
-            await task_manager.remove_task(pad_code)
 
 
 

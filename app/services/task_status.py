@@ -6,7 +6,7 @@ from loguru import logger
 
 from app.curd.status import update_cloud_status
 from app.dependencies.utils import get_cloud_file_task_info
-from app.services.every_task import set_phone_state, install_app_task
+from app.services.every_task import start_app_state, install_app_task
 
 
 class TaskStatus(IntEnum):
@@ -98,7 +98,7 @@ async def reboot_task_status(data, package_name, task_manager):
             case TaskStatus.COMPLETED:
                 logger.success(f"{pad_code}: 重启成功")
                 await update_cloud_status(pad_code=pad_code, current_status="重启成功")
-                await set_phone_state(package_name, pad_code, task_manager)
+                await start_app_state(package_name, pad_code, task_manager)
 
             case _:
                 logger.error(f"未知任务状态: {task_status}")

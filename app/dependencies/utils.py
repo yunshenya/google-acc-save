@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from app.dependencies.auth import VmosUtil
 from loguru import logger
 
@@ -117,7 +119,7 @@ async def reboot(pad_code_list: list[str]):
 
     return await VmosUtil(reboot_url, body).send()
 
-async def check_padTaskDetail(tasks_list: list[str]) -> bool:
+async def check_padTaskDetail(tasks_list: list[str]) -> int:
     try:
         result = await get_cloud_file_task_info(tasks_list)
         task_status = result["data"][0]["taskStatus"]
@@ -126,39 +128,41 @@ async def check_padTaskDetail(tasks_list: list[str]) -> bool:
         match task_status:
             case -1:
                 if errorMsg:
+                    await reboot([padCode])
                     logger.error(f"{task_status}: {padCode}：{errorMsg}")
-                return False
+                return -1
 
             case -2:
                 if errorMsg:
                     logger.warning(f"{task_status}： {padCode}：{errorMsg}")
-                return False
+                return -1
 
             case -3:
                 if errorMsg:
                     logger.warning(f"{task_status}: {padCode}：{errorMsg}")
-                return False
+                return -1
 
             case -4:
                 if errorMsg:
                     logger.warning(f"{task_status}: {padCode}：{errorMsg}")
-                return False
+                return -1
 
             case 1:
                 if errorMsg:
                     logger.info(f"{task_status}: {padCode}：{errorMsg}")
-                return False
+                return 0
 
             case 2:
                 if errorMsg:
                     logger.info(f"{task_status}: {padCode}：{errorMsg}")
-                return False
+                return 0
 
             case 3:
                 if errorMsg:
                     logger.success(f"{task_status}: {padCode}：{errorMsg}")
-                return True
-        return False
+                return  1
+
+        return 0
 
     except IndexError:
-        return False
+        return  0
