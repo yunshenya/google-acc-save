@@ -1,7 +1,7 @@
-from typing import Tuple
+from loguru import logger
 
 from app.dependencies.auth import VmosUtil
-from loguru import logger
+
 
 async def replace_pad(pad_code:list[str], template_id:int) -> dict[str, str]:
     pad_infos_url = '/vcpcloud/api/padApi/replacePad'
