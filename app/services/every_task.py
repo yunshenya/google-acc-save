@@ -7,7 +7,7 @@ from loguru import logger
 
 from app.config import clash_install_url, script_install_url, temple_id_list
 from app.curd.status import update_cloud_status
-from app.dependencies.utils import update_language, update_time_zone, gps_in_ject_info, start_app, install_app, \
+from app.dependencies.utils import start_app, install_app, \
     check_padTaskDetail, replace_pad
 
 
