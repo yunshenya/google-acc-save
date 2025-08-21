@@ -83,10 +83,11 @@ class TaskManager:
                         await reboot(pad_code_list=[pad_code])
                         return True
                     else:
-                        await asyncio.sleep(1)
+                        logger.info(f"{pad_code}: 安装中...")
+                        await asyncio.sleep(2)
 
             elif len(app_install_result["data"][0]["apps"]) == 0:
-                logger.warning(f"{pad_code}: 重新安装")
+                logger.warning(f"{pad_code}: 重新上传")
                 await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}重新安装")
                 await install_app(pad_code_list=[pad_code],
                                                  app_url=clash_install_url, md5=clash_md5)
@@ -97,7 +98,7 @@ class TaskManager:
 
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
-                logger.warning(f"安装成功一个:{app_result[0]['appName']}")
+                logger.warning(f"上传成功一个:{app_result[0]['appName']}")
                 await update_cloud_status(pad_code=pad_code, current_status= f"安装成功一个:{app_result[0]['appName']}")
                 await install_app(pad_code_list=[pad_code],app_url=clash_install_url, md5=clash_md5)
                 await asyncio.sleep(10)
@@ -110,8 +111,8 @@ class TaskManager:
                 return True
 
             elif len(app_install_result["data"][0]["apps"]) == 0:
-                logger.warning(f"{pad_code}: 重新安装")
-                await update_cloud_status(pad_code=pad_code, current_status= "安装失败，重新安装")
+                logger.warning(f"{pad_code}: 重新上传")
+                await update_cloud_status(pad_code=pad_code, current_status= "上传失败，重新上传")
                 await install_app(pad_code_list=[pad_code],
                                                  app_url=clash_install_url,  md5=clash_md5)
 
@@ -122,8 +123,8 @@ class TaskManager:
 
             elif len(app_install_result["data"][0]["apps"]) == 1:
                 app_result = app_install_result["data"][0]["apps"]
-                logger.info(f"安装成功一个:{app_result[0]['appName']}")
-                await update_cloud_status(pad_code=pad_code, current_status= f"安装成功一个:{app_result[0]['appName']}")
+                logger.info(f"上传成功一个:{app_result[0]['appName']}")
+                await update_cloud_status(pad_code=pad_code, current_status= f"上传成功一个:{app_result[0]['appName']}")
                 await install_app(pad_code_list=[pad_code],app_url=script_install_url, md5=script_md5)
                 await asyncio.sleep(10)
                 return False
@@ -144,14 +145,14 @@ class TaskManager:
                         pad_code = result["data"][0]["padCode"]
                         match InstallTaskStatus(task_status):
                             case InstallTaskStatus.PENDING:
-                                logger.info(f"{pad_code}:{task_type}: 等待安装中")
+                                logger.info(f"{pad_code}:{task_type}: 等待上传中")
                                 await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}等待安装中")
                                 if error_message:
                                     logger.warning(f"{pad_code}: {error_message}")
                                     await update_cloud_status(pad_code=pad_code, current_status= error_message)
 
                             case InstallTaskStatus.RUNNING:
-                                logger.info(f"{pad_code}:{task_type}:安装中")
+                                logger.info(f"{pad_code}:{task_type}:上传中")
                                 await update_cloud_status(pad_code=pad_code, current_status= f"{task_type}安装中")
                                 if error_message:
                                     logger.warning(f"{pad_code}: {error_message}")
