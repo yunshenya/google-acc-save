@@ -191,7 +191,7 @@ class TaskManager:
                 return
             try:
                 pad_code = result["data"][0]["padCode"]
-                if self.get_task(pad_code) is not None:
+                if await self.get_task(pad_code) is not None:
                     await self.remove_task(pad_code)
                     temple_id = random.choice(temple_id_list)
                     replace_result = await replace_pad([pad_code], template_id=temple_id)
@@ -208,7 +208,7 @@ class TaskManager:
                 logger.info(f"标识符 {pad_code_str} 的任务已不存在，无需替换")
                 return
             logger.warning(f"标识符超时: {pad_code_str}")
-            if self.get_task(pad_code_str) is not None:
+            if await self.get_task(pad_code_str) is not None:
                 temple_id = random.choice(temple_id_list)
                 result = await replace_pad([pad_code_str], template_id=temple_id)
                 await update_cloud_status(pad_code=pad_code_str, current_status= "任务超时，正在一键新机中", temple_id=temple_id, number_of_run=1, country="")

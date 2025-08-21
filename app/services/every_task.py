@@ -22,7 +22,7 @@ async def start_app_state(package_name, pad_code, task_manager):
             match await check_padTaskDetail([taskid]):
                 case -1:
                     logger.warning(f"{pad_code}: 启动任务正在一键新机")
-                    if task_manager.get_task(pad_code) is not None:
+                    if await task_manager.get_task(pad_code) is not None:
                         await task_manager.remove_task(pad_code)
                         template_id=random.choice(temple_id_list)
                         await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id, current_status="正在一键新机中",country="")
@@ -45,7 +45,7 @@ async def start_app_state(package_name, pad_code, task_manager):
             match await check_padTaskDetail([taskid]):
                 case -1:
                     logger.warning(f"{pad_code}: 正在一键新机")
-                    if task_manager.get_task(pad_code) is not None:
+                    if await task_manager.get_task(pad_code) is not None:
                         await task_manager.remove_task(pad_code)
                         template_id=random.choice(temple_id_list)
                         await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id, current_status="正在一键新机中",country="")
