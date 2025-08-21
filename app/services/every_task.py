@@ -21,7 +21,7 @@ async def start_app_state(package_name, pad_code, task_manager):
             taskid= app_result["data"][0]["taskId"]
             match await check_padTaskDetail([taskid]):
                 case -1:
-                    logger.warning("正在一键新机")
+                    logger.warning(f"{pad_code}: 正在一键新机")
                     temple_id = random.choice(temple_id_list)
                     await replace_pad([pad_code], template_id=temple_id)
                     await task_manager.remove_task(pad_code)
@@ -42,7 +42,7 @@ async def start_app_state(package_name, pad_code, task_manager):
             taskid= app_result["data"][0]["taskId"]
             match await check_padTaskDetail([taskid]):
                 case -1:
-                    logger.warning("正在一键新机")
+                    logger.warning(f"{pad_code}: 正在一键新机")
                     temple_id = random.choice(temple_id_list)
                     await replace_pad([pad_code], template_id=temple_id)
                     await task_manager.remove_task(pad_code)
