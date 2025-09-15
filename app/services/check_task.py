@@ -5,12 +5,13 @@ from enum import IntEnum
 from typing import Any
 
 from loguru import logger
-from app.curd.status import get_proxy_status
+
 from app.config import clash_install_url, script_install_url, temple_id_list, pkg_name, global_timeout_minute, \
     check_task_timeout_minute
+from app.curd.status import get_proxy_status
 from app.curd.status import update_cloud_status
-from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, reboot, install_app, \
-    replace_pad, update_language, update_time_zone, gps_in_ject_info
+from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, install_app, \
+    replace_pad, update_language, update_time_zone, gps_in_ject_info, reboot
 from app.models.proxy import ProxyResponse
 
 

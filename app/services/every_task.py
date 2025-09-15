@@ -73,7 +73,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                             action_type=ActionType.lift
                         ).to_dict()
                     ])
-                    await sleep(3)
+                    await sleep(5)
                     await click([pad_code], [
                         Position(
                             x=1003,
@@ -85,7 +85,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                             x=1003,
                             y=671,
                             action_type=ActionType.lift,
-                            next_position_wait_time=200
+                            next_position_wait_time=1000
                         ).to_dict(),
                         Position(
                             x=456,
