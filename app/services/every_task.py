@@ -1,5 +1,6 @@
 import asyncio
 import random
+from asyncio import sleep
 from typing import Any
 
 from fastapi import HTTPException
@@ -8,7 +9,7 @@ from loguru import logger
 from app.config import clash_install_url, script_install_url, temple_id_list
 from app.curd.status import update_cloud_status
 from app.dependencies.utils import start_app, install_app, \
-    check_padTaskDetail, replace_pad
+    check_padTaskDetail, replace_pad, click, Position, ActionType
 
 
 async def start_app_state(package_name, pad_code, task_manager):
@@ -35,6 +36,70 @@ async def start_app_state(package_name, pad_code, task_manager):
 
                 case 1:
                     logger.success(f"{pad_code}: 启动app成功")
+                    await click([pad_code], [
+                        Position(
+                            x=559,
+                            y=2056,
+                            action_type=ActionType.press,
+                            next_position_wait_time=10
+                        ).to_dict(),
+                        Position(
+                            x=559,
+                            y=2056,
+                            action_type=ActionType.lift,
+                            next_position_wait_time=100
+                        ).to_dict(),
+                        Position(
+                            x=1003,
+                            y=671,
+                            action_type=ActionType.press,
+                            next_position_wait_time=10
+                        ).to_dict(),
+                        Position(
+                            x=1003,
+                            y=671,
+                            action_type=ActionType.lift,
+                            next_position_wait_time=100
+                        ).to_dict(),
+                        Position(
+                            x=456,
+                            y=674,
+                            action_type=ActionType.press,
+                            next_position_wait_time=10
+                        ).to_dict(),
+                        Position(
+                            x=456,
+                            y=674,
+                            action_type=ActionType.lift
+                        ).to_dict()
+                    ])
+                    await sleep(10)
+                    await click([pad_code], [
+                        Position(
+                            x=1003,
+                            y=671,
+                            action_type=ActionType.press,
+                            next_position_wait_time=10
+                        ).to_dict(),
+                        Position(
+                            x=1003,
+                            y=671,
+                            action_type=ActionType.lift,
+                            next_position_wait_time=200
+                        ).to_dict(),
+                        Position(
+                            x=456,
+                            y=674,
+                            action_type=ActionType.press,
+                            next_position_wait_time=10
+                        ).to_dict(),
+                        Position(
+                            x=456,
+                            y=674,
+                            action_type=ActionType.lift
+                        ).to_dict()
+                    ])
+                    logger.success("点击启动成功")
                     break
             total_try_count += 1
 

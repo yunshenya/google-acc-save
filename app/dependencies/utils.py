@@ -1,5 +1,7 @@
 from loguru import logger
-
+from dataclasses import dataclass
+from enum import Enum
+from typing import Optional
 from app.dependencies.auth import VmosUtil
 
 
@@ -49,6 +51,51 @@ async def start_app(pad_code_list:list, pkg_name: str) -> list:
 
     return await VmosUtil(start_app_url, body).send()
 
+
+class ActionType(Enum):
+    press = 0
+    lift = 1
+    touching = 2
+
+
+@dataclass
+class Position:
+    action_type: ActionType
+    x: int
+    y: int
+    next_position_wait_time: Optional[int] = None
+
+    def __init__(self, action_type: ActionType, x: int, y: int, next_position_wait_time: Optional[int] = None):
+        self.action_type = action_type
+        self.x = x
+        self.y = y
+        self.next_position_wait_time = next_position_wait_time
+
+    def to_dict(self) -> dict:
+
+        result = {
+            "actionType": self.action_type.value,
+            "x": self.x,
+            "y": self.y
+        }
+        if self.next_position_wait_time is not None:
+            result["nextPositionWaitTime"] = self.next_position_wait_time
+        return result
+
+
+async def click(pad_code_list: list[str], positions: list,
+          width: int = 1080,
+          height: int = 2160) -> str:
+    click_url = "/vcpcloud/api/padApi/simulateTouch"
+    body = {
+        "padCodes": pad_code_list,
+        "width": width,
+        "height": height,
+        "positions": positions
+    }
+
+
+    return await VmosUtil(click_url, body).send()
 
 async def replacement(pad_code:str) -> dict[str, str]:
     replace_ment_url = "/vcpcloud/api/padApi/replacement"

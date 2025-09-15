@@ -8,7 +8,7 @@ DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager
 
 pad_code_list =  [] if DEBUG else ["AC32011030882","AC32010790283"]
 
-pkg_name = "com.aaee8h0kh.cejwrh616"
+pkg_name = "com.feasfc.grsrf"
 
 default_proxy = {
     "country": "摩洛哥",
@@ -20,11 +20,11 @@ default_proxy = {
     "longitude": -5.7909
 }
 
-temple_id_list = [744, 832, 808, 804, 714, 864,781, 807]
+temple_id_list = [437]
 
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
 
-script_install_url = "https://file.vmoscloud.com/userFile/e2e5a378f38fc62ebfecda5456875edb.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/fbb82f68e8ab56de90922150a30a254a.apk"
 
 global_timeout_minute = 10
 

@@ -51,8 +51,8 @@ async def startup_event(app: FastAPI):
         template_id=random.choice(temple_id_list)
         await add_cloud_status(pad_code, template_id)
         await set_proxy_status(pad_code, default_proxy)
-        # result = await replace_pad([pad_code], template_id=template_id)
-        # logger.info(f"已启动: {pad_code}，执行结果为: {result['msg']}")
+        result = await replace_pad([pad_code], template_id=template_id)
+        logger.info(f"已启动: {pad_code}，执行结果为: {result['msg']}")
 
     # 创建数据库表
     async with engine.begin() as conn:
