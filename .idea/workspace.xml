@@ -4,11 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="设置单个代理">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="最新版">
       <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -388,15 +385,7 @@
       <workItem from="1757900647123" duration="1171000" />
       <workItem from="1757907913472" duration="8000" />
       <workItem from="1757912742406" duration="663000" />
-      <workItem from="1757916293269" duration="5484000" />
-    </task>
-    <task id="LOCAL-00050" summary="增加一个创建时间字段">
-      <option name="closed" value="true" />
-      <created>1754985502040</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1754985502041</updated>
+      <workItem from="1757916293269" duration="6090000" />
     </task>
     <task id="LOCAL-00051" summary="增加一些判断">
       <option name="closed" value="true" />
@@ -782,7 +771,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757918612474</updated>
     </task>
-    <option name="localTasksCounter" value="99" />
+    <task id="LOCAL-00099" summary="最新版">
+      <option name="closed" value="true" />
+      <created>1757922999058</created>
+      <option name="number" value="00099" />
+      <option name="presentableId" value="LOCAL-00099" />
+      <option name="project" value="LOCAL" />
+      <updated>1757922999058</updated>
+    </task>
+    <option name="localTasksCounter" value="100" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -804,7 +801,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="添加代理管理器" />
     <MESSAGE value="移除无用的参数，简化耦合性" />
     <MESSAGE value="调整日志等级" />
     <MESSAGE value="新增删除接口" />
@@ -829,6 +825,7 @@
     <MESSAGE value="修复多次设置新机的bug" />
     <MESSAGE value="开始时随机模板" />
     <MESSAGE value="设置单个代理" />
-    <option name="LAST_COMMIT_MESSAGE" value="设置单个代理" />
+    <MESSAGE value="最新版" />
+    <option name="LAST_COMMIT_MESSAGE" value="最新版" />
   </component>
 </project>
