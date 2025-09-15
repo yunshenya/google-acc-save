@@ -99,7 +99,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                             action_type=ActionType.lift
                         ).to_dict()
                     ])
-                    logger.success("点击启动成功")
+                    logger.success(f"{pad_code}：安装包点击成功")
                     break
             total_try_count += 1
 
