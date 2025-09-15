@@ -35,7 +35,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                     await asyncio.sleep(2)
 
                 case 1:
-                    logger.success(f"{pad_code}: 启动app成功")
+                    await sleep(10)
                     await click([pad_code], [
                         Position(
                             x=559,
@@ -73,7 +73,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                             action_type=ActionType.lift
                         ).to_dict()
                     ])
-                    await sleep(10)
+                    await sleep(3)
                     await click([pad_code], [
                         Position(
                             x=1003,
@@ -99,7 +99,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                             action_type=ActionType.lift
                         ).to_dict()
                     ])
-                    logger.success(f"{pad_code}：安装包点击成功")
+                    logger.success(f"{pad_code}: 启动app成功")
                     break
             total_try_count += 1
 
