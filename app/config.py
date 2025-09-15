@@ -6,7 +6,7 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
 
-pad_code_list =  [] if DEBUG else []
+pad_code_list =  [] if DEBUG else ["AC32011030882","AC32010790283"]
 
 pkg_name = "com.aaee8h0kh.cejwrh616"
 

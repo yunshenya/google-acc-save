@@ -11,7 +11,11 @@ CREATE TABLE cloud_status (
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               code varchar(100),
-                              latitude float
+                              latitude float,
+                              proxy VARCHAR(100),
+                              longitude float,
+                              language VARCHAR(100),
+                              time_zone VARCHAR(100)
 
 );
 
