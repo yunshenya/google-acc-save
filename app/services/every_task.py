@@ -85,7 +85,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                             x=1003,
                             y=671,
                             action_type=ActionType.lift,
-                            next_position_wait_time=1000
+                            next_position_wait_time=2000
                         ).to_dict(),
                         Position(
                             x=456,
