@@ -27,7 +27,7 @@ async def index(request: Request):
 
 @router.get("/favicon.ico")
 async def favicon() -> FileResponse:
-    return FileResponse("static/favicon.ico")
+    return FileResponse("static/img/favicon.ico")
 
 
 @router.post("/status")
