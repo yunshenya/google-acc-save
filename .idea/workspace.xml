@@ -4,20 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="修改后">
-      <change afterPath="$PROJECT_DIR$/app/dependencies/auth_middleware.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/auth.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加登录页面">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -500,15 +489,8 @@
       <workItem from="1757992733366" duration="34000" />
       <workItem from="1758003633608" duration="131000" />
       <workItem from="1758014833617" duration="5266000" />
-      <workItem from="1758020128764" duration="772000" />
-    </task>
-    <task id="LOCAL-00062" summary="完善了获取云机的api">
-      <option name="closed" value="true" />
-      <created>1755148850216</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1755148850216</updated>
+      <workItem from="1758020128764" duration="2480000" />
+      <workItem from="1758022658016" duration="320000" />
     </task>
     <task id="LOCAL-00063" summary="完善了获取云机的api">
       <option name="closed" value="true" />
@@ -894,7 +876,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758018212866</updated>
     </task>
-    <option name="localTasksCounter" value="111" />
+    <task id="LOCAL-00111" summary="增加登录页面">
+      <option name="closed" value="true" />
+      <created>1758020922912</created>
+      <option name="number" value="00111" />
+      <option name="presentableId" value="LOCAL-00111" />
+      <option name="project" value="LOCAL" />
+      <updated>1758020922912</updated>
+    </task>
+    <option name="localTasksCounter" value="112" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -916,7 +906,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="调整日志等级" />
     <MESSAGE value="新增删除接口" />
     <MESSAGE value="解决类型报错问题" />
     <MESSAGE value="添加前端页面" />
@@ -941,6 +930,7 @@
     <MESSAGE value="设置单个代理" />
     <MESSAGE value="最新版" />
     <MESSAGE value="修改后" />
-    <option name="LAST_COMMIT_MESSAGE" value="修改后" />
+    <MESSAGE value="增加登录页面" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加登录页面" />
   </component>
 </project>
