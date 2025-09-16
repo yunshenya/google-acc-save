@@ -212,10 +212,9 @@ class TaskManager:
                                                    longitude=current_proxy.longitude)
 
                             await asyncio.sleep(10)
-                            await update_cloud_status(pad_code=pad_code, current_status="开始重启")
+                            await update_cloud_status(pad_code=pad_code, current_status="开始启动应用")
                             await start_app_state(package_name=pkg_name, pad_code=pad_code, task_manager=task_manager)
 
-                            # 只完成主任务，保留超时任务等待 /status 接口调用
                             await self.complete_main_task(pad_code)
                             return True
                         else:

@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="修改后">
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -487,15 +488,7 @@
       <workItem from="1757991698426" duration="659000" />
       <workItem from="1757992733366" duration="34000" />
       <workItem from="1758003633608" duration="131000" />
-      <workItem from="1758014833617" duration="2651000" />
-    </task>
-    <task id="LOCAL-00059" summary="完善了获取云机的api">
-      <option name="closed" value="true" />
-      <created>1755142442378</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
-      <option name="project" value="LOCAL" />
-      <updated>1755142442378</updated>
+      <workItem from="1758014833617" duration="3246000" />
     </task>
     <task id="LOCAL-00060" summary="完善了获取云机的api">
       <option name="closed" value="true" />
@@ -881,7 +874,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758016412449</updated>
     </task>
-    <option name="localTasksCounter" value="108" />
+    <task id="LOCAL-00108" summary="修改后">
+      <option name="closed" value="true" />
+      <created>1758017498737</created>
+      <option name="number" value="00108" />
+      <option name="presentableId" value="LOCAL-00108" />
+      <option name="project" value="LOCAL" />
+      <updated>1758017498737</updated>
+    </task>
+    <option name="localTasksCounter" value="109" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
