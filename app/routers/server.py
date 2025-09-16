@@ -1,12 +1,10 @@
 import random
 
 from fastapi import APIRouter
-from fastapi import Request
 from fastapi.responses import FileResponse
-from fastapi.templating import Jinja2Templates
 from loguru import logger
+from starlette.responses import HTMLResponse
 
-from app.config import DEBUG
 from app.config import pad_code_list, pkg_name, temple_id_list
 from app.curd.status import update_cloud_status
 from app.dependencies.utils import replace_pad
@@ -20,10 +18,21 @@ router = APIRouter()
 task_manager = TaskManager()
 
 
-@router.get("/")
-async def index(request: Request):
-    templates = Jinja2Templates(directory="templates")
-    return templates.TemplateResponse("index.html", {"request": request, "debug": "true" if DEBUG else "false"})
+@router.get("/login", response_class=HTMLResponse)
+async def login_page():
+    """登录页面"""
+    with open("templates/login.html", "r", encoding="utf-8") as f:
+        content = f.read()
+    return HTMLResponse(content=content)
+
+# 修改现有的首页路由，添加认证检查
+@router.get("/", response_class=HTMLResponse)
+async def index():
+    """主页 - 需要认证"""
+    with open("templates/index.html", "r", encoding="utf-8") as f:
+        content = f.read()
+    return HTMLResponse(content=content)
+
 
 @router.get("/favicon.ico")
 async def favicon() -> FileResponse:

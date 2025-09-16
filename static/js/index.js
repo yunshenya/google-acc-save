@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // DOM元素
+    // 认证检查
+    checkAuthStatus();
+
+    // DOM元素 - 原有元素
     const fetchAllBtn = document.getElementById('fetchAll');
     const fetchPageBtn = document.getElementById('fetchPage');
     const fetchSingleBtn = document.getElementById('fetchSingle');
@@ -27,6 +30,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const paginationInfo = document.getElementById('paginationInfo');
     const progressBar = document.getElementById('progressBar');
 
+    // DOM元素 - 新增元素
+    const statusTableBody = document.getElementById('statusTableBody');
+    const toggleViewBtn = document.getElementById('toggleView');
+    const accountsSection = document.getElementById('accountsSection');
+    const statusSection = document.getElementById('statusSection');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const refreshAllStatusBtn = document.getElementById('refreshAllStatus');
+    const statusEmptyState = document.getElementById('statusEmptyState');
 
     // 状态变量
     let allAccounts = [];
@@ -36,6 +47,10 @@ document.addEventListener('DOMContentLoaded', function() {
     let totalPages = 0;
     let isFetching = false;
     let fetchMode = 'none'; // 'all', 'page', 'single'
+
+    // 新增状态变量
+    let currentView = 'accounts'; // 'accounts' or 'status'
+    let statusUpdateInterval = null;
 
     // 初始化
     init();
@@ -47,28 +62,100 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setupEventListeners() {
         // 获取数据按钮
-        fetchAllBtn.addEventListener('click', fetchAllAccounts);
-        fetchPageBtn.addEventListener('click', fetchAccountsByPage);
-        fetchSingleBtn.addEventListener('click', fetchSingleAccount);
-        fetchSingleLockBtn.addEventListener('click', fetchSingleAccountLocked);
+        fetchAllBtn && fetchAllBtn.addEventListener('click', fetchAllAccounts);
+        fetchPageBtn && fetchPageBtn.addEventListener('click', fetchAccountsByPage);
+        fetchSingleBtn && fetchSingleBtn.addEventListener('click', fetchSingleAccount);
+        fetchSingleLockBtn && fetchSingleLockBtn.addEventListener('click', fetchSingleAccountLocked);
 
         // 分页控制
-        firstPageBtn.addEventListener('click', () => goToPage(1));
-        prevPageBtn.addEventListener('click', () => goToPage(currentPage - 1));
-        nextPageBtn.addEventListener('click', () => goToPage(currentPage + 1));
-        lastPageBtn.addEventListener('click', () => goToPage(totalPages));
+        firstPageBtn && firstPageBtn.addEventListener('click', () => goToPage(1));
+        prevPageBtn && prevPageBtn.addEventListener('click', () => goToPage(currentPage - 1));
+        nextPageBtn && nextPageBtn.addEventListener('click', () => goToPage(currentPage + 1));
+        lastPageBtn && lastPageBtn.addEventListener('click', () => goToPage(totalPages));
 
         // 筛选和搜索
-        applyFiltersBtn.addEventListener('click', applyFilters);
-        resetFiltersBtn.addEventListener('click', resetFilters);
-        searchInput.addEventListener('keyup', debounce(applyFilters, 300));
+        applyFiltersBtn && applyFiltersBtn.addEventListener('click', applyFilters);
+        resetFiltersBtn && resetFiltersBtn.addEventListener('click', resetFilters);
+        searchInput && searchInput.addEventListener('keyup', debounce(applyFilters, 300));
 
         // 其他功能
-        maskPasswordsCheck.addEventListener('change', togglePasswordMask);
-        exportCSVBtn.addEventListener('click', exportToCSV);
+        maskPasswordsCheck && maskPasswordsCheck.addEventListener('change', togglePasswordMask);
+        exportCSVBtn && exportCSVBtn.addEventListener('click', exportToCSV);
 
         // 监听滚动事件实现无限滚动
-        tableContainer.addEventListener('scroll', debounce(handleScroll, 200));
+        tableContainer && tableContainer.addEventListener('scroll', debounce(handleScroll, 200));
+
+        // 新增事件监听器
+        toggleViewBtn && toggleViewBtn.addEventListener('click', toggleView);
+        logoutBtn && logoutBtn.addEventListener('click', logout);
+        refreshAllStatusBtn && refreshAllStatusBtn.addEventListener('click', fetchCloudStatus);
+    }
+
+    // 认证相关函数
+    function getAuthToken() {
+        return localStorage.getItem('access_token');
+    }
+
+    function getAuthHeaders() {
+        const token = getAuthToken();
+        return token ? {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        } : {
+            'Content-Type': 'application/json'
+        };
+    }
+
+    async function checkAuthStatus() {
+        const token = getAuthToken();
+        if (!token) {
+            redirectToLogin();
+            return;
+        }
+
+        try {
+            const response = await fetch('/auth/verify', {
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                redirectToLogin();
+                return;
+            }
+        } catch (error) {
+            console.error('认证检查失败:', error);
+            redirectToLogin();
+            return;
+        }
+    }
+
+    function redirectToLogin() {
+        window.location.href = '/login';
+    }
+
+    function logout() {
+        localStorage.removeItem('access_token');
+        redirectToLogin();
+    }
+
+    // 修改所有的 fetch 请求以包含认证头
+    async function authenticatedFetch(url, options = {}) {
+        const headers = getAuthHeaders();
+
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                ...headers,
+                ...options.headers
+            }
+        });
+
+        if (response.status === 401) {
+            redirectToLogin();
+            return;
+        }
+
+        return response;
     }
 
     // 防抖函数
@@ -85,65 +172,73 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 显示加载进度
     function updateProgress(progress) {
-        progressBar.style.width = `${progress}%`;
+        if (progressBar) {
+            progressBar.style.width = `${progress}%`;
+        }
     }
 
     // 显示加载状态
     function showLoading() {
         isFetching = true;
-        loadingElement.style.display = 'flex';
-        errorElement.style.display = 'none';
+        if (loadingElement) loadingElement.style.display = 'flex';
+        if (errorElement) errorElement.style.display = 'none';
         updateUI();
     }
 
     // 隐藏加载状态
     function hideLoading() {
         isFetching = false;
-        loadingElement.style.display = 'none';
+        if (loadingElement) loadingElement.style.display = 'none';
         updateProgress(0);
         updateUI();
     }
 
     // 显示错误信息
     function showError(message) {
-        errorMessage.textContent = message;
-        errorElement.style.display = 'flex';
+        if (errorMessage) errorMessage.textContent = message;
+        if (errorElement) errorElement.style.display = 'flex';
         console.error(message);
     }
 
     // 更新UI状态
     function updateUI() {
         // 禁用/启用按钮
-        fetchAllBtn.disabled = isFetching;
-        fetchPageBtn.disabled = isFetching;
-        fetchSingleBtn.disabled = isFetching || !accountIdInput.value;
-        fetchSingleLockBtn.disabled = isFetching || !accountIdInput.value;
-        applyFiltersBtn.disabled = isFetching;
+        if (fetchAllBtn) fetchAllBtn.disabled = isFetching;
+        if (fetchPageBtn) fetchPageBtn.disabled = isFetching;
+        if (fetchSingleBtn) fetchSingleBtn.disabled = isFetching || !accountIdInput?.value;
+        if (fetchSingleLockBtn) fetchSingleLockBtn.disabled = isFetching || !accountIdInput?.value;
+        if (applyFiltersBtn) applyFiltersBtn.disabled = isFetching;
 
         // 分页控制
-        firstPageBtn.disabled = currentPage === 1 || isFetching;
-        prevPageBtn.disabled = currentPage === 1 || isFetching;
-        nextPageBtn.disabled = currentPage === totalPages || isFetching;
-        lastPageBtn.disabled = currentPage === totalPages || isFetching;
+        if (firstPageBtn) firstPageBtn.disabled = currentPage === 1 || isFetching;
+        if (prevPageBtn) prevPageBtn.disabled = currentPage === 1 || isFetching;
+        if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages || isFetching;
+        if (lastPageBtn) lastPageBtn.disabled = currentPage === totalPages || isFetching;
 
         // 只有在分页模式下才显示分页控件
-        if (fetchMode === 'page' && filteredAccounts.length > 0) {
-            pagination.style.display = 'flex';
-            updatePaginationUI();
-        } else {
-            pagination.style.display = 'none';
+        if (pagination) {
+            if (fetchMode === 'page' && filteredAccounts.length > 0) {
+                pagination.style.display = 'flex';
+                updatePaginationUI();
+            } else {
+                pagination.style.display = 'none';
+            }
         }
 
         // 显示/隐藏空状态
-        if (filteredAccounts.length === 0 && !isFetching) {
-            emptyState.style.display = 'block';
-        } else {
-            emptyState.style.display = 'none';
+        if (emptyState && currentView === 'accounts') {
+            if (filteredAccounts.length === 0 && !isFetching) {
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+            }
         }
     }
 
     // 更新分页UI
     function updatePaginationUI() {
+        if (!pageNumbers) return;
+
         // 清空页码按钮
         pageNumbers.innerHTML = '';
 
@@ -170,9 +265,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // 更新分页信息
-        const startItem = (currentPage - 1) * pageSize + 1;
-        const endItem = Math.min(currentPage * pageSize, filteredAccounts.length);
-        paginationInfo.textContent = `显示 ${startItem}-${endItem} 条，共 ${filteredAccounts.length} 条记录`;
+        if (paginationInfo) {
+            const startItem = (currentPage - 1) * pageSize + 1;
+            const endItem = Math.min(currentPage * pageSize, filteredAccounts.length);
+            paginationInfo.textContent = `显示 ${startItem}-${endItem} 条，共 ${filteredAccounts.length} 条记录`;
+        }
     }
 
     // 跳转到指定页
@@ -182,12 +279,12 @@ document.addEventListener('DOMContentLoaded', function() {
         currentPage = page;
         renderAccounts(getPaginatedAccounts());
         updateUI();
-        tableContainer.scrollTo(0, 0);
+        if (tableContainer) tableContainer.scrollTo(0, 0);
     }
 
     // 处理滚动事件
     function handleScroll() {
-        if (fetchMode !== 'page' || isFetching) return;
+        if (fetchMode !== 'page' || isFetching || !tableContainer) return;
 
         const { scrollTop, scrollHeight, clientHeight } = tableContainer;
         const isNearBottom = scrollTop + clientHeight >= scrollHeight - 50;
@@ -199,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 清空表格
     function clearTable() {
-        accountsBody.innerHTML = '';
+        if (accountsBody) accountsBody.innerHTML = '';
     }
 
     // 格式化日期时间
@@ -246,7 +343,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 使用文档片段提高性能
         const fragment = document.createDocumentFragment();
-        const maskPasswords = maskPasswordsCheck.checked;
+        const maskPasswords = maskPasswordsCheck?.checked || false;
 
         accounts.forEach(account => {
             const row = document.createElement('tr');
@@ -282,12 +379,12 @@ document.addEventListener('DOMContentLoaded', function() {
             fragment.appendChild(row);
         });
 
-        accountsBody.appendChild(fragment);
+        if (accountsBody) accountsBody.appendChild(fragment);
 
         // 添加查看按钮事件
         document.querySelectorAll('.view-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                accountIdInput.value = this.getAttribute('data-id');
+                if (accountIdInput) accountIdInput.value = this.getAttribute('data-id');
                 fetchSingleAccount().then(() => {});
             });
         });
@@ -303,11 +400,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // 模拟分块加载进度
             updateProgress(10);
 
-            const response = await fetch(`/accounts`);
+            const response = await authenticatedFetch(`/accounts`);
             updateProgress(30);
 
-            if (!response.ok) {
-                new Error(`HTTP错误! 状态码: ${response.status}`);
+            if (!response || !response.ok) {
+                throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
             }
 
             const data = await response.json();
@@ -337,10 +434,10 @@ document.addEventListener('DOMContentLoaded', function() {
             currentPage = 1;
 
             // 这里假设后端支持分页参数，如果实际不支持，需要在前端处理
-            const response = await fetch(`/accounts`);
+            const response = await authenticatedFetch(`/accounts`);
 
-            if (!response.ok) {
-                new Error(`HTTP错误! 状态码: ${response.status}`);
+            if (!response || !response.ok) {
+                throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
             }
 
             allAccounts = await response.json();
@@ -359,7 +456,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 获取单个账户（不加锁）
     async function fetchSingleAccount() {
-        const accountId = accountIdInput.value.trim();
+        const accountId = accountIdInput?.value?.trim();
 
         if (!accountId) {
             showError('请输入账户ID');
@@ -371,10 +468,10 @@ document.addEventListener('DOMContentLoaded', function() {
             clearTable();
             fetchMode = 'single';
 
-            const response = await fetch(`/accounts/${accountId}`);
+            const response = await authenticatedFetch(`/accounts/${accountId}`);
 
-            if (!response.ok) {
-                new Error(`HTTP错误! 状态码: ${response.status}`);
+            if (!response || !response.ok) {
+                throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
             }
 
             const data = await response.json();
@@ -393,7 +490,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 获取单个账户（加锁）
     async function fetchSingleAccountLocked() {
-        const accountId = accountIdInput.value.trim();
+        const accountId = accountIdInput?.value?.trim();
 
         if (!accountId) {
             showError('请输入账户ID');
@@ -405,10 +502,10 @@ document.addEventListener('DOMContentLoaded', function() {
             clearTable();
             fetchMode = 'single';
 
-            const response = await fetch(`/account/${accountId}`);
+            const response = await authenticatedFetch(`/account/unique`);
 
-            if (!response.ok) {
-                new Error(`HTTP错误! 状态码: ${response.status}`);
+            if (!response || !response.ok) {
+                throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
             }
 
             const data = await response.json();
@@ -432,9 +529,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const searchTerm = searchInput.value.toLowerCase();
-        const statusValue = statusFilter.value;
-        const typeValue = typeFilter.value;
+        const searchTerm = searchInput?.value?.toLowerCase() || '';
+        const statusValue = statusFilter?.value || '';
+        const typeValue = typeFilter?.value || '';
 
         filteredAccounts = allAccounts.filter(account => {
             // 搜索条件
@@ -460,9 +557,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 重置筛选条件
     function resetFilters() {
-        searchInput.value = '';
-        statusFilter.value = '';
-        typeFilter.value = '';
+        if (searchInput) searchInput.value = '';
+        if (statusFilter) statusFilter.value = '';
+        if (typeFilter) typeFilter.value = '';
         applyFilters();
     }
 
@@ -515,6 +612,124 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('导出CSV失败:', error);
         }
     }
+
+    // 实时状态功能
+    async function fetchCloudStatus() {
+        try {
+            const response = await authenticatedFetch('/cloud_status');
+            if (!response || !response.ok) {
+                throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
+            }
+            const statusData = await response.json();
+            renderStatusTable(statusData);
+        } catch (error) {
+            console.error('获取状态失败:', error);
+            showError(`获取云机状态失败: ${error.message}`);
+        }
+    }
+
+    function renderStatusTable(statusData) {
+        if (!statusTableBody) return;
+
+        statusTableBody.innerHTML = '';
+
+        if (!Array.isArray(statusData) || statusData.length === 0) {
+            if (statusEmptyState) statusEmptyState.style.display = 'block';
+            statusTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">暂无状态数据</td></tr>';
+            return;
+        }
+
+        if (statusEmptyState) statusEmptyState.style.display = 'none';
+
+        statusData.forEach(status => {
+            const row = document.createElement('tr');
+
+            // 根据状态设置样式
+            const statusClass = getStatusClass(status.current_status);
+
+            row.innerHTML = `
+                <td>${status.pad_code}</td>
+                <td class="${statusClass}">${status.current_status || '未知'}</td>
+                <td>${status.number_of_run}</td>
+                <td>${status.temple_id}</td>
+                <td>${status.phone_number_counts}</td>
+                <td>${status.country || '未设置'}</td>
+                <td>${formatDateTime(status.updated_at)}</td>
+                <td>
+                    <button class="status-btn" onclick="refreshSingleStatus('${status.pad_code}')">刷新</button>
+                </td>
+            `;
+
+            statusTableBody.appendChild(row);
+        });
+    }
+
+    function getStatusClass(status) {
+        if (!status) return '';
+
+        const statusLower = status.toLowerCase();
+        if (statusLower.includes('成功') || statusLower.includes('完成')) {
+            return 'status-success';
+        } else if (statusLower.includes('失败') || statusLower.includes('错误')) {
+            return 'status-error';
+        } else if (statusLower.includes('进行中') || statusLower.includes('安装中') || statusLower.includes('启动中')) {
+            return 'status-running';
+        } else if (statusLower.includes('等待') || statusLower.includes('准备')) {
+            return 'status-pending';
+        }
+        return 'status-info';
+    }
+
+    function toggleView() {
+        if (currentView === 'accounts') {
+            currentView = 'status';
+            if (accountsSection) accountsSection.style.display = 'none';
+            if (statusSection) statusSection.style.display = 'block';
+            if (toggleViewBtn) toggleViewBtn.textContent = '切换到账户管理';
+            startStatusUpdates();
+        } else {
+            currentView = 'accounts';
+            if (accountsSection) accountsSection.style.display = 'block';
+            if (statusSection) statusSection.style.display = 'none';
+            if (toggleViewBtn) toggleViewBtn.textContent = '切换到状态监控';
+            stopStatusUpdates();
+        }
+    }
+
+    function startStatusUpdates() {
+        fetchCloudStatus(); // 立即获取一次
+        statusUpdateInterval = setInterval(fetchCloudStatus, 3000); // 每3秒更新一次
+    }
+
+    function stopStatusUpdates() {
+        if (statusUpdateInterval) {
+            clearInterval(statusUpdateInterval);
+            statusUpdateInterval = null;
+        }
+    }
+
+    async function refreshSingleStatus(padCode) {
+        try {
+            const response = await authenticatedFetch('/cloud_status', {
+                method: 'POST',
+                body: JSON.stringify({ pad_code: padCode })
+            });
+
+            if (response && response.ok) {
+                fetchCloudStatus(); // 刷新整个状态表
+            }
+        } catch (error) {
+            console.error('刷新单个状态失败:', error);
+        }
+    }
+
+    // 页面卸载时清理定时器
+    window.addEventListener('beforeunload', function() {
+        stopStatusUpdates();
+    });
+
+    // 将 refreshSingleStatus 函数暴露到全局，以便在 HTML 中使用
+    window.refreshSingleStatus = refreshSingleStatus;
 });
 
 // 添加CSS动画

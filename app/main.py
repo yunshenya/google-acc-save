@@ -13,16 +13,14 @@ from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.proxy import ProxyResponse
-from app.routers import accounts, proxy, server, status
+from app.routers import accounts, proxy, server, status, auth
 from app.services.database import engine, Base
 
 
 #日志拦截器
 class InterceptHandler(logging.Handler):
     def emit(self, record):
-        # 获取 Loguru 对应的日志级别
         level = logger.level(record.levelname).name
-        # 将日志记录传递给 Loguru
         logger.opt(depth=6, exception=record.exc_info).log(level, record.getMessage())
 
 
@@ -41,6 +39,7 @@ async def startup_event(app: FastAPI):
     # 加载代理国家列表
     load_proxy_countries()
     app.mount("/static", StaticFiles(directory="static"), name="static")
+    app.include_router(auth.router, prefix="/auth", tags=["认证"])
     app.include_router(accounts.router, prefix="")
     app.include_router(proxy.router, prefix="")
     app.include_router(server.router, prefix="")

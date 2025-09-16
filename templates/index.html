@@ -10,7 +10,13 @@
 <div class="progress-bar" id="progressBar"></div>
 
 <div class="container">
-    <h1>账户管理系统</h1>
+    <div class="header-controls">
+        <h1>账户管理系统</h1>
+        <div class="header-buttons">
+            <button id="toggleView" class="secondary">切换到状态监控</button>
+            <button id="logoutBtn" class="logout-btn">退出登录</button>
+        </div>
+    </div>
 
     <div id="error" class="error" style="display: none;">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
@@ -19,91 +25,136 @@
         <span id="errorMessage"></span>
     </div>
 
-    <div class="controls">
-        <div class="control-group">
-            <button id="fetchAll">获取全部账户</button>
-            <button id="fetchPage" class="secondary">分页获取</button>
+    <!-- 账户管理部分 -->
+    <div id="accountsSection">
+        <div class="controls">
+            <div class="control-group">
+                <button id="fetchAll">获取全部账户</button>
+                <button id="fetchPage" class="secondary">分页获取</button>
+            </div>
+
+            <div class="control-group">
+                <input type="number" id="accountId" placeholder="输入账户ID" min="0">
+                <button id="fetchSingle">获取单个账户</button>
+                <button id="fetchSingleLock">获取单个(加锁)</button>
+            </div>
+
+            <input type="text" id="searchInput" class="search-box" placeholder="搜索账号或代码...">
         </div>
 
-        <div class="control-group">
-            <input type="number" id="accountId" placeholder="输入账户ID" min="0">
-            <button id="fetchSingle">获取单个账户</button>
-            <button id="fetchSingleLock">获取单个(加锁)</button>
+        <div class="controls">
+            <div class="control-group">
+                <select id="statusFilter">
+                    <option value="">所有状态</option>
+                    <option value="1">活跃</option>
+                    <option value="0">禁用</option>
+                </select>
+                <select id="typeFilter">
+                    <option value="">所有类型</option>
+                    <option value="0">类型 0</option>
+                    <option value="1">类型 1</option>
+                    <option value="2">类型 2</option>
+                </select>
+                <button id="applyFilters">应用筛选</button>
+                <button id="resetFilters" class="secondary">重置</button>
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <input type="checkbox" id="maskPasswords" checked> 隐藏密码
+                </label>
+                <button id="exportCSV">导出CSV</button>
+            </div>
         </div>
 
-        <input type="text" id="searchInput" class="search-box" placeholder="搜索账号或代码...">
+        <div class="table-container" id="tableContainer">
+            <div id="loading" class="loading" style="display: none;">
+                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="var(--dark-gray)" style="animation: spin 1s linear infinite;">
+                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
+                    <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"/>
+                </svg>
+                <div>加载中...</div>
+            </div>
+
+            <table id="accountsTable">
+                <thead>
+                <tr>
+                    <th width="80px">ID</th>
+                    <th width="150px">账号</th>
+                    <th width="120px">密码</th>
+                    <th width="80px">类型</th>
+                    <th width="100px">状态</th>
+                    <th width="120px">代码</th>
+                    <th width="180px">创建时间</th>
+                    <th width="100px">操作</th>
+                </tr>
+                </thead>
+                <tbody id="accountsBody">
+                <!-- 数据将通过JavaScript动态填充 -->
+                </tbody>
+            </table>
+
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3>没有数据</h3>
+                <p>点击"获取全部账户"或"分页获取"按钮加载数据</p>
+            </div>
+        </div>
+
+        <div class="pagination" id="pagination" style="display: none;">
+            <button id="firstPage">首页</button>
+            <button id="prevPage">上一页</button>
+            <span id="pageNumbers" style="display: flex; align-items: center; padding: 0 10px;"></span>
+            <button id="nextPage">下一页</button>
+            <button id="lastPage">末页</button>
+        </div>
+
+        <div class="pagination-info" id="paginationInfo"></div>
     </div>
 
-    <div class="controls">
-        <div class="control-group">
-            <select id="statusFilter">
-                <option value="">所有状态</option>
-                <option value="1">活跃</option>
-                <option value="0">禁用</option>
-            </select>
-            <select id="typeFilter">
-                <option value="">所有类型</option>
-                <option value="0">类型 0</option>
-                <option value="1">类型 1</option>
-                <option value="2">类型 2</option>
-            </select>
-            <button id="applyFilters">应用筛选</button>
-            <button id="resetFilters" class="secondary">重置</button>
+    <!-- 状态监控部分 -->
+    <div id="statusSection" style="display: none;">
+        <div class="status-header">
+            <h2>云机状态实时监控</h2>
+            <div class="status-controls">
+                <button id="refreshAllStatus">刷新所有状态</button>
+                <span class="auto-update-indicator">
+                    <span class="pulse-dot"></span>
+                    自动更新中 (每3秒)
+                </span>
+            </div>
         </div>
 
-        <div class="control-group">
-            <label>
-                <input type="checkbox" id="maskPasswords" checked> 隐藏密码
-            </label>
-            <button id="exportCSV">导出CSV</button>
-        </div>
-    </div>
+        <div class="table-container">
+            <table id="statusTable">
+                <thead>
+                <tr>
+                    <th width="120px">设备代码</th>
+                    <th width="200px">当前状态</th>
+                    <th width="80px">运行次数</th>
+                    <th width="80px">模板ID</th>
+                    <th width="100px">电话号码数</th>
+                    <th width="100px">国家</th>
+                    <th width="160px">更新时间</th>
+                    <th width="100px">操作</th>
+                </tr>
+                </thead>
+                <tbody id="statusTableBody">
+                <!-- 状态数据将通过JavaScript动态填充 -->
+                </tbody>
+            </table>
 
-    <div class="table-container" id="tableContainer">
-        <div id="loading" class="loading" style="display: none;">
-            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="var(--dark-gray)" style="animation: spin 1s linear infinite;">
-                <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
-                <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"/>
-            </svg>
-            <div>加载中...</div>
-        </div>
-
-        <table id="accountsTable">
-            <thead>
-            <tr>
-                <th width="80px">ID</th>
-                <th width="150px">账号</th>
-                <th width="120px">密码</th>
-                <th width="80px">类型</th>
-                <th width="100px">状态</th>
-                <th width="120px">代码</th>
-                <th width="180px">创建时间</th>
-                <th width="100px">操作</th>
-            </tr>
-            </thead>
-            <tbody id="accountsBody">
-            <!-- 数据将通过JavaScript动态填充 -->
-            </tbody>
-        </table>
-
-        <div id="emptyState" class="empty-state" style="display: none;">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h3>没有数据</h3>
-            <p>点击"获取全部账户"或"分页获取"按钮加载数据</p>
+            <div id="statusEmptyState" class="empty-state" style="display: none;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                <h3>暂无状态数据</h3>
+                <p>系统正在获取云机状态信息...</p>
+            </div>
         </div>
     </div>
-
-    <div class="pagination" id="pagination" style="display: none;">
-        <button id="firstPage">首页</button>
-        <button id="prevPage">上一页</button>
-        <span id="pageNumbers" style="display: flex; align-items: center; padding: 0 10px;"></span>
-        <button id="nextPage">下一页</button>
-        <button id="lastPage">末页</button>
-    </div>
-
-    <div class="pagination-info" id="paginationInfo"></div>
 </div>
 
 <script src="../static/js/index.js"></script>

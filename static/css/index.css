@@ -238,3 +238,188 @@ tr:hover {
         font-size: 13px;
     }
 }
+
+/* 在现有的 static/css/index.css 中添加以下样式 */
+
+/* 头部控制区域 */
+.header-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.logout-btn {
+    background-color: var(--danger-color) !important;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b !important;
+    transform: translateY(-1px);
+}
+
+/* 状态监控相关样式 */
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.status-header h2 {
+    color: var(--text-color);
+    margin: 0;
+    font-size: 24px;
+}
+
+.status-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.auto-update-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--success-color);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--success-color);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 状态相关的样式类 */
+.status-success {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.status-error {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+.status-running {
+    color: var(--primary-color);
+    font-weight: bold;
+    position: relative;
+}
+
+.status-running::after {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    margin-left: 8px;
+    background-color: var(--primary-color);
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+
+.status-pending {
+    color: var(--warning-color);
+    font-weight: bold;
+}
+
+.status-info {
+    color: var(--dark-gray);
+    font-weight: 500;
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0.3;
+    }
+}
+
+.status-btn {
+    background-color: var(--success-color) !important;
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    min-width: auto;
+    border-radius: 3px;
+}
+
+.status-btn:hover {
+    background-color: #219a52 !important;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+    .header-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-buttons {
+        justify-content: center;
+    }
+
+    .status-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .status-controls {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}
+
+/* 表格行悬停效果优化 */
+#statusTable tr:hover {
+    background-color: rgba(46, 204, 113, 0.05);
+}
+
+/* 加载状态优化 */
+.table-container {
+    position: relative;
+}
+
+.loading {
+    background-color: rgba(255, 255, 255, 0.95);
+    z-index: 100;
+}
