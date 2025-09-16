@@ -6,7 +6,7 @@ if __name__ == '__main__':
        header = {"content-type" : "application/json"}
        json = {
            "pad_code": "AC32010790283",
-           "country_code": "nz"
+           "country_code": "ma"
        }
        re = requests.post(url, headers = header, json=json)
        print(re.json())

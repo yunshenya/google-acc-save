@@ -120,34 +120,36 @@ def app_reboot_task_status(data):
             logger.warning(f"{pad_code}: 未知重启id {task_status}")
 
 
+
 async def replace_pad_stak_status(data, task_manager):
     task_status = data.get("taskStatus")
     pad_code = data.get("padCode")
     match TaskStatus(task_status):
         case TaskStatus.COMPLETED:
-            await update_cloud_status(pad_code=pad_code, current_status= "正在安装app")
-            await install_app_task(pad_code_str=pad_code, task_manager=task_manager)
+            await update_cloud_status(pad_code=pad_code, current_status="正在安装app")
+            try:
+                await install_app_task(pad_code_str=pad_code, task_manager=task_manager)
+            except Exception as e:
+                logger.error(f"{pad_code}: 启动安装任务失败: {e}")
+
         case TaskStatus.RUNNING:
-            await update_cloud_status(pad_code=pad_code, current_status= "一键新机执行中")
+            await update_cloud_status(pad_code=pad_code, current_status="一键新机执行中")
             logger.info(f"{pad_code}: 一键新机执行中")
 
         case TaskStatus.PENDING:
-            await update_cloud_status(pad_code=pad_code, current_status= "一键新机等待中")
+            await update_cloud_status(pad_code=pad_code, current_status="一键新机等待中")
             logger.info(f"{pad_code}: 一键新机等待中")
 
-
         case TaskStatus.CANCELLED:
-            await update_cloud_status(pad_code=pad_code, current_status= "一键新机任务取消")
+            await update_cloud_status(pad_code=pad_code, current_status="一键新机任务取消")
             logger.info(f"{pad_code}: 一键新机任务取消")
 
-
         case TaskStatus.TIMEOUT:
-            await update_cloud_status(pad_code=pad_code, current_status= "一键新机任务超时")
+            await update_cloud_status(pad_code=pad_code, current_status="一键新机任务超时")
             logger.info(f"{pad_code}: 一键新机任务超时")
 
-
         case TaskStatus.ALL_FAILED:
-            await update_cloud_status(pad_code=pad_code, current_status= "一键新机任务失败")
+            await update_cloud_status(pad_code=pad_code, current_status="一键新机任务失败")
             logger.info(f"{pad_code}: 一键新机任务失败")
 
 
