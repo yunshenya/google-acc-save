@@ -144,9 +144,9 @@ async def install_app_task(pad_code_str, task_manager):
                                                    app_url=script_install_url, md5=script_md5)
     logger.info(f"脚本安装结果: {script_install_result['msg']}")
     clash_task = asyncio.create_task(
-        task_manager.check_task_status(clash_install_result["data"][0]["taskId"], "Clash"))
+        task_manager.check_task_status(clash_install_result["data"][0]["taskId"], "Clash", task_manager=task_manager))
     script_task = asyncio.create_task(
-        task_manager.check_task_status(script_install_result["data"][0]["taskId"], "Script"))
+        task_manager.check_task_status(script_install_result["data"][0]["taskId"], "Script", task_manager=task_manager))
     try:
         await asyncio.gather(clash_task, script_task)
     except asyncio.CancelledError:

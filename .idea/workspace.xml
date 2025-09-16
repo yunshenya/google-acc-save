@@ -7,6 +7,7 @@
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="最新版">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -470,15 +471,10 @@
       <workItem from="1757933271520" duration="18000" />
       <workItem from="1757933316362" duration="1445000" />
       <workItem from="1757935246026" duration="27000" />
-      <workItem from="1757935281036" duration="1146000" />
-    </task>
-    <task id="LOCAL-00056" summary="增加云机状态">
-      <option name="closed" value="true" />
-      <created>1755076458514</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1755076458514</updated>
+      <workItem from="1757935281036" duration="4842000" />
+      <workItem from="1757942308948" duration="17000" />
+      <workItem from="1757942808384" duration="183000" />
+      <workItem from="1757986344707" duration="2748000" />
     </task>
     <task id="LOCAL-00057" summary="完善了获取云机的api">
       <option name="closed" value="true" />
@@ -864,7 +860,15 @@
       <option name="project" value="LOCAL" />
       <updated>1757930644064</updated>
     </task>
-    <option name="localTasksCounter" value="105" />
+    <task id="LOCAL-00105" summary="最新版">
+      <option name="closed" value="true" />
+      <created>1757936693053</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1757936693054</updated>
+    </task>
+    <option name="localTasksCounter" value="106" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

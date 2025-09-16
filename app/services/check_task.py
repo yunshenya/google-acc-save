@@ -11,8 +11,9 @@ from app.config import clash_install_url, script_install_url, temple_id_list, pk
 from app.curd.status import get_proxy_status
 from app.curd.status import update_cloud_status
 from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, install_app, \
-    replace_pad, update_language, update_time_zone, gps_in_ject_info, reboot
+    replace_pad, update_language, update_time_zone, gps_in_ject_info
 from app.models.proxy import ProxyResponse
+from app.services.every_task import start_app_state
 
 
 class InstallTaskStatus(IntEnum):
@@ -45,7 +46,7 @@ class TaskManager:
             return self._operations.get(pad_code)
 
 
-    async def handle_install_result(self, result, task_type) -> bool:
+    async def handle_install_result(self, result, task_type, task_manager) -> bool:
         script_md5_list: Any = script_install_url.split("/")
         script_md5 = script_md5_list[-1].replace(".apk", "")
         clash_md5_list: Any = clash_install_url.split("/")
@@ -82,7 +83,7 @@ class TaskManager:
                         await asyncio.sleep(10)
                         logger.info(f"{pad_code}: 开始重启")
                         await update_cloud_status(pad_code=pad_code, current_status= "开始重启")
-                        await reboot(pad_code_list=[pad_code])
+                        await start_app_state(package_name=pkg_name, pad_code=pad_code, task_manager=task_manager)
                         return True
                     else:
                         logger.info(f"{pad_code}: 安装中...")
@@ -133,7 +134,7 @@ class TaskManager:
         return False
 
 
-    async def check_task_status(self, task_id, task_type, timeout_seconds: int = (check_task_timeout_minute * 60), retry_interval: int = 10):
+    async def check_task_status(self, task_id, task_type, task_manager, timeout_seconds: int = (check_task_timeout_minute * 60), retry_interval: int = 10):
         app_url = clash_install_url if task_type.lower() == "clash" else script_install_url
         app_mod5_list: Any = app_url.split("/")
         app_mod5 = app_mod5_list[-1].replace(".apk", "")
@@ -175,7 +176,7 @@ class TaskManager:
                                 raise asyncio.TimeoutError("强制超时")
 
                             case InstallTaskStatus.COMPLETED:
-                                if await self.handle_install_result(result, task_type):
+                                if await self.handle_install_result(result, task_type, task_manager=task_manager):
                                     break
 
                             case InstallTaskStatus.TIMEOUT:
