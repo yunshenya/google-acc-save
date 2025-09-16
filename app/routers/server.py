@@ -32,12 +32,11 @@ async def favicon() -> FileResponse:
 
 @router.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
-    if await task_manager.has_task(android_code.pad_code):
-        await task_manager.remove_task(android_code.pad_code)
-        template_id = random.choice(temple_id_list)
-        await update_cloud_status(android_code.pad_code, number_of_run=1, temple_id=template_id, current_status="任务已完成，正在一键新机中")
-        logger.success(f"{android_code.pad_code}: 任务已完成，正在一键新机中")
-        await replace_pad([android_code.pad_code], template_id=template_id)
+    await task_manager.cancel_timeout_task_only(android_code.pad_code)
+    template_id = random.choice(temple_id_list)
+    await update_cloud_status(android_code.pad_code, number_of_run=1, temple_id=template_id, current_status="任务已完成，正在一键新机中")
+    logger.success(f"{android_code.pad_code}: 任务已完成，正在一键新机中")
+    await replace_pad([android_code.pad_code], template_id=template_id)
     return {"message": "新机成功"}
 
 

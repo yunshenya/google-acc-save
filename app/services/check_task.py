@@ -113,9 +113,11 @@ class TaskManager:
         try:
             await asyncio.sleep(timeout_seconds)
 
-            # 检查任务是否还需要处理超时
-            if not await self.has_task(pad_code):
-                return
+            # 检查超时任务是否还应该继续（可能被 /status 接口取消了）
+            async with self._lock:
+                if pad_code not in self._timeout_tasks:
+                    logger.info(f"超时任务已被取消: {pad_code}")
+                    return
 
             logger.warning(f"任务超时: {pad_code}")
 
@@ -130,7 +132,7 @@ class TaskManager:
             )
             logger.info(f"{pad_code}: 超时处理完成，模板: {temple_id}")
 
-            # 清理任务
+            # 超时后清理所有任务
             await self.remove_task(pad_code)
 
         except asyncio.CancelledError:
@@ -138,10 +140,34 @@ class TaskManager:
         except Exception as e:
             logger.error(f"超时处理异常 {pad_code}: {e}")
 
-    async def complete_task(self, pad_code: str) -> None:
-        """标记任务完成并清理"""
-        logger.info(f"任务完成: {pad_code}")
-        await self.remove_task(pad_code)
+    async def cancel_timeout_task_only(self, pad_code: str) -> None:
+        """只取消超时任务（由 /status 接口调用）"""
+        async with self._lock:
+            if pad_code in self._timeout_tasks:
+                timeout_task = self._timeout_tasks[pad_code]
+                _cancel_task_simple(timeout_task)
+                del self._timeout_tasks[pad_code]
+                logger.info(f"已取消超时任务: {pad_code}")
+            else:
+                logger.warning(f"未找到超时任务: {pad_code}")
+
+    async def complete_main_task(self, pad_code: str) -> None:
+        """标记主任务完成，但保留超时任务"""
+        logger.info(f"主任务完成: {pad_code}")
+        async with self._lock:
+            # 只清理主任务，保留超时任务
+            if pad_code in self._operations:
+                task = self._operations[pad_code]
+                _cancel_task_simple(task)
+                del self._operations[pad_code]
+        """标记主任务完成，但保留超时任务"""
+        logger.info(f"主任务完成: {pad_code}")
+        async with self._lock:
+            # 只清理主任务，保留超时任务
+            if pad_code in self._operations:
+                task = self._operations[pad_code]
+                _cancel_task_simple(task)
+                del self._operations[pad_code]
 
     async def handle_install_result(self, result, task_type, task_manager) -> bool:
         """处理安装结果"""
@@ -189,7 +215,8 @@ class TaskManager:
                             await update_cloud_status(pad_code=pad_code, current_status="开始重启")
                             await start_app_state(package_name=pkg_name, pad_code=pad_code, task_manager=task_manager)
 
-                            await self.complete_task(pad_code)
+                            # 只完成主任务，保留超时任务等待 /status 接口调用
+                            await self.complete_main_task(pad_code)
                             return True
                         else:
                             await asyncio.sleep(10)
@@ -301,7 +328,7 @@ class TaskManager:
         result: Any = await get_cloud_file_task_info([str(task_id)])
         pad_code = result["data"][0]["padCode"]
         if 'pad_code' in locals():
-            if await self.has_task(pad_code=pad_code):
+            if await self.has_task(pad_code):
                 temple_id = random.choice(temple_id_list)
                 await replace_pad([pad_code], template_id=temple_id)
                 await update_cloud_status(
