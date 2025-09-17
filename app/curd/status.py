@@ -1,9 +1,10 @@
-from typing import cast, Optional
+from typing import cast
 
 from fastapi import HTTPException
 from loguru import logger
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
+
 from app.models.proxy import ProxyResponse
 from app.models.status import StatusResponse
 from app.services.database import SessionLocal, Status
