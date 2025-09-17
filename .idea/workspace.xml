@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加登录页面" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加登录页面">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -491,15 +494,9 @@
       <workItem from="1758022658016" duration="419000" />
       <workItem from="1758023209790" duration="1914000" />
       <workItem from="1758027660187" duration="1192000" />
-      <workItem from="1758072453807" duration="2429000" />
-    </task>
-    <task id="LOCAL-00065" summary="完善了获取云机的api">
-      <option name="closed" value="true" />
-      <created>1755151266465</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1755151266465</updated>
+      <workItem from="1758072453807" duration="3314000" />
+      <workItem from="1758079981571" duration="15000" />
+      <workItem from="1758085506382" duration="4819000" />
     </task>
     <task id="LOCAL-00066" summary="完善了获取云机的api">
       <option name="closed" value="true" />
@@ -885,7 +882,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758076585597</updated>
     </task>
-    <option name="localTasksCounter" value="114" />
+    <task id="LOCAL-00114" summary="增加登录页面">
+      <option name="closed" value="true" />
+      <created>1758077003575</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1758077003575</updated>
+    </task>
+    <option name="localTasksCounter" value="115" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
