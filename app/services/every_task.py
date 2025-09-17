@@ -22,15 +22,16 @@ async def start_app_state(package_name, pad_code, task_manager):
             match await check_padTaskDetail([taskid]):
                 case -1:
                     logger.warning(f"{pad_code}: 启动任务正在一键新机")
-                    if await task_manager.has_task(pad_code):
-                        await task_manager.remove_task(pad_code)
-                        template_id=random.choice(temple_id_list)
-                        await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id, current_status="正在一键新机中")
-                        await replace_pad([pad_code], template_id=template_id)
+                    await update_cloud_status(pad_code=pad_code, current_status="启动任务正在一键新机")
+                    await task_manager.cancel_timeout_task_only(pad_code)
+                    template_id=random.choice(temple_id_list)
+                    await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id, current_status="正在一键新机中")
+                    await replace_pad([pad_code], template_id=template_id)
                     break
 
                 case 0:
                     logger.info(f"{pad_code}: 启动app中...")
+                    await update_cloud_status(pad_code=pad_code, current_status="启动app中...")
                     await asyncio.sleep(2)
 
                 case 1:
@@ -99,6 +100,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                         ).to_dict()
                     ])
                     logger.success(f"{pad_code}: 启动app成功")
+                    await update_cloud_status(pad_code=pad_code, current_status="启动app成功")
                     break
             total_try_count += 1
 
@@ -109,17 +111,18 @@ async def start_app_state(package_name, pad_code, task_manager):
             match await check_padTaskDetail([taskid]):
                 case -1:
                     logger.warning(f"{pad_code}: 正在一键新机")
-                    if await task_manager.has_task(pad_code):
-                        await task_manager.remove_task(pad_code)
-                        template_id=random.choice(temple_id_list)
-                        await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id, current_status="正在一键新机中")
-                        await replace_pad([pad_code], template_id=template_id)
+                    await task_manager.cancel_timeout_task_only(pad_code)
+                    template_id=random.choice(temple_id_list)
+                    await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id, current_status="正在一键新机中")
+                    await replace_pad([pad_code], template_id=template_id)
                     break
                 case 0:
                     logger.info(f"{pad_code}: 启动app中...")
+                    await update_cloud_status(pad_code=pad_code, current_status="启动app中...")
                     await asyncio.sleep(2)
                 case 1:
                     logger.success(f"{pad_code}: 启动app成功")
+                    await update_cloud_status(pad_code=pad_code, current_status="启动app成功")
                     break
             total_try_count += 1
 
