@@ -45,11 +45,11 @@ async def startup_event(app: FastAPI):
     app.include_router(server.router, prefix="")
     app.include_router(status.router, prefix="")
     # 一键新机
-    default_proxy: ProxyResponse = manager.get_current_proxy()
     for pad_code in pad_code_list:
         template_id=random.choice(temple_id_list)
         await add_cloud_status(pad_code, template_id)
-        await set_proxy_status(pad_code, default_proxy)
+        default_proxy: list[ProxyResponse] = manager.get_proxy_countries()
+        await set_proxy_status(pad_code, random.choice(default_proxy))
         result = await replace_pad([pad_code], template_id=template_id)
         logger.info(f"已启动: {pad_code}，执行结果为: {result['msg']}")
 

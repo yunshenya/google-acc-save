@@ -1,4 +1,5 @@
 import random
+from typing import Any
 
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
@@ -6,7 +7,8 @@ from loguru import logger
 from starlette.responses import HTMLResponse
 
 from app.config import pad_code_list, pkg_name, temple_id_list
-from app.curd.status import update_cloud_status
+from app.curd.status import update_cloud_status, set_proxy_status
+from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
@@ -43,6 +45,8 @@ async def favicon() -> FileResponse:
 async def status(android_code: AndroidPadCodeRequest):
     await task_manager.cancel_timeout_task_only(android_code.pad_code)
     template_id = random.choice(temple_id_list)
+    default_proxy: Any = manager.get_proxy_countries()
+    await set_proxy_status(android_code.pad_code, random.choice(default_proxy))
     await update_cloud_status(android_code.pad_code, number_of_run=1, temple_id=template_id, current_status="任务已完成，正在一键新机中")
     logger.success(f"{android_code.pad_code}: 任务已完成，正在一键新机中")
     await replace_pad([android_code.pad_code], template_id=template_id)
