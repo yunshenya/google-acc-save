@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="c975f126-b7eb-42df-891f-af21a08eb52e" name="香港云">
-        <fileTransfer rootFolder="/home/google-save" accessType="SFTP" host="103.115.64.73" port="55973" sshConfigId="cce26eb5-ae21-4d1c-850f-4a0918c005d4" sshConfig="root@103.115.64.73:55973 agent" authAgent="true">
+        <fileTransfer rootFolder="/home/google-save" accessType="SFTP" host="103.115.64.73" port="55973" sshConfigId="cce26eb5-ae21-4d1c-850f-4a0918c005d4" sshConfig="root@103.115.64.73:55973 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

@@ -11,7 +11,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 # JWT配置
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key-here")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", '+H~I52e."@bM5BC"?-5mpKUnr\}{+nh,>>SrV4Sx@qfthW/_D9')
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -51,8 +51,6 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
         )
 
 def authenticate_user(username: str, password: str):
-    print(ADMIN_USERNAME)
-    print(ADMIN_PASSWORD)
     if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
         return {"username": username}
     return None

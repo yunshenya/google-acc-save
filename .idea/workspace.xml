@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加登录页面">
+      <change beforePath="$PROJECT_DIR$/.idea/webServers.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webServers.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -102,7 +99,7 @@
     &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
     &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
     &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
     &quot;数据库脚本.data.sql.executor&quot;: &quot;Run&quot;,
@@ -310,10 +307,10 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="数据库脚本.data.sql" />
       <item itemvalue="Python.main" />
       <item itemvalue="Python.run" />
       <item itemvalue="Python.test" />
-      <item itemvalue="数据库脚本.data.sql" />
     </list>
     <recent_temporary>
       <list>
@@ -499,23 +496,23 @@
       <workItem from="1758027660187" duration="1192000" />
       <workItem from="1758072453807" duration="3314000" />
       <workItem from="1758079981571" duration="15000" />
-      <workItem from="1758085506382" duration="10873000" />
-    </task>
-    <task id="LOCAL-00067" summary="完善了获取云机的api">
-      <option name="closed" value="true" />
-      <created>1755177640494</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1755177640494</updated>
-    </task>
-    <task id="LOCAL-00068" summary="完善了获取云机的api">
-      <option name="closed" value="true" />
-      <created>1755482463620</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1755482463620</updated>
+      <workItem from="1758085506382" duration="12200000" />
+      <workItem from="1758100943323" duration="6480000" />
+      <workItem from="1758110580225" duration="1104000" />
+      <workItem from="1758111861277" duration="559000" />
+      <workItem from="1758114659070" duration="531000" />
+      <workItem from="1758158718957" duration="162000" />
+      <workItem from="1758165612640" duration="3202000" />
+      <workItem from="1758173248742" duration="637000" />
+      <workItem from="1758189672499" duration="6000" />
+      <workItem from="1758197852765" duration="641000" />
+      <workItem from="1758262703705" duration="714000" />
+      <workItem from="1758269540456" duration="608000" />
+      <workItem from="1758356752502" duration="1207000" />
+      <workItem from="1758358493612" duration="915000" />
+      <workItem from="1758361450978" duration="1742000" />
+      <workItem from="1758367101313" duration="424000" />
+      <workItem from="1758367609557" duration="1327000" />
     </task>
     <task id="LOCAL-00069" summary="提高控制的精细度">
       <option name="closed" value="true" />
@@ -893,7 +890,23 @@
       <option name="project" value="LOCAL" />
       <updated>1758092046550</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <task id="LOCAL-00116" summary="增加登录页面">
+      <option name="closed" value="true" />
+      <created>1758099313207</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1758099313207</updated>
+    </task>
+    <task id="LOCAL-00117" summary="增加登录页面">
+      <option name="closed" value="true" />
+      <created>1758099565285</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1758099565285</updated>
+    </task>
+    <option name="localTasksCounter" value="118" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
