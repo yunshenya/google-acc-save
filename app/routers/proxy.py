@@ -9,11 +9,11 @@ from app.models.proxy import ProxyResponse, DbProxyRequest
 
 router = APIRouter()
 
-@router.post("/proxy", response_model=ProxyResponse)
+@router.post("/proxy", response_model=str)
 async def get_proxy(android_pad_code: AndroidPadCodeRequest):
     """获取当前使用的代理信息"""
     current_proxy: ProxyResponse = await get_proxy_status(android_pad_code.pad_code)
-    return current_proxy
+    return current_proxy.proxy
 
 @router.get("/proxy/countries", response_model=List[ProxyResponse])
 async def get_proxy_countries() -> List[ProxyResponse]:

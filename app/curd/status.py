@@ -21,7 +21,7 @@ async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = 
             db.add(db_account)
             await db.commit()
             await db.refresh(db_account)
-            logger.success("云机状态上传成功")
+            logger.success(f"{pad_code}: 云机状态上传成功")
         except IntegrityError:
             await db.rollback()
             await update_cloud_status(pad_code=pad_code, current_status="新机中")

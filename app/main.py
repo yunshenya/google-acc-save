@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from loguru import logger
 
-from app.config import pad_code_list, temple_id_list
+from app.config import pad_code_list, temple_id_list, DEBUG
 from app.curd.status import add_cloud_status, remove_cloud_status, set_proxy_status
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
@@ -50,8 +50,9 @@ async def startup_event(app: FastAPI):
         await add_cloud_status(pad_code, template_id)
         default_proxy: list[ProxyResponse] = manager.get_proxy_countries()
         await set_proxy_status(pad_code, random.choice(default_proxy))
-        result = await replace_pad([pad_code], template_id=template_id)
-        logger.info(f"已启动: {pad_code}，执行结果为: {result['msg']}")
+        if not DEBUG:
+            result = await replace_pad([pad_code], template_id=template_id)
+            logger.info(f"已启动: {pad_code}，执行结果为: {result['msg']}")
 
     # 创建数据库表
     async with engine.begin() as conn:

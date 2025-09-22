@@ -13,6 +13,8 @@ router = APIRouter()
 @router.post("/accounts", response_model=AccountResponse)
 async def create_account(account: AccountCreate) -> AccountResponse:
     async with SessionLocal() as db:
+        if account.account is None or account.password is None:
+            raise HTTPException(status_code=404, detail="Account or password is empty")
         try:
             db_account = Account(
                 account=account.account,
