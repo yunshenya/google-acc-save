@@ -10,7 +10,7 @@ from app.services.database import SessionLocal, Status
 router = APIRouter()
 
 
-@router.put("/status_update", response_model=StatusResponse)
+@router.post("/status_update", response_model=StatusResponse)
 async def update_status_server(status_request: StatusRequest) -> StatusResponse:
     status_response = await update_cloud_status(status_request.pad_code, status_request.current_status,
                                                 phone_number_counts=status_request.phone_number_counts)

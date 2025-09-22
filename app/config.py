@@ -6,7 +6,7 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 DATABASE_URL = "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
 
-pad_code_list =  ["AC32010800443","AC32010590813","AC32010780162","AC32011030882","AC32010790283"]
+pad_code_list =  ["AC32010800443","AC32010590813"]
 
 pkg_name = "com.gasegom.grni"
 
@@ -24,7 +24,7 @@ temple_id_list = [473]
 
 clash_install_url = "https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk"
 
-script_install_url = "https://file.vmoscloud.com/userFile/7a3a6024e5255fb7a520143da1968c14.apk"
+script_install_url = "https://file.vmoscloud.com/userFile/69e2efa91dba04abc11d8c04cf3aaf0d.apk"
 
 global_timeout_minute = 10
 
