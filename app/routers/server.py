@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 from loguru import logger
 from starlette.responses import HTMLResponse
 
-from app.config import pad_code_list, pkg_name, temple_id_list
+from app.config import pad_code_list, pkg_name, temple_id_list, DEBUG
 from app.curd.status import update_cloud_status, set_proxy_status
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
@@ -90,7 +90,7 @@ async def callback(data: dict) -> str:
             return "ok"
 
         case 1124:
-            if data.get("padCode") in pad_code_list:
+            if (data.get("padCode") in pad_code_list) and not DEBUG:
                 await replace_pad_stak_status(data, task_manager=task_manager)
             return "ok"
 
