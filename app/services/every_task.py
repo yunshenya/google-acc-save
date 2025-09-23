@@ -36,7 +36,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                     await asyncio.sleep(2)
 
                 case 1:
-                    await sleep(10)
+                    await sleep(5)
                     await click([pad_code], [
                         Position(
                             x=559,
