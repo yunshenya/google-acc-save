@@ -42,10 +42,10 @@ async def remove_cloud_status(pad_code: str):
 
 
 async def update_cloud_status(pad_code: str,
-                              current_status: str = None,
-                              number_of_run: int = None,
-                              temple_id: int = None,
-                              phone_number_counts: int = None) -> StatusResponse:
+                                current_status: str = None,
+                                number_of_run: int = None,
+                                temple_id: int = None,
+                                phone_number_counts: int = None) -> StatusResponse:
     async with SessionLocal() as db:
         try:
             from sqlalchemy import select
