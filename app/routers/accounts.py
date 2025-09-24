@@ -5,7 +5,7 @@ from loguru import logger
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
 
-from app.models.accounts import AccountResponse, AccountCreate, AccountUpdate
+from app.models.accounts import AccountResponse, AccountCreate, AccountUpdate, ForwardRequest, SecondaryEmail
 from app.services.database import SessionLocal, Account
 
 router = APIRouter()
@@ -66,7 +66,8 @@ async def get_unique_account(
             type=account.type,
             status=account.status,
             code=account.code,
-            created_at=account.created_at
+            created_at=account.created_at,
+            is_boned_secondary_email=account.is_boned_secondary_email
         )
 
         if delete:
@@ -88,6 +89,36 @@ async def get_account(account_id: int) -> AccountResponse:
         account = result.scalars().first()
         if account is None:
             raise HTTPException(status_code=404, detail="账号不存在")
+        return account
+
+@router.post("/update_forward", response_model=AccountResponse)
+async def update_forward(forward: ForwardRequest) -> AccountResponse:
+    async with SessionLocal() as db:
+        from sqlalchemy import select
+        stmt = select(Account).filter(cast(ColumnElement[bool], Account.account == forward.account))
+        result = await db.execute(stmt)
+        account = result.scalars().first()
+        if account is None:
+            raise HTTPException(status_code=404, detail="账号不存在")
+        account.for_email = forward.for_email
+        account.for_password = forward.for_password
+        await db.commit()
+        await db.refresh(account)
+        return account
+
+
+@router.post("/update_secondary_mail", response_model=AccountResponse)
+async def update_secondary_mail(secondary_mail: SecondaryEmail) -> AccountResponse:
+    async with SessionLocal() as db:
+        from sqlalchemy import select
+        stmt = select(Account).filter(cast(ColumnElement[bool], Account.account == secondary_mail.account))
+        result = await db.execute(stmt)
+        account = result.scalars().first()
+        if account is None:
+            raise HTTPException(status_code=404, detail="账号不存在")
+        account.is_boned_secondary_email = secondary_mail.is_boned_secondary_email
+        await db.commit()
+        await db.refresh(account)
         return account
 
 

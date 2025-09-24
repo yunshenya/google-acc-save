@@ -2,7 +2,7 @@ import requests
 
 
 if __name__ == '__main__':
-    url = "http://localhost:4000/account/unique"
+    url = "http://127.0.0.1:4000/account/unique"
     header = {"content-type" : "application/json"}
     re = requests.get(url, headers = header)
-    print(re.text)
+    print(re.json())

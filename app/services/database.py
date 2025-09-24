@@ -1,7 +1,7 @@
 import datetime
 from typing import Any
 
-from sqlalchemy import Column, Integer, String, DateTime, Float, Text
+from sqlalchemy import Column, Integer, String, DateTime, Float, Text, Boolean
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
@@ -23,6 +23,7 @@ class Account(Base):
     for_email = Column(Text, nullable=True)
     for_password = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)
+    is_boned_secondary_email = Column(Boolean, nullable=False, default=False)
 
 
 class Status(Base):

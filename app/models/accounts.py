@@ -34,3 +34,16 @@ class AccountResponse(BaseModel):
     status: int
     code: str | None
     created_at: datetime
+    is_boned_secondary_email: bool
+
+
+
+class ForwardRequest(BaseModel):
+    account: str
+    for_email: str
+    for_password: str
+
+
+class SecondaryEmail(BaseModel):
+    account: str
+    is_boned_secondary_email: bool

@@ -9,7 +9,8 @@ CREATE TABLE google_account (
                                 code VARCHAR(32),
                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                 for_email TEXT,
-                                for_password TEXT
+                                for_password TEXT,
+                                is_boned_secondary_email boolean NOT NULL DEFAULT false
 );
 
 ALTER TABLE google_account OWNER TO postgres;
