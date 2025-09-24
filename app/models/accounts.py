@@ -8,6 +8,8 @@ class AccountCreate(BaseModel):
     password: str
     type: int = 0
     code: str | None = None
+    for_email: str | None = None
+    for_password: str | None = None
 
 
 class AndroidPadCodeRequest(BaseModel):
@@ -26,6 +28,8 @@ class AccountResponse(BaseModel):
     id: int
     account: str
     password: str
+    for_email: str | None
+    for_password: str | None
     type: int
     status: int
     code: str | None

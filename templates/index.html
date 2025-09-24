@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>账户管理系统</title>
     <link href="../static/css/index.css" rel="stylesheet">
 </head>
@@ -13,14 +13,16 @@
     <div class="header-controls">
         <h1>账户管理系统</h1>
         <div class="header-buttons">
-            <button id="toggleView" class="secondary">切换到状态监控</button>
-            <button id="logoutBtn" class="logout-btn">退出登录</button>
+            <button class="secondary" id="toggleView">切换到状态监控</button>
+            <button class="logout-btn" id="logoutBtn">退出登录</button>
         </div>
     </div>
 
-    <div id="error" class="error" style="display: none;">
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+    <div class="error" id="error" style="display: none;">
+        <svg fill="currentColor" height="20" viewBox="0 0 20 20" width="20">
+            <path clip-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  fill-rule="evenodd"/>
         </svg>
         <span id="errorMessage"></span>
     </div>
@@ -30,16 +32,16 @@
         <div class="controls">
             <div class="control-group">
                 <button id="fetchAll">获取全部账户</button>
-                <button id="fetchPage" class="secondary">分页获取</button>
+                <button class="secondary" id="fetchPage">分页获取</button>
             </div>
 
             <div class="control-group">
-                <input type="number" id="accountId" placeholder="输入账户ID" min="0">
+                <input id="accountId" min="0" placeholder="输入账户ID" type="number">
                 <button id="fetchSingle">获取单个账户</button>
                 <button id="fetchSingleLock">获取单个(加锁)</button>
             </div>
 
-            <input type="text" id="searchInput" class="search-box" placeholder="搜索账号或代码...">
+            <input class="search-box" id="searchInput" placeholder="搜索账号或代码..." type="text">
         </div>
 
         <div class="controls">
@@ -56,21 +58,23 @@
                     <option value="2">类型 2</option>
                 </select>
                 <button id="applyFilters">应用筛选</button>
-                <button id="resetFilters" class="secondary">重置</button>
+                <button class="secondary" id="resetFilters">重置</button>
             </div>
 
             <div class="control-group">
                 <label>
-                    <input type="checkbox" id="maskPasswords" checked> 隐藏密码
+                    <input checked id="maskPasswords" type="checkbox"> 隐藏密码
                 </label>
                 <button id="exportCSV">导出CSV</button>
             </div>
         </div>
 
         <div class="table-container" id="tableContainer">
-            <div id="loading" class="loading" style="display: none;">
-                <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="var(--dark-gray)" style="animation: spin 1s linear infinite;">
-                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
+            <div class="loading" id="loading" style="display: none;">
+                <svg fill="var(--dark-gray)" height="24" style="animation: spin 1s linear infinite;" viewBox="0 0 24 24"
+                     width="24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
+                          opacity=".25"/>
                     <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"/>
                 </svg>
                 <div>加载中...</div>
@@ -94,9 +98,10 @@
                 </tbody>
             </table>
 
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <svg fill="none" height="48" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="48">
+                    <path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round"
+                          stroke-linejoin="round"/>
                 </svg>
                 <h3>没有数据</h3>
                 <p>点击"获取全部账户"或"分页获取"按钮加载数据</p>
@@ -119,7 +124,7 @@
         <div class="status-header">
             <h2>云机状态实时监控</h2>
             <div class="status-controls">
-                <div id="connectionStatus" class="connection-status">
+                <div class="connection-status" id="connectionStatus">
                     <span class="status-info">● 未连接</span>
                 </div>
                 <button id="refreshAllStatus">刷新所有状态</button>
@@ -145,9 +150,10 @@
                 </tbody>
             </table>
 
-            <div id="statusEmptyState" class="empty-state" style="display: none;">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            <div class="empty-state" id="statusEmptyState" style="display: none;">
+                <svg fill="none" height="48" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="48">
+                    <path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round"
+                          stroke-linejoin="round"/>
                 </svg>
                 <h3>暂无状态数据</h3>
                 <p>系统正在获取云机状态信息...</p>

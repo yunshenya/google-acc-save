@@ -11,7 +11,7 @@ from app.services.database import SessionLocal, Account
 router = APIRouter()
 
 
-@router.post("/accounts", response_model=AccountResponse)
+@router.post("/create_accounts", response_model=AccountResponse)
 async def create_account(account: AccountCreate) -> AccountResponse:
     async with SessionLocal() as db:
         if account.account is None or account.password is None:
@@ -21,7 +21,9 @@ async def create_account(account: AccountCreate) -> AccountResponse:
                 account=account.account,
                 password=account.password,
                 type=account.type,
-                code=account.code
+                code=account.code,
+                for_email=account.for_email,
+                for_password=account.for_password,
             )
             db.add(db_account)
             await db.commit()
