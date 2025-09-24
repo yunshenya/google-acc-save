@@ -65,7 +65,8 @@ class Config:
         "AC32010590813",
         "AC32010780162",
         "AC32011030882",
-        "AC32010790283"
+        "AC32010790283",
+        "ACP250924ZG0VI6K"
     ]
 
     PACKAGE_NAMES: Dict[str, str] = {

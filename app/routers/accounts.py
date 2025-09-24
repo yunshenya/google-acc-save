@@ -1,6 +1,6 @@
 from typing import cast
 
-from fastapi import HTTPException, APIRouter
+from fastapi import HTTPException, APIRouter, Query
 from loguru import logger
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
@@ -46,21 +46,37 @@ async def get_accounts() -> list[AccountResponse]:
 
 ## 获取之后就会删除之前那条数据
 @router.get("/account/unique", response_model=AccountResponse)
-async def get_unique_account() -> AccountResponse:
+async def get_unique_account(
+        delete: bool = Query(default=False, description="是否删除账号，False则将status改为1")
+) -> AccountResponse:
     async with SessionLocal() as db:
         from sqlalchemy import select
-
-        # 使用select语句并添加锁
         stmt = select(Account).filter(cast(ColumnElement[bool], Account.status == 0)).with_for_update()
         result = await db.execute(stmt)
         account = result.scalars().first()
 
         if account is None:
-            raise HTTPException(status_code=404, detail="没有可用的账号（status=0）")
+            raise HTTPException(status_code=404, detail="没有可用的账号")
+        account_data = AccountResponse(
+            id=account.id,
+            account=account.account,
+            password=account.password,
+            for_email=account.for_email,
+            for_password=account.for_password,
+            type=account.type,
+            status=account.status,
+            code=account.code,
+            created_at=account.created_at
+        )
 
-        await db.delete(account)
+        if delete:
+            await db.delete(account)
+            logger.info(f"账号 {account.account} 已被删除")
+        else:
+            account.status = 1
         await db.commit()
-        return account
+        return account_data
+
 
 
 @router.get("/accounts/{account_id}", response_model=AccountResponse)

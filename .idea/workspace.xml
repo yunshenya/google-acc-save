@@ -4,15 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加for_email和for_password">
-      <change afterPath="$PROJECT_DIR$/app/routers/statistics.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/statistics.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/google-acc-save.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/google-acc-save.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加统计页面">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +136,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run">
+  <component name="RunManager" selected="Python.test">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
@@ -395,8 +391,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.run" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.run" />
         <item itemvalue="Python.accounts" />
         <item itemvalue="Python.main" />
       </list>
@@ -611,15 +607,8 @@
       <workItem from="1758677366989" duration="2331000" />
       <workItem from="1758679800924" duration="2367000" />
       <workItem from="1758682594138" duration="13518000" />
-      <workItem from="1758699652637" duration="3032000" />
-    </task>
-    <task id="LOCAL-00084" summary="提高控制的精细度">
-      <option name="closed" value="true" />
-      <created>1755744858530</created>
-      <option name="number" value="00084" />
-      <option name="presentableId" value="LOCAL-00084" />
-      <option name="project" value="LOCAL" />
-      <updated>1755744858530</updated>
+      <workItem from="1758699652637" duration="5304000" />
+      <workItem from="1758705083929" duration="1202000" />
     </task>
     <task id="LOCAL-00085" summary="提高控制的精细度">
       <option name="closed" value="true" />
@@ -1005,7 +994,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758701635210</updated>
     </task>
-    <option name="localTasksCounter" value="133" />
+    <task id="LOCAL-00133" summary="添加统计页面">
+      <option name="closed" value="true" />
+      <created>1758702917418</created>
+      <option name="number" value="00133" />
+      <option name="presentableId" value="LOCAL-00133" />
+      <option name="project" value="LOCAL" />
+      <updated>1758702917419</updated>
+    </task>
+    <option name="localTasksCounter" value="134" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1027,7 +1024,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="优化错误判断机制" />
     <MESSAGE value="优化日志" />
     <MESSAGE value="添加日志拦截器" />
     <MESSAGE value="日志优化" />
@@ -1052,6 +1048,7 @@
     <MESSAGE value="增加统一文件管理" />
     <MESSAGE value="格式化代码" />
     <MESSAGE value="添加for_email和for_password" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加for_email和for_password" />
+    <MESSAGE value="添加统计页面" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加统计页面" />
   </component>
 </project>
