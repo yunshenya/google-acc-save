@@ -423,3 +423,91 @@ tr:hover {
     background-color: rgba(255, 255, 255, 0.95);
     z-index: 100;
 }
+
+.ratio-high {
+    color: #27ae60;
+    font-weight: bold;
+    background-color: rgba(39, 174, 96, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.ratio-medium {
+    color: #f39c12;
+    font-weight: bold;
+    background-color: rgba(243, 156, 18, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.ratio-low {
+    color: #e67e22;
+    font-weight: bold;
+    background-color: rgba(230, 126, 34, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.ratio-none {
+    color: #95a5a6;
+    font-weight: normal;
+    background-color: rgba(149, 165, 166, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* 状态表格优化 */
+#statusTable th:nth-child(5),
+#statusTable th:nth-child(6),
+#statusTable th:nth-child(7) {
+    text-align: center;
+    font-size: 12px;
+}
+
+#statusTable td:nth-child(5),
+#statusTable td:nth-child(6),
+#statusTable td:nth-child(7) {
+    text-align: center;
+    font-size: 13px;
+}
+
+/* 表格列宽调整 */
+#statusTable th:nth-child(1) { width: 100px; } /* 设备代码 */
+#statusTable th:nth-child(2) { width: 180px; } /* 当前状态 */
+#statusTable th:nth-child(3) { width: 70px; }  /* 运行次数 */
+#statusTable th:nth-child(4) { width: 70px; }  /* 模板ID */
+#statusTable th:nth-child(5) { width: 80px; }  /* 转发邮箱 */
+#statusTable th:nth-child(6) { width: 70px; }  /* 手机号 */
+#statusTable th:nth-child(7) { width: 80px; }  /* 辅助邮箱 */
+#statusTable th:nth-child(8) { width: 90px; }  /* 国家 */
+#statusTable th:nth-child(9) { width: 140px; } /* 更新时间 */
+#statusTable th:nth-child(10) { width: 80px; } /* 操作 */
+
+/* 响应式优化 */
+@media (max-width: 1200px) {
+    #statusTable th:nth-child(9) {
+        width: 120px;
+        font-size: 11px;
+    }
+    #statusTable td:nth-child(9) {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 768px) {
+    .ratio-high, .ratio-medium, .ratio-low, .ratio-none {
+        padding: 2px 4px;
+        font-size: 11px;
+    }
+
+    #statusTable th:nth-child(1) { width: 80px; }
+    #statusTable th:nth-child(2) { width: 120px; }
+    #statusTable th:nth-child(3) { width: 50px; }
+    #statusTable th:nth-child(4) { width: 50px; }
+    #statusTable th:nth-child(5) { width: 60px; }
+    #statusTable th:nth-child(6) { width: 50px; }
+    #statusTable th:nth-child(7) { width: 60px; }
+    #statusTable th:nth-child(8) { width: 70px; }
+    #statusTable th:nth-child(9) { width: 100px; }
+    #statusTable th:nth-child(10) { width: 60px; }
+}

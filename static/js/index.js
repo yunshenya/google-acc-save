@@ -276,10 +276,17 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const row of rows) {
             const padCodeCell = row.cells[0];
             if (padCodeCell && padCodeCell.textContent === statusData.pad_code) {
+                // 更新状态
                 const statusCell = row.cells[1];
                 if (statusCell) {
                     statusCell.textContent = statusData.current_status;
                     statusCell.className = getStatusClass(statusData.current_status);
+                }
+
+                // 如果有运行次数等数据更新，也需要重新计算占比
+                if (statusData.number_of_run !== undefined) {
+                    // 重新获取完整状态数据并重新渲染整行
+                    requestStatusUpdate();
                 }
                 break;
             }
@@ -824,7 +831,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (!Array.isArray(statusData) || statusData.length === 0) {
             if (statusEmptyState) statusEmptyState.style.display = 'block';
-            statusTableBody.innerHTML = '<tr><td colspan="8" style="text-align: center;">暂无状态数据</td></tr>';
+            statusTableBody.innerHTML = '<tr><td colspan="10" style="text-align: center;">暂无状态数据</td></tr>';
             return;
         }
 
@@ -836,18 +843,34 @@ document.addEventListener('DOMContentLoaded', function() {
             // 根据状态设置样式
             const statusClass = getStatusClass(status.current_status);
 
+            // 计算占比
+            const totalRuns = status.number_of_run || 1; // 避免除零
+            const forwardRatio = totalRuns > 0 ? Math.round((status.forward_num || 0) / totalRuns * 100) : 0;
+            const phoneRatio = totalRuns > 0 ? Math.round((status.phone_number_counts || 0) / totalRuns * 100) : 0;
+            const secondaryEmailRatio = totalRuns > 0 ? Math.round((status.secondary_email_num || 0) / totalRuns * 100) : 0;
+
+            // 为占比添加颜色样式
+            const getRatioClass = (ratio) => {
+                if (ratio >= 80) return 'ratio-high';
+                if (ratio >= 50) return 'ratio-medium';
+                if (ratio >= 20) return 'ratio-low';
+                return 'ratio-none';
+            };
+
             row.innerHTML = `
-                <td>${status.pad_code}</td>
-                <td class="${statusClass}">${status.current_status || '未知'}</td>
-                <td>${status.number_of_run}</td>
-                <td>${status.temple_id}</td>
-                <td>${status.phone_number_counts}</td>
-                <td>${status.country || '未设置'}</td>
-                <td>${formatDateTime(status.updated_at)}</td>
-                <td>
-                    <button class="status-btn" onclick="refreshSingleStatus('${status.pad_code}')">刷新</button>
-                </td>
-            `;
+            <td>${status.pad_code}</td>
+            <td class="${statusClass}">${status.current_status || '未知'}</td>
+            <td>${status.number_of_run}</td>
+            <td>${status.temple_id}</td>
+            <td class="${getRatioClass(forwardRatio)}">${forwardRatio}%</td>
+            <td class="${getRatioClass(phoneRatio)}">${phoneRatio}%</td>
+            <td class="${getRatioClass(secondaryEmailRatio)}">${secondaryEmailRatio}%</td>
+            <td>${status.country || '未设置'}</td>
+            <td>${formatDateTime(status.updated_at)}</td>
+            <td>
+                <button class="status-btn" onclick="refreshSingleStatus('${status.pad_code}')">刷新</button>
+            </td>
+        `;
 
             statusTableBody.appendChild(row);
         });

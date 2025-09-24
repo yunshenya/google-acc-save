@@ -72,6 +72,8 @@ class WebSocketManager:
                         "number_of_run": status.number_of_run,
                         "temple_id": status.temple_id,
                         "phone_number_counts": status.phone_number_counts,
+                        "forward_num": status.forward_num,  # 转发邮箱数量
+                        "secondary_email_num": status.secondary_email_num,  # 辅助邮箱数量
                         "country": status.country,
                         "updated_at": status.updated_at.isoformat() if status.updated_at else None,
                         "created_at": status.created_at.isoformat() if status.created_at else None,
