@@ -2,7 +2,7 @@ import requests
 
 
 if __name__ == '__main__':
-       url = "http://127.0.0.1:4000/create_accounts"
+       url = "http://103.115.64.73:3000/create_accounts"
        header = {"content-type" : "application/json"}
        json = {
            "for_email": "te11st@gmail.com",
