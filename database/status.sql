@@ -15,8 +15,9 @@ CREATE TABLE cloud_status (
                               proxy VARCHAR(100),
                               longitude float,
                               language VARCHAR(100),
-                              time_zone VARCHAR(100)
-
+                              time_zone VARCHAR(100),
+                              forward_num INT NOT NULL DEFAULT 0,
+                              secondary_email_num INT NOT NULL DEFAULT 0
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()

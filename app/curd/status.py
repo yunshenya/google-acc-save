@@ -50,7 +50,10 @@ async def update_cloud_status(pad_code: str,
                               current_status: str = None,
                               number_of_run: int = None,
                               temple_id: int = None,
-                              phone_number_counts: int = None) -> StatusResponse:
+                              phone_number_counts: int = None,
+                              secondary_email_num: int = None,
+                              forward_num: int = None
+                              ) -> StatusResponse:
     async with SessionLocal() as db:
         try:
             from sqlalchemy import select
@@ -73,6 +76,12 @@ async def update_cloud_status(pad_code: str,
 
             if temple_id is not None:
                 db_status.temple_id = temple_id
+
+            if secondary_email_num is not None:
+                db_status.secondary_email_num = secondary_email_num
+
+            if forward_num is not None:
+                db_status.forward_num = forward_num
 
             await db.commit()
             await db.refresh(db_status)

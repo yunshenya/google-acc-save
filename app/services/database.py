@@ -43,3 +43,5 @@ class Status(Base):
     language = Column(String(100), nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
+    forward_num = Column(Integer, default=0, nullable=False)
+    secondary_email_num = Column(Integer, default=0, nullable=False)

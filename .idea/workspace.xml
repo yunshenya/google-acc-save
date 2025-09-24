@@ -6,11 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加统计页面">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/status.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/status.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -610,15 +611,7 @@
       <workItem from="1758679800924" duration="2367000" />
       <workItem from="1758682594138" duration="13518000" />
       <workItem from="1758699652637" duration="5304000" />
-      <workItem from="1758705083929" duration="5988000" />
-    </task>
-    <task id="LOCAL-00086" summary="提高控制的精细度">
-      <option name="closed" value="true" />
-      <created>1755747679876</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1755747679876</updated>
+      <workItem from="1758705083929" duration="8776000" />
     </task>
     <task id="LOCAL-00087" summary="修复多次设置新机的bug">
       <option name="closed" value="true" />
@@ -1004,7 +997,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758706299381</updated>
     </task>
-    <option name="localTasksCounter" value="135" />
+    <task id="LOCAL-00135" summary="添加统计页面">
+      <option name="closed" value="true" />
+      <created>1758712241681</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1758712241681</updated>
+    </task>
+    <option name="localTasksCounter" value="136" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -13,7 +13,9 @@ router = APIRouter()
 @router.post("/status_update", response_model=StatusResponse)
 async def update_status_server(status_request: StatusRequest) -> StatusResponse:
     status_response = await update_cloud_status(status_request.pad_code, status_request.current_status,
-                                                phone_number_counts=status_request.phone_number_counts)
+                                                phone_number_counts=status_request.phone_number_counts,
+                                                forward_num=status_request.forward_num,
+                                                secondary_email_num=status_request.secondary_email_num)
     return status_response
 
 
