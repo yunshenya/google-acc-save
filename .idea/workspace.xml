@@ -5,9 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加for_email和for_password">
+      <change afterPath="$PROJECT_DIR$/app/routers/statistics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/statistics.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/google-acc-save.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/google-acc-save.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +24,8 @@
       <list>
         <option value="JavaScript File" />
         <option value="CSS File" />
-        <option value="HTML File" />
         <option value="Python Script" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -135,7 +140,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.run">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
@@ -390,9 +395,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.run" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.accounts" />
-        <item itemvalue="Python.run" />
         <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
@@ -606,15 +611,7 @@
       <workItem from="1758677366989" duration="2331000" />
       <workItem from="1758679800924" duration="2367000" />
       <workItem from="1758682594138" duration="13518000" />
-      <workItem from="1758699652637" duration="1966000" />
-    </task>
-    <task id="LOCAL-00083" summary="提高控制的精细度">
-      <option name="closed" value="true" />
-      <created>1755744491626</created>
-      <option name="number" value="00083" />
-      <option name="presentableId" value="LOCAL-00083" />
-      <option name="project" value="LOCAL" />
-      <updated>1755744491626</updated>
+      <workItem from="1758699652637" duration="3032000" />
     </task>
     <task id="LOCAL-00084" summary="提高控制的精细度">
       <option name="closed" value="true" />
@@ -1000,7 +997,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758696434553</updated>
     </task>
-    <option name="localTasksCounter" value="132" />
+    <task id="LOCAL-00132" summary="添加for_email和for_password">
+      <option name="closed" value="true" />
+      <created>1758701635209</created>
+      <option name="number" value="00132" />
+      <option name="presentableId" value="LOCAL-00132" />
+      <option name="project" value="LOCAL" />
+      <updated>1758701635210</updated>
+    </task>
+    <option name="localTasksCounter" value="133" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

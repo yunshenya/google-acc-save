@@ -37,6 +37,14 @@ async def index():
     return HTMLResponse(content=content)
 
 
+@router.get("/statistics", response_class=HTMLResponse)
+async def statistics_page():
+    """统计页面 - 需要认证"""
+    with open("templates/statistics.html", "r", encoding="utf-8") as f:
+        content = f.read()
+    return HTMLResponse(content=content)
+
+
 @router.get("/favicon.ico")
 async def favicon() -> FileResponse:
     return FileResponse("static/img/favicon.ico")
