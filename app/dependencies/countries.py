@@ -1,4 +1,5 @@
 import csv
+from typing import Any
 
 from loguru import logger
 
@@ -10,7 +11,7 @@ manager = ProxyManager() ## 全局代理管理
 def load_proxy_countries():
     try:
         with open("代理国家列表 - IPIDEA.csv", "r", encoding="utf-8") as f:
-            reader = csv.reader(f)
+            reader: Any = csv.reader(f)
             for row in reader:
                 if len(row) >= 9:
                     # 读取所有字段，但只保留模型中需要的字段

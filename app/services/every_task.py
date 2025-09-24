@@ -10,6 +10,7 @@ from app.config import clash_install_url, script_install_url, temple_id_list, gl
 from app.curd.status import update_cloud_status
 from app.dependencies.utils import start_app, install_app, \
     check_padTaskDetail, replace_pad, click, Position, ActionType
+from app.entity.install_app_enum import InstallAppEnum
 
 
 async def start_app_state(package_name, pad_code, task_manager):
@@ -129,16 +130,6 @@ async def start_app_state(package_name, pad_code, task_manager):
 
 
 async def install_app_main_logic(pad_code_str: str, task_manager):
-    """主要的应用安装逻辑"""
-    script_md5_list: Any = script_install_url.split("/")
-    script_md5 = script_md5_list[-1].replace(".apk", "")
-    clash_md5_list: Any = clash_install_url.split("/")
-    clash_md5 = clash_md5_list[-1].replace(".apk", "")
-    chrome_md5_list: Any = chrome_install_url.split("/")
-    chrome_md5 = chrome_md5_list[-1].replace(".apk", "")
-    script2_md5_list: Any = script2_install_url.split("/")
-    script2_md5 = script2_md5_list[-1].replace(".apk", "")
-
     logger.success(f'{pad_code_str}: 一键新机成功，开始安装应用')
     await update_cloud_status(pad_code=pad_code_str, current_status="一键新机成功，开始安装应用")
 
@@ -146,28 +137,28 @@ async def install_app_main_logic(pad_code_str: str, task_manager):
     clash_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],
         app_url=clash_install_url,
-        md5=clash_md5
+        md5=InstallAppEnum.clash_md5
     )
     logger.info(f"Clash 安装结果: {clash_install_result['msg']}")
 
     script_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],
         app_url=script_install_url,
-        md5=script_md5
+        md5=InstallAppEnum.script_md5
     )
     logger.info(f"脚本安装结果: {script_install_result['msg']}")
 
     chrome_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],
         app_url=chrome_install_url,
-        md5=chrome_md5
+        md5=InstallAppEnum.chrome_md5
     )
 
 
     script2_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],
         app_url=script2_install_url,
-        md5=script2_md5
+        md5=InstallAppEnum.script2_md5
     )
 
     # 创建检查任务
