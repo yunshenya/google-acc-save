@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加统一文件管理">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
-    </list>
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加统一文件管理" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -133,7 +130,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run">
+  <component name="RunManager" selected="Python.test">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
@@ -365,8 +362,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.run" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.run" />
         <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
@@ -579,15 +576,7 @@
       <workItem from="1758634966229" duration="825000" />
       <workItem from="1758677366989" duration="2331000" />
       <workItem from="1758679800924" duration="2367000" />
-      <workItem from="1758682594138" duration="1224000" />
-    </task>
-    <task id="LOCAL-00078" summary="提高控制的精细度">
-      <option name="closed" value="true" />
-      <created>1755740283829</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
-      <option name="project" value="LOCAL" />
-      <updated>1755740283829</updated>
+      <workItem from="1758682594138" duration="5700000" />
     </task>
     <task id="LOCAL-00079" summary="提高控制的精细度">
       <option name="closed" value="true" />
@@ -973,7 +962,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758681458747</updated>
     </task>
-    <option name="localTasksCounter" value="127" />
+    <task id="LOCAL-00127" summary="增加统一文件管理">
+      <option name="closed" value="true" />
+      <created>1758684125224</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1758684125224</updated>
+    </task>
+    <option name="localTasksCounter" value="128" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
