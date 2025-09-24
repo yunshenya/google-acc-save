@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // 认证检查
-    checkAuthStatus();
+    checkAuthStatus().then(r => {});
 
     // DOM元素 - 原有元素
     const fetchAllBtn = document.getElementById('fetchAll');
@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logoutBtn');
     const refreshAllStatusBtn = document.getElementById('refreshAllStatus');
     const statusEmptyState = document.getElementById('statusEmptyState');
+    const connectionStatus = document.getElementById('connectionStatus');
 
     // 状态变量
     let allAccounts = [];
@@ -50,7 +51,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 新增状态变量
     let currentView = 'accounts'; // 'accounts' or 'status'
-    let statusUpdateInterval = null;
+    let websocket = null;
+    let reconnectInterval = null;
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 5;
+    let isConnecting = false;
 
     // 初始化
     init();
@@ -88,7 +93,197 @@ document.addEventListener('DOMContentLoaded', function() {
         // 新增事件监听器
         toggleViewBtn && toggleViewBtn.addEventListener('click', toggleView);
         logoutBtn && logoutBtn.addEventListener('click', logout);
-        refreshAllStatusBtn && refreshAllStatusBtn.addEventListener('click', fetchCloudStatus);
+        refreshAllStatusBtn && refreshAllStatusBtn.addEventListener('click', requestStatusUpdate);
+
+        // 页面可见性变化时重连WebSocket
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
+        // 页面卸载前关闭WebSocket
+        window.addEventListener('beforeunload', closeWebSocket);
+    }
+
+    // WebSocket相关函数
+    function initWebSocket() {
+        if (isConnecting || (websocket && websocket.readyState === WebSocket.OPEN)) {
+            return;
+        }
+
+        isConnecting = true;
+        updateConnectionStatus('connecting');
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+        try {
+            websocket = new WebSocket(wsUrl);
+
+            websocket.onopen = function() {
+                console.log('WebSocket连接已建立');
+                isConnecting = false;
+                reconnectAttempts = 0;
+                updateConnectionStatus('connected');
+
+                // 清除重连定时器
+                if (reconnectInterval) {
+                    clearInterval(reconnectInterval);
+                    reconnectInterval = null;
+                }
+
+                // 订阅状态更新
+                if (currentView === 'status') {
+                    requestStatusUpdate();
+                }
+            };
+
+            websocket.onmessage = function(event) {
+                try {
+                    const message = JSON.parse(event.data);
+                    handleWebSocketMessage(message);
+                } catch (error) {
+                    console.error('解析WebSocket消息失败:', error);
+                }
+            };
+
+            websocket.onclose = function(event) {
+                console.log('WebSocket连接已关闭:', event.code, event.reason);
+                isConnecting = false;
+                websocket = null;
+                updateConnectionStatus('disconnected');
+
+                // 如果不是主动关闭且在状态监控页面，尝试重连
+                if (event.code !== 1000 && currentView === 'status') {
+                    attemptReconnect();
+                }
+            };
+
+            websocket.onerror = function(error) {
+                console.error('WebSocket错误:', error);
+                isConnecting = false;
+                updateConnectionStatus('error');
+            };
+
+        } catch (error) {
+            console.error('创建WebSocket连接失败:', error);
+            isConnecting = false;
+            updateConnectionStatus('error');
+            attemptReconnect();
+        }
+    }
+
+    function closeWebSocket() {
+        if (reconnectInterval) {
+            clearInterval(reconnectInterval);
+            reconnectInterval = null;
+        }
+
+        if (websocket) {
+            websocket.close(1000, '页面关闭');
+            websocket = null;
+        }
+        updateConnectionStatus('disconnected');
+    }
+
+    function attemptReconnect() {
+        if (reconnectAttempts >= maxReconnectAttempts) {
+            console.log('达到最大重连次数，停止重连');
+            updateConnectionStatus('failed');
+            return;
+        }
+
+        if (reconnectInterval) {
+            return; // 已经在重连中
+        }
+
+        const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // 指数退避，最大30秒
+        console.log(`${delay}ms后尝试重连... (${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+
+        updateConnectionStatus('reconnecting');
+
+        reconnectInterval = setTimeout(() => {
+            reconnectAttempts++;
+            reconnectInterval = null;
+            initWebSocket();
+        }, delay);
+    }
+
+    function handleWebSocketMessage(message) {
+        switch (message.type) {
+            case 'status_update':
+                if (currentView === 'status') {
+                    renderStatusTable(message.data);
+                }
+                break;
+
+            case 'single_status_update':
+                if (currentView === 'status') {
+                    updateSingleStatus(message.data);
+                }
+                break;
+
+            case 'pong':
+                // 心跳响应
+                break;
+
+            default:
+                console.log('未知WebSocket消息类型:', message.type);
+        }
+    }
+
+    function requestStatusUpdate() {
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            websocket.send(JSON.stringify({
+                type: 'subscribe_status'
+            }));
+        } else {
+            // WebSocket未连接，回退到HTTP请求
+            fetchCloudStatus();
+        }
+    }
+
+    function updateConnectionStatus(status) {
+        if (!connectionStatus) return;
+
+        const statusMap = {
+            'connected': { text: '实时连接', class: 'status-success', icon: '●' },
+            'connecting': { text: '连接中...', class: 'status-pending', icon: '◐' },
+            'reconnecting': { text: '重连中...', class: 'status-pending', icon: '◑' },
+            'disconnected': { text: '已断开', class: 'status-error', icon: '○' },
+            'error': { text: '连接错误', class: 'status-error', icon: '✗' },
+            'failed': { text: '连接失败', class: 'status-error', icon: '✗' }
+        };
+
+        const statusInfo = statusMap[status] || statusMap['disconnected'];
+        connectionStatus.innerHTML = `
+            <span class="${statusInfo.class}">
+                ${statusInfo.icon} ${statusInfo.text}
+            </span>
+        `;
+    }
+
+    function handleVisibilityChange() {
+        if (document.hidden) {
+            // 页面隐藏时暂停WebSocket心跳
+        } else {
+            // 页面显示时恢复连接
+            if (currentView === 'status' && (!websocket || websocket.readyState !== WebSocket.OPEN)) {
+                initWebSocket();
+            }
+        }
+    }
+
+    // 更新单个状态行
+    function updateSingleStatus(statusData) {
+        const rows = statusTableBody.querySelectorAll('tr');
+        for (const row of rows) {
+            const padCodeCell = row.cells[0];
+            if (padCodeCell && padCodeCell.textContent === statusData.pad_code) {
+                const statusCell = row.cells[1];
+                if (statusCell) {
+                    statusCell.textContent = statusData.current_status;
+                    statusCell.className = getStatusClass(statusData.current_status);
+                }
+                break;
+            }
+        }
     }
 
     // 认证相关函数
@@ -120,12 +315,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response.ok) {
                 redirectToLogin();
-                return;
+
             }
         } catch (error) {
             console.error('认证检查失败:', error);
             redirectToLogin();
-            return;
+
         }
     }
 
@@ -135,6 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function logout() {
         localStorage.removeItem('access_token');
+        closeWebSocket();
         redirectToLogin();
     }
 
@@ -490,13 +686,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 获取单个账户（加锁）
     async function fetchSingleAccountLocked() {
-        const accountId = accountIdInput?.value?.trim();
-
-        if (!accountId) {
-            showError('请输入账户ID');
-            return;
-        }
-
         try {
             showLoading();
             clearTable();
@@ -613,7 +802,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 实时状态功能
+    // 实时状态功能 - 改为WebSocket优先，HTTP作为fallback
     async function fetchCloudStatus() {
         try {
             const response = await authenticatedFetch('/cloud_status');
@@ -686,25 +875,15 @@ document.addEventListener('DOMContentLoaded', function() {
             if (accountsSection) accountsSection.style.display = 'none';
             if (statusSection) statusSection.style.display = 'block';
             if (toggleViewBtn) toggleViewBtn.textContent = '切换到账户管理';
-            startStatusUpdates();
+            // 启动WebSocket连接并开始状态监控
+            initWebSocket();
         } else {
             currentView = 'accounts';
             if (accountsSection) accountsSection.style.display = 'block';
             if (statusSection) statusSection.style.display = 'none';
             if (toggleViewBtn) toggleViewBtn.textContent = '切换到状态监控';
-            stopStatusUpdates();
-        }
-    }
-
-    function startStatusUpdates() {
-        fetchCloudStatus(); // 立即获取一次
-        statusUpdateInterval = setInterval(fetchCloudStatus, 3000); // 每3秒更新一次
-    }
-
-    function stopStatusUpdates() {
-        if (statusUpdateInterval) {
-            clearInterval(statusUpdateInterval);
-            statusUpdateInterval = null;
+            // 关闭WebSocket连接
+            closeWebSocket();
         }
     }
 
@@ -716,17 +895,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (response && response.ok) {
-                fetchCloudStatus(); // 刷新整个状态表
+                // WebSocket优先，如果WebSocket连接正常，状态会自动更新
+                // 如果WebSocket未连接，则手动刷新
+                if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+                    fetchCloudStatus();
+                }
             }
         } catch (error) {
             console.error('刷新单个状态失败:', error);
         }
     }
-
-    // 页面卸载时清理定时器
-    window.addEventListener('beforeunload', function() {
-        stopStatusUpdates();
-    });
 
     // 将 refreshSingleStatus 函数暴露到全局，以便在 HTML 中使用
     window.refreshSingleStatus = refreshSingleStatus;
@@ -754,6 +932,139 @@ style.textContent = `
 
             .view-btn:hover {
                 background-color: #34495e;
+            }
+
+            .connection-status {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 14px;
+                padding: 8px 12px;
+                border-radius: 4px;
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                min-width: 120px;
+            }
+
+            .connection-status .status-success {
+                color: #27ae60;
+                font-weight: 500;
+            }
+
+            .connection-status .status-pending {
+                color: #f39c12;
+                font-weight: 500;
+            }
+
+            .connection-status .status-error {
+                color: #e74c3c;
+                font-weight: 500;
+            }
+
+            .connection-status .status-info {
+                color: #6c757d;
+                font-weight: 500;
+            }
+
+            .status-running::after {
+                content: '';
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                margin-left: 8px;
+                background-color: var(--primary-color);
+                border-radius: 50%;
+                animation: blink 1s infinite;
+            }
+
+            @keyframes blink {
+                0%, 50% { opacity: 1; }
+                51%, 100% { opacity: 0.3; }
+            }
+
+            /* WebSocket连接状态指示器动画 */
+            .connection-status .status-pending::before {
+                content: '';
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                margin-right: 4px;
+                border: 2px solid #f39c12;
+                border-top-color: transparent;
+                border-radius: 50%;
+                animation: spin 1s linear infinite;
+            }
+
+            .connection-status .status-success::before {
+                content: '';
+                display: inline-block;
+                width: 8px;
+                height: 8px;
+                margin-right: 4px;
+                background-color: #27ae60;
+                border-radius: 50%;
+                animation: pulse 2s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1.2);
+                    opacity: 0.7;
+                }
+                100% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+
+            /* 表格行的状态样式 */
+            .status-success {
+                color: var(--success-color);
+                font-weight: bold;
+            }
+
+            .status-error {
+                color: var(--danger-color);
+                font-weight: bold;
+            }
+
+            .status-running {
+                color: var(--primary-color);
+                font-weight: bold;
+                position: relative;
+            }
+
+            .status-pending {
+                color: var(--warning-color);
+                font-weight: bold;
+            }
+
+            .status-info {
+                color: var(--dark-gray);
+                font-weight: 500;
+            }
+
+            /* 响应式优化 */
+            @media (max-width: 768px) {
+                .connection-status {
+                    font-size: 12px;
+                    padding: 6px 10px;
+                    min-width: 100px;
+                }
+                
+                .status-controls {
+                    flex-direction: column;
+                    gap: 10px;
+                    align-items: stretch;
+                }
+                
+                .status-controls button {
+                    width: 100%;
+                }
             }
         `;
 document.head.appendChild(style);

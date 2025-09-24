@@ -14,8 +14,6 @@ class LoginResponse(BaseModel):
 
 @router.post("/login", response_model=LoginResponse)
 async def login(request: LoginRequest):
-    print(request.username)
-    print(request.password)
     user = authenticate_user(request.username, request.password)
     if not user:
         raise HTTPException(

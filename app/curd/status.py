@@ -1,3 +1,5 @@
+# 在 app/curd/status.py 中修改update_cloud_status函数，添加WebSocket通知
+
 from typing import cast
 
 from fastapi import HTTPException
@@ -22,6 +24,11 @@ async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = 
             await db.commit()
             await db.refresh(db_account)
             logger.success(f"{pad_code}: 云机状态上传成功")
+
+            # 通知WebSocket客户端
+            from app.services.websocket_manager import ws_manager
+            await ws_manager.notify_status_change(pad_code, current_status)
+
         except IntegrityError:
             await db.rollback()
             await update_cloud_status(pad_code=pad_code, current_status="新机中")
@@ -54,8 +61,11 @@ async def update_cloud_status(pad_code: str,
             db_status = result.scalars().first()
             if db_status is None:
                 raise HTTPException(status_code=404, detail="云机状态不存在")
-            if current_status is not None:
+
+            status_changed = False
+            if current_status is not None and db_status.current_status != current_status:
                 db_status.current_status = current_status
+                status_changed = True
 
             if number_of_run is not None:
                 db_status.number_of_run += number_of_run
@@ -68,6 +78,12 @@ async def update_cloud_status(pad_code: str,
 
             await db.commit()
             await db.refresh(db_status)
+
+            # 如果状态发生变化，通知WebSocket客户端
+            if status_changed:
+                from app.services.websocket_manager import ws_manager
+                await ws_manager.notify_status_change(pad_code, current_status)
+
             return db_status
         except IntegrityError:
             await db.rollback()
