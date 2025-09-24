@@ -1,5 +1,3 @@
-# 在 app/curd/status.py 中修改update_cloud_status函数，添加WebSocket通知
-
 from typing import cast
 
 from fastapi import HTTPException
@@ -10,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from app.models.proxy import ProxyResponse
 from app.models.status import StatusResponse
 from app.services.database import SessionLocal, Status
+from app.services.websocket_manager import ws_manager
 
 
 async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = "新机中"):
@@ -26,7 +25,6 @@ async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = 
             logger.success(f"{pad_code}: 云机状态上传成功")
 
             # 通知WebSocket客户端
-            from app.services.websocket_manager import ws_manager
             await ws_manager.notify_status_change(pad_code, current_status)
 
         except IntegrityError:
@@ -81,7 +79,6 @@ async def update_cloud_status(pad_code: str,
 
             # 如果状态发生变化，通知WebSocket客户端
             if status_changed:
-                from app.services.websocket_manager import ws_manager
                 await ws_manager.notify_status_change(pad_code, current_status)
 
             return db_status
