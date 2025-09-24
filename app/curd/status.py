@@ -47,10 +47,10 @@ async def remove_cloud_status(pad_code: str):
 
 
 async def update_cloud_status(pad_code: str,
-                                current_status: str = None,
-                                number_of_run: int = None,
-                                temple_id: int = None,
-                                phone_number_counts: int = None) -> StatusResponse:
+                              current_status: str = None,
+                              number_of_run: int = None,
+                              temple_id: int = None,
+                              phone_number_counts: int = None) -> StatusResponse:
     async with SessionLocal() as db:
         try:
             from sqlalchemy import select
@@ -99,7 +99,7 @@ async def set_proxy_status(pad_code: str, proxy_response: ProxyResponse) -> Stat
 
             db_status.proxy = proxy_response.proxy
             db_status.country = proxy_response.country
-            db_status.code  = proxy_response.code
+            db_status.code = proxy_response.code
             db_status.time_zone = proxy_response.time_zone
             db_status.latitude = proxy_response.latitude
             db_status.longitude = proxy_response.longitude
@@ -111,6 +111,7 @@ async def set_proxy_status(pad_code: str, proxy_response: ProxyResponse) -> Stat
         except IntegrityError:
             await db.rollback()
             raise HTTPException(status_code=400, detail="设置代理失败")
+
 
 async def get_proxy_status(pad_code: str) -> ProxyResponse:
     async with SessionLocal() as db:

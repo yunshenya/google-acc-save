@@ -36,5 +36,3 @@ async def get_one_cloud_status(one_cloud_status_request: GetOneCloudStatus) -> S
         if status is None:
             raise HTTPException(status_code=404, detail="云机不存在")
         return status
-
-

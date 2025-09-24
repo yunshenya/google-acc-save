@@ -1,7 +1,9 @@
-from typing import List, Dict, Union
-from app.models.proxy import ProxyResponse
-from app.config import default_proxy
 import threading
+from typing import List, Dict, Union
+
+from app.config import default_proxy
+from app.models.proxy import ProxyResponse
+
 
 class ProxyManager:
     _instance = None

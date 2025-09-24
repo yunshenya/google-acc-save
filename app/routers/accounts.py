@@ -10,6 +10,7 @@ from app.services.database import SessionLocal, Account
 
 router = APIRouter()
 
+
 @router.post("/accounts", response_model=AccountResponse)
 async def create_account(account: AccountCreate) -> AccountResponse:
     async with SessionLocal() as db:
@@ -39,6 +40,7 @@ async def get_accounts() -> list[AccountResponse]:
         result = await db.execute(select(Account).order_by(cast(ColumnElement[bool], Account.id)))
         accounts = result.scalars().all()
         return accounts
+
 
 ## 获取之后就会删除之前那条数据
 @router.get("/account/unique", response_model=AccountResponse)

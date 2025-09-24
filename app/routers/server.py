@@ -27,6 +27,7 @@ async def login_page():
         content = f.read()
     return HTMLResponse(content=content)
 
+
 # 修改现有的首页路由，添加认证检查
 @router.get("/", response_class=HTMLResponse)
 async def index():
@@ -47,13 +48,14 @@ async def status(android_code: AndroidPadCodeRequest):
     template_id = random.choice(temple_id_list)
     default_proxy: Any = manager.get_proxy_countries()
     await set_proxy_status(android_code.pad_code, random.choice(default_proxy))
-    await update_cloud_status(android_code.pad_code, number_of_run=1, temple_id=template_id, current_status="任务已完成，正在一键新机中")
+    await update_cloud_status(android_code.pad_code, number_of_run=1, temple_id=template_id,
+                              current_status="任务已完成，正在一键新机中")
     logger.success(f"{android_code.pad_code}: 任务已完成，正在一键新机中")
     await replace_pad([android_code.pad_code], template_id=template_id)
     return {"message": "新机成功"}
 
 
-@router.post("/callback", response_model= str)
+@router.post("/callback", response_model=str)
 async def callback(data: dict) -> str:
     task_business_type = data.get("taskBusinessType")
     match int(task_business_type):

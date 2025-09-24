@@ -9,6 +9,7 @@ from app.services.websocket_manager import WebSocketManager
 router = APIRouter()
 ws_manager = WebSocketManager()
 
+
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await ws_manager.connect(websocket)

@@ -6,7 +6,8 @@ from loguru import logger
 from app.config import default_proxy
 from app.dependencies.proxy import ProxyManager
 
-manager = ProxyManager() ## 全局代理管理
+manager = ProxyManager()  ## 全局代理管理
+
 
 def load_proxy_countries():
     try:
@@ -15,12 +16,12 @@ def load_proxy_countries():
             for row in reader:
                 if len(row) >= 9:
                     # 读取所有字段，但只保留模型中需要的字段
-                    country_data =  {
+                    country_data = {
                         "country": row[0],  # 国家名称
-                        "code": row[1],    # 国家代码
+                        "code": row[1],  # 国家代码
                         "proxy": row[2],  # 代理URL
                         "time_zone": row[3],  # 时区
-                        "language": row[4],   # 语言
+                        "language": row[4],  # 语言
                         "latitude": float(row[5]),  # 纬度
                         "longitude": float(row[6]),  # 经度
                     }

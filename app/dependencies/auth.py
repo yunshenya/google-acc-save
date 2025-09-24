@@ -20,7 +20,7 @@ class VmosUtil(object):
         self._host = "api.vmoscloud.com"
 
     def _get_signature(self):
-        json_string :Any = json.dumps(self._data, separators=(',', ':'), ensure_ascii=False)
+        json_string: Any = json.dumps(self._data, separators=(',', ':'), ensure_ascii=False)
         # 计算SHA-256哈希值
         hash_object = hashlib.sha256(json_string.encode())
         x_content_sha256 = hash_object.hexdigest()
@@ -78,7 +78,6 @@ class VmosUtil(object):
 
         return signature
 
-
     async def send(self):
         signature = self._get_signature()
         url = f"https://api.vmoscloud.com{self._url}"
@@ -92,5 +91,3 @@ class VmosUtil(object):
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers, data=payload) as response:
                 return await response.json()
-
-

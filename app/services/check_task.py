@@ -2,6 +2,7 @@ import asyncio
 import random
 from enum import IntEnum
 from typing import Any, Dict, Set
+
 from loguru import logger
 
 from app.config import clash_install_url, script_install_url, temple_id_list, pkg_name, global_timeout_minute, \
@@ -223,18 +224,24 @@ class TaskManager:
                     logger.warning(f"{pad_code}: 重新上传")
                     await update_cloud_status(pad_code=pad_code, current_status=f"{task_type}重新安装")
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url, md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url, md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url, md5=InstallAppEnum.script2_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                                      md5=InstallAppEnum.script_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                                      md5=InstallAppEnum.chrome_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                                      md5=InstallAppEnum.script2_md5)
 
                 else:
                     app_result = app_install_result["data"][0]["apps"]
                     for app_result_one in app_result:
                         logger.warning(f"安装成功: {app_result_one['appName']}")
-                        await update_cloud_status(pad_code=pad_code, current_status=f"安装成功: {app_result_one['appName']}")
+                        await update_cloud_status(pad_code=pad_code,
+                                                  current_status=f"安装成功: {app_result_one['appName']}")
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url, md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url, md5=InstallAppEnum.script2_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                                      md5=InstallAppEnum.chrome_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                                      md5=InstallAppEnum.script2_md5)
 
             elif task_type.lower() == "clash":
                 app_install_result = await get_app_install_info([pad_code])
@@ -247,18 +254,25 @@ class TaskManager:
                     logger.warning(f"{pad_code}: 重新上传")
                     await update_cloud_status(pad_code=pad_code, current_status="上传失败，重新上传")
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url, md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url, md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url, md5=InstallAppEnum.script2_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                                      md5=InstallAppEnum.script_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                                      md5=InstallAppEnum.chrome_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                                      md5=InstallAppEnum.script2_md5)
 
                 else:
                     app_result = app_install_result["data"][0]["apps"]
                     for app_result_one in app_result:
                         logger.warning(f"安装成功: {app_result_one['appName']}")
-                        await update_cloud_status(pad_code=pad_code, current_status=f"安装成功: {app_result_one['appName']}")
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url, md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url, md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url, md5=InstallAppEnum.script2_md5)
+                        await update_cloud_status(pad_code=pad_code,
+                                                  current_status=f"安装成功: {app_result_one['appName']}")
+                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                                      md5=InstallAppEnum.script_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                                      md5=InstallAppEnum.chrome_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                                      md5=InstallAppEnum.script2_md5)
 
 
             elif task_type.lower() == "chrome":
@@ -271,18 +285,24 @@ class TaskManager:
                     logger.warning(f"{pad_code}: 重新上传")
                     await update_cloud_status(pad_code=pad_code, current_status="上传失败，重新上传")
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url, md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code],app_url=chrome_install_url, md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url, md5=InstallAppEnum.script2_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                                      md5=InstallAppEnum.script_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                                      md5=InstallAppEnum.chrome_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                                      md5=InstallAppEnum.script2_md5)
 
                 else:
                     app_result = app_install_result["data"][0]["apps"]
                     for app_result_one in app_result:
                         logger.warning(f"安装成功: {app_result_one['appName']}")
-                        await update_cloud_status(pad_code=pad_code, current_status=f"安装成功: {app_result_one['appName']}")
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url, md5=InstallAppEnum.script_md5)
+                        await update_cloud_status(pad_code=pad_code,
+                                                  current_status=f"安装成功: {app_result_one['appName']}")
+                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                                      md5=InstallAppEnum.script_md5)
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url, md5=InstallAppEnum.script2_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                                      md5=InstallAppEnum.script2_md5)
 
             elif task_type.lower() == "script2":
                 app_install_result = await get_app_install_info([pad_code])
@@ -294,18 +314,24 @@ class TaskManager:
                     logger.warning(f"{pad_code}: 重新上传")
                     await update_cloud_status(pad_code=pad_code, current_status="上传失败，重新上传")
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url, md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code],app_url=chrome_install_url, md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code],app_url=script2_install_url, md5=InstallAppEnum.script2_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                                      md5=InstallAppEnum.script_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                                      md5=InstallAppEnum.chrome_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                                      md5=InstallAppEnum.script2_md5)
 
                 else:
                     app_result = app_install_result["data"][0]["apps"]
                     for app_result_one in app_result:
                         logger.warning(f"安装成功: {app_result_one['appName']}")
-                        await update_cloud_status(pad_code=pad_code, current_status=f"安装成功: {app_result_one['appName']}")
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url, md5=InstallAppEnum.script_md5)
+                        await update_cloud_status(pad_code=pad_code,
+                                                  current_status=f"安装成功: {app_result_one['appName']}")
+                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                                      md5=InstallAppEnum.script_md5)
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code],app_url=chrome_install_url, md5=InstallAppEnum.chrome_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                                      md5=InstallAppEnum.chrome_md5)
 
         except Exception as e:
             logger.error(f"处理安装结果时出错 {pad_code}: {e}")
@@ -327,7 +353,6 @@ class TaskManager:
 
         if task_type.lower() == "chrome":
             app_url = chrome_install_url
-
 
         if task_type.lower() == "script2":
             app_url = script2_install_url
@@ -367,7 +392,8 @@ class TaskManager:
                         case InstallTaskStatus.ALL_FAILED:
                             logger.error(f"{pad_code}: {task_type} 全部失败")
                             if error_message:
-                                await update_cloud_status(pad_code=pad_code, current_status=f"安装失败: {error_message}")
+                                await update_cloud_status(pad_code=pad_code,
+                                                          current_status=f"安装失败: {error_message}")
                             return False
 
                         case InstallTaskStatus.COMPLETED:

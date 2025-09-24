@@ -1,16 +1,20 @@
 from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel
+
 from app.dependencies.auth_middleware import authenticate_user, create_access_token, verify_token
 
 router = APIRouter()
+
 
 class LoginRequest(BaseModel):
     username: str
     password: str
 
+
 class LoginResponse(BaseModel):
     access_token: str
     token_type: str
+
 
 @router.post("/login", response_model=LoginResponse)
 async def login(request: LoginRequest):
@@ -24,6 +28,7 @@ async def login(request: LoginRequest):
 
     access_token = create_access_token(data={"sub": user["username"]})
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 @router.get("/verify")
 async def verify_token_endpoint(current_user: str = Depends(verify_token)):

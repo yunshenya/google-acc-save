@@ -17,13 +17,14 @@ class StatusResponse(BaseModel):
     longitude: float | None = None
     language: str | None = None
     time_zone: str | None = None
-    proxy : str | None = None
+    proxy: str | None = None
 
 
 class StatusRequest(BaseModel):
     pad_code: str
     current_status: str | None = None
     phone_number_counts: int | None = None
+
 
 class GetOneCloudStatus(BaseModel):
     pad_code: str

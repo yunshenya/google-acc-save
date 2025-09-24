@@ -10,6 +10,7 @@ class ProxyResponse(BaseModel):
     latitude: float
     longitude: float
 
+
 class ProxyRequest(BaseModel):
     country_code: str
 

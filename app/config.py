@@ -1,6 +1,7 @@
 import os
-from typing import Dict, List, Any
 from dataclasses import dataclass
+from typing import Dict, List, Any
+
 from dotenv import load_dotenv
 
 # 加载环境变量
@@ -25,7 +26,7 @@ class ProxyConfig:
             "proxy": self.proxy,
             "time_zone": self.time_zone,
             "language": self.language,
-            "latitude":self.latitude,
+            "latitude": self.latitude,
             "longitude": self.longitude
         }
 
@@ -121,9 +122,8 @@ class Config:
         return getattr(cls.TIMEOUTS, f"{timeout_type}_timeout", 10)
 
 
-#创建全局配置实例以便于访问
+# 创建全局配置实例以便于访问
 config = Config()
-
 
 # 向后兼容性 - 如果您需要保留原始变量名称
 DEBUG = config.DEBUG

@@ -20,14 +20,15 @@ async def start_app_state(package_name, pad_code, task_manager):
     try:
         while total_try_count < 6:
             app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
-            taskid= app_result["data"][0]["taskId"]
+            taskid = app_result["data"][0]["taskId"]
             match await check_padTaskDetail([taskid]):
                 case -1:
                     logger.warning(f"{pad_code}: 启动任务正在一键新机")
                     await update_cloud_status(pad_code=pad_code, current_status="启动任务正在一键新机")
                     await task_manager.cancel_timeout_task_only(pad_code)
-                    template_id=random.choice(temple_id_list)
-                    await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id, current_status="正在一键新机中")
+                    template_id = random.choice(temple_id_list)
+                    await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
+                                              current_status="正在一键新机中")
                     await replace_pad([pad_code], template_id=template_id)
                     break
 
@@ -109,13 +110,14 @@ async def start_app_state(package_name, pad_code, task_manager):
     except IndexError:
         while total_try_count < 6:
             app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
-            taskid= app_result["data"][0]["taskId"]
+            taskid = app_result["data"][0]["taskId"]
             match await check_padTaskDetail([taskid]):
                 case -1:
                     logger.warning(f"{pad_code}: 正在一键新机")
                     await task_manager.cancel_timeout_task_only(pad_code)
-                    template_id=random.choice(temple_id_list)
-                    await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id, current_status="正在一键新机中")
+                    template_id = random.choice(temple_id_list)
+                    await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
+                                              current_status="正在一键新机中")
                     await replace_pad([pad_code], template_id=template_id)
                     break
                 case 0:
@@ -153,7 +155,6 @@ async def install_app_main_logic(pad_code_str: str, task_manager):
         app_url=chrome_install_url,
         md5=InstallAppEnum.chrome_md5
     )
-
 
     script2_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],

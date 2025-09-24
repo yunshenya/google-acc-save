@@ -18,12 +18,11 @@ from app.routers import websocket as websocket_router
 from app.services.database import engine, Base
 
 
-#日志拦截器
+# 日志拦截器
 class InterceptHandler(logging.Handler):
     def emit(self, record):
         level = logger.level(record.levelname).name
         logger.opt(depth=6, exception=record.exc_info).log(level, record.getMessage())
-
 
 
 # noinspection PyShadowingNames
@@ -36,7 +35,7 @@ async def startup_event(app: FastAPI):
     # 将 Uvicorn 的日志处理器替换为我们的拦截器
     logging.getLogger("uvicorn.access").handlers = [InterceptHandler()]
     logging.getLogger("uvicorn.error").handlers = [InterceptHandler()]
-    logging.getLogger("uvicorn.error").propagate = False # 避免重复输出
+    logging.getLogger("uvicorn.error").propagate = False  # 避免重复输出
     # 加载代理国家列表
     load_proxy_countries()
     app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -48,7 +47,7 @@ async def startup_event(app: FastAPI):
     app.include_router(status.router, prefix="")
     # 一键新机
     for pad_code in pad_code_list:
-        template_id=random.choice(temple_id_list)
+        template_id = random.choice(temple_id_list)
         await add_cloud_status(pad_code, template_id)
         default_proxy: list[ProxyResponse] = manager.get_proxy_countries()
         await set_proxy_status(pad_code, random.choice(default_proxy))
@@ -65,7 +64,6 @@ async def startup_event(app: FastAPI):
     logger.info("application shutdown")
 
 
-
 app = FastAPI(title="google账号管理系统", lifespan=startup_event)
 
 app.add_middleware(
@@ -74,4 +72,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-

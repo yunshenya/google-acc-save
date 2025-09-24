@@ -12,7 +12,6 @@ engine: Any = create_async_engine(DATABASE_URL)
 SessionLocal = sessionmaker(class_=AsyncSession, bind=engine, autoflush=False, autocommit=False)
 
 
-
 class Account(Base):
     __tablename__ = "google_account"
     id = Column(Integer, primary_key=True, index=True)
@@ -22,7 +21,6 @@ class Account(Base):
     status = Column(Integer, default=0, nullable=False)
     code = Column(String(32), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)
-
 
 
 class Status(Base):

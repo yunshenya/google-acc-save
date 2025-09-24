@@ -112,5 +112,6 @@ class WebSocketManager:
         }
         await self.broadcast(message)
 
+
 # 全局WebSocket管理器实例
 ws_manager = WebSocketManager()
