@@ -2,12 +2,10 @@ from sqlite3 import IntegrityError
 from typing import List, cast
 
 from fastapi import APIRouter, HTTPException
-from loguru import logger
 from sqlalchemy import ColumnElement
 
 from app.curd.status import update_cloud_status
 from app.models.status import StatusResponse, StatusRequest, GetOneCloudStatus
-from app.routers.websocket import ws_manager
 from app.services.database import SessionLocal, Status
 
 router = APIRouter()
