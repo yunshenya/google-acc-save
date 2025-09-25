@@ -31,3 +31,8 @@ class StatusRequest(BaseModel):
 
 class GetOneCloudStatus(BaseModel):
     pad_code: str
+
+
+class AddStatusRequest(BaseModel):
+    pad_code: str
+    country_code: str

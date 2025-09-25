@@ -1,11 +1,12 @@
-from sqlite3 import IntegrityError
 from typing import List, cast
 
 from fastapi import APIRouter, HTTPException
 from sqlalchemy import ColumnElement
+from sqlalchemy.exc import IntegrityError
 
 from app.curd.status import update_cloud_status
-from app.models.status import StatusResponse, StatusRequest, GetOneCloudStatus
+from app.dependencies.countries import manager, load_proxy_countries
+from app.models.status import StatusResponse, StatusRequest, GetOneCloudStatus, AddStatusRequest
 from app.services.database import SessionLocal, Status
 
 router = APIRouter()
@@ -41,17 +42,32 @@ async def get_one_cloud_status(one_cloud_status_request: GetOneCloudStatus) -> S
         return status
 
 @router.post("/add_cloud_status", response_model=dict[str, str])
-async def add_cloud_status(status: StatusRequest) -> dict[str, str]:
+async def add_cloud_status(status: AddStatusRequest) -> dict[str, str]:
     async with SessionLocal() as db:
         try:
-            db_account = Status(
-                pad_code=status.pad_code,
-                current_status=status.current_status
-            )
-            db.add(db_account)
-            await db.commit()
-            await db.refresh(db_account)
-            return {"msg": f"{status.pad_code}成功"}
+            proxy_countries = manager.get_proxy_countries()
+            if not proxy_countries:
+                load_proxy_countries()
+
+            for country in proxy_countries:
+                if country.code.lower() == status.country_code.lower():
+                    db_account = Status(
+                        pad_code=status.pad_code,
+                        country = country.country,
+                        proxy = country.proxy,
+                        code = country.code,
+                        time_zone = country.time_zone,
+                        language = country.language,
+                        latitude = country.latitude,
+                        longitude = country.longitude,
+                    )
+                    db.add(db_account)
+                    await db.commit()
+                    await db.refresh(db_account)
+                    return {"msg": f"{status.pad_code}成功"}
+
+            return {"msg": "未找到代理国家"}
+
         except IntegrityError:
             await db.rollback()
             return {"msg": f"云机已存在: {status.pad_code}"}
