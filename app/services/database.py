@@ -45,3 +45,19 @@ class Status(Base):
     longitude = Column(Float, nullable=False)
     forward_num = Column(Integer, default=0, nullable=False)
     secondary_email_num = Column(Integer, default=0, nullable=False)
+
+
+class ProxyCollection(Base):
+    __tablename__ = "proxy_collection"
+    id = Column(Integer, primary_key=True, index=True)
+    country = Column(Text, nullable=True)
+    template_id  = Column(Integer, nullable=True)
+    android_version = Column(Text, nullable=True)
+    temple_id  = Column(Integer, nullable=True)
+    code  = Column(Text, nullable=True)
+    latitude = Column(Float, nullable=True)
+    longitude = Column(Float, nullable=True)
+    proxy  = Column(Text, nullable=True)
+    language  = Column(Text, nullable=True)
+    time_zone  = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)

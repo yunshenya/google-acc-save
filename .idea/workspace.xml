@@ -5,13 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加统计页面">
+      <change afterPath="$PROJECT_DIR$/app/curd/proxy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/proxy.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies/countries.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/countries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/proxy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/accounts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/proxy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/proxy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/status.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/status.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,8 +32,8 @@
       <list>
         <option value="JavaScript File" />
         <option value="CSS File" />
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -109,6 +118,7 @@
     &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
     &quot;数据库脚本.data.sql.executor&quot;: &quot;Run&quot;,
+    &quot;数据库脚本.proxy.sql.executor&quot;: &quot;Run&quot;,
     &quot;数据库脚本.status.sql.executor&quot;: &quot;Run&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -158,10 +168,10 @@
       <data-source id="b11d5334-a1ec-4ad7-b714-9c084d1bbdd4" namespace="database/&quot;google-manager&quot;/schema/&quot;public&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
-      <script-file value="$PROJECT_DIR$/database/data.sql" />
+    <configuration name="proxy.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/database/proxy.sql" />
       <script-mode>FILE</script-mode>
-      <data-source id="b11d5334-a1ec-4ad7-b714-9c084d1bbdd4" namespace="database/&quot;google-manager&quot;/schema/&quot;public&quot;" />
+      <data-source id="3f88973b-af52-4202-9e39-d850b25d60eb" namespace="database/&quot;google-manager&quot;/schema/&quot;public&quot;" />
       <method v="2" />
     </configuration>
     <configuration name="accounts" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -208,7 +218,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="proxy" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="google-acc-save" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -217,11 +227,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/app/curd" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/curd/proxy.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -386,18 +396,21 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.accounts" />
       <item itemvalue="Python.main" />
+      <item itemvalue="Python.proxy" />
+      <item itemvalue="Python.accounts" />
       <item itemvalue="Python.run" />
       <item itemvalue="Python.test" />
       <item itemvalue="数据库脚本.data.sql" />
+      <item itemvalue="数据库脚本.proxy.sql" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.test" />
         <item itemvalue="Python.run" />
+        <item itemvalue="数据库脚本.proxy.sql" />
+        <item itemvalue="Python.proxy" />
         <item itemvalue="Python.accounts" />
-        <item itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -611,23 +624,8 @@
       <workItem from="1758679800924" duration="2367000" />
       <workItem from="1758682594138" duration="13518000" />
       <workItem from="1758699652637" duration="5304000" />
-      <workItem from="1758705083929" duration="8776000" />
-    </task>
-    <task id="LOCAL-00087" summary="修复多次设置新机的bug">
-      <option name="closed" value="true" />
-      <created>1755748280065</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1755748280065</updated>
-    </task>
-    <task id="LOCAL-00088" summary="修复多次设置新机的bug">
-      <option name="closed" value="true" />
-      <created>1755748472494</created>
-      <option name="number" value="00088" />
-      <option name="presentableId" value="LOCAL-00088" />
-      <option name="project" value="LOCAL" />
-      <updated>1755748472494</updated>
+      <workItem from="1758705083929" duration="14520000" />
+      <workItem from="1758764040754" duration="3842000" />
     </task>
     <task id="LOCAL-00089" summary="修复多次设置新机的bug">
       <option name="closed" value="true" />
@@ -1005,7 +1003,23 @@
       <option name="project" value="LOCAL" />
       <updated>1758712241681</updated>
     </task>
-    <option name="localTasksCounter" value="136" />
+    <task id="LOCAL-00136" summary="添加统计页面">
+      <option name="closed" value="true" />
+      <created>1758715041409</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1758715041409</updated>
+    </task>
+    <task id="LOCAL-00137" summary="添加统计页面">
+      <option name="closed" value="true" />
+      <created>1758716223514</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1758716223514</updated>
+    </task>
+    <option name="localTasksCounter" value="138" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

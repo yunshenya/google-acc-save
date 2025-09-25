@@ -169,6 +169,14 @@ async def reboot(pad_code_list: list[str]):
     return await VmosUtil(reboot_url, body).send()
 
 
+async def get_cloud_phone_info(pad_code: str):
+    url = "/vcpcloud/api/padApi/padInfo"
+    body = {
+        "padCode": pad_code
+    }
+
+    return await VmosUtil(url, body).send()
+
 async def check_padTaskDetail(tasks_list: list[str]) -> int:
     try:
         result = await get_cloud_file_task_info(tasks_list)

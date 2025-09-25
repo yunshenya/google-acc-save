@@ -10,6 +10,7 @@ class AccountCreate(BaseModel):
     code: str | None = None
     for_email: str | None = None
     for_password: str | None = None
+    pad_code: str | None = None
 
 
 class AndroidPadCodeRequest(BaseModel):
@@ -35,7 +36,6 @@ class AccountResponse(BaseModel):
     code: str | None
     created_at: datetime
     is_boned_secondary_email: bool
-
 
 
 class ForwardRequest(BaseModel):

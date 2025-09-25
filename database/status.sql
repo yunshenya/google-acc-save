@@ -8,8 +8,6 @@ CREATE TABLE cloud_status (
                               phone_number_counts INT DEFAULT 0,
                               country VARCHAR(100),
                               temple_id INT NOT NULL,
-                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               code varchar(100),
                               latitude float,
                               proxy VARCHAR(100),
@@ -17,7 +15,9 @@ CREATE TABLE cloud_status (
                               language VARCHAR(100),
                               time_zone VARCHAR(100),
                               forward_num INT NOT NULL DEFAULT 0,
-                              secondary_email_num INT NOT NULL DEFAULT 0
+                              secondary_email_num INT NOT NULL DEFAULT 0,
+                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()

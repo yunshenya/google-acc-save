@@ -5,6 +5,7 @@ from loguru import logger
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
 
+from app.curd.proxy import update_proxies
 from app.models.accounts import AccountResponse, AccountCreate, AccountUpdate, ForwardRequest, SecondaryEmail
 from app.services.database import SessionLocal, Account
 
@@ -28,7 +29,10 @@ async def create_account(account: AccountCreate) -> AccountResponse:
             db.add(db_account)
             await db.commit()
             await db.refresh(db_account)
-            logger.success("账号上传成功")
+            if account.pad_code is not None:
+                logger.success(f"{account.pad_code}: 账号上传成功")
+                await update_proxies(pade_code=account.pad_code)
+
             return db_account
         except IntegrityError:
             await db.rollback()
@@ -79,7 +83,6 @@ async def get_unique_account(
         return account_data
 
 
-
 @router.get("/accounts/{account_id}", response_model=AccountResponse)
 async def get_account(account_id: int) -> AccountResponse:
     async with SessionLocal() as db:
@@ -90,6 +93,7 @@ async def get_account(account_id: int) -> AccountResponse:
         if account is None:
             raise HTTPException(status_code=404, detail="账号不存在")
         return account
+
 
 @router.post("/update_forward", response_model=AccountResponse)
 async def update_forward(forward: ForwardRequest) -> AccountResponse:
