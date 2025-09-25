@@ -23,7 +23,7 @@ class StatusResponse(BaseModel):
 class StatusRequest(BaseModel):
     pad_code: str
     current_status: str | None = None
-    phone_number_counts: int | None = None,
+    phone_number_counts: int | None = None
     forward_num: int | None = None
     secondary_email_num: int | None = None
 

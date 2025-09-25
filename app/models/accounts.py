@@ -40,10 +40,12 @@ class AccountResponse(BaseModel):
 
 class ForwardRequest(BaseModel):
     account: str
+    pad_code: str
     for_email: str
     for_password: str
 
 
 class SecondaryEmail(BaseModel):
     account: str
+    pad_code: str
     is_boned_secondary_email: bool

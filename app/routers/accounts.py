@@ -6,6 +6,7 @@ from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
 
 from app.curd.proxy import update_proxies
+from app.curd.status import update_cloud_status
 from app.models.accounts import AccountResponse, AccountCreate, AccountUpdate, ForwardRequest, SecondaryEmail
 from app.services.database import SessionLocal, Account
 
@@ -109,6 +110,7 @@ async def update_forward(forward: ForwardRequest) -> AccountResponse:
         account.for_password = forward.for_password
         await db.commit()
         await db.refresh(account)
+        await update_cloud_status(pad_code=forward.pad_code, forward_num=1)
         return account
 
 
@@ -124,6 +126,7 @@ async def update_secondary_mail(secondary_mail: SecondaryEmail) -> AccountRespon
         account.is_boned_secondary_email = secondary_mail.is_boned_secondary_email
         await db.commit()
         await db.refresh(account)
+        await update_cloud_status(pad_code=secondary_mail.pad_code, secondary_email_num=1)
         return account
 
 
