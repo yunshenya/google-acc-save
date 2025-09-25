@@ -18,6 +18,7 @@ class StatusResponse(BaseModel):
     language: str | None = None
     time_zone: str | None = None
     proxy: str | None = None
+    is_secondary_email: bool | None = None
 
 
 class StatusRequest(BaseModel):
