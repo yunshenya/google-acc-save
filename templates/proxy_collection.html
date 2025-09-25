@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代理集合管理 - 账户管理系统</title>
+    <link href="../static/css/index.css" rel="stylesheet">
+    <style>
+        .proxy-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .proxy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .proxy-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-filter-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            flex: 1;
+        }
+
+        .search-input {
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .filter-select {
+            min-width: 120px;
+        }
+
+        .proxy-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .proxy-table th,
+        .proxy-table td {
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 0;
+        }
+
+        .proxy-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* 列宽设置 */
+        .proxy-table th:nth-child(1) { width: 60px; }   /* ID */
+        .proxy-table th:nth-child(2) { width: 120px; }  /* 国家 */
+        .proxy-table th:nth-child(3) { width: 60px; }   /* 代码 */
+        .proxy-table th:nth-child(4) { width: 120px; }  /* Android版本 */
+        .proxy-table th:nth-child(5) { width: 80px; }   /* 模板ID */
+        .proxy-table th:nth-child(6) { width: 80px; }   /* 纬度 */
+        .proxy-table th:nth-child(7) { width: 80px; }   /* 经度 */
+        .proxy-table th:nth-child(8) { width: 200px; }  /* 代理URL */
+        .proxy-table th:nth-child(9) { width: 80px; }   /* 语言 */
+        .proxy-table th:nth-child(10) { width: 140px; } /* 时区 */
+        .proxy-table th:nth-child(11) { width: 140px; } /* 创建时间 */
+        .proxy-table th:nth-child(12) { width: 80px; }  /* 操作 */
+
+        .proxy-url {
+            font-family: monospace;
+            font-size: 11px;
+            max-width: 200px;
+            word-break: break-all;
+        }
+
+        .coordinates {
+            font-family: monospace;
+            font-size: 12px;
+            color: var(--primary-color);
+        }
+
+        .country-flag {
+            margin-right: 5px;
+        }
+
+        .delete-btn {
+            background-color: var(--danger-color) !important;
+            color: white;
+            padding: 4px 8px;
+            font-size: 12px;
+            min-width: auto;
+            border-radius: 3px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b !important;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: var(--primary-color);
+            margin: 0 0 8px 0;
+            font-size: 20px;
+        }
+
+        .stat-card p {
+            color: var(--dark-gray);
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        @media (max-width: 768px) {
+            .proxy-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .proxy-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-filter-row {
+                flex-direction: column;
+            }
+
+            .search-input,
+            .filter-select {
+                max-width: 100%;
+            }
+
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .proxy-table th,
+            .proxy-table td {
+                font-size: 11px;
+                padding: 8px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="proxy-container">
+    <div class="proxy-header">
+        <h1>🌐 代理集合管理</h1>
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="refresh-btn" id="refreshBtn" onclick="loadProxyData()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="refreshIcon">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="m3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+                刷新数据
+            </button>
+            <button class="secondary" onclick="window.location.href='/'">返回主页</button>
+        </div>
+    </div>
+
+    <!-- 错误消息 -->
+    <div class="error" id="error" style="display: none;">
+        <svg fill="currentColor" height="20" viewBox="0 0 20 20" width="20">
+            <path clip-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  fill-rule="evenodd"/>
+        </svg>
+        <span id="errorMessage"></span>
+    </div>
+
+    <!-- 统计卡片 -->
+    <div class="stats-cards" id="statsCards">
+        <!-- 通过 JavaScript 动态填充 -->
+    </div>
+
+    <!-- 控制区域 -->
+    <div class="proxy-controls">
+        <div class="search-filter-row">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索国家、代码或代理URL...">
+            <select class="filter-select" id="countryFilter">
+                <option value="">所有国家</option>
+            </select>
+            <select class="filter-select" id="languageFilter">
+                <option value="">所有语言</option>
+            </select>
+        </div>
+        <div style="display: flex; gap: 10px;">
+            <button id="applyFilters">应用筛选</button>
+            <button class="secondary" id="resetFilters">重置筛选</button>
+        </div>
+    </div>
+
+    <!-- 代理数据表格 -->
+    <div class="table-container" style="position: relative;">
+        <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+            <div class="loading">
+                <svg fill="var(--primary-color)" height="24" style="animation: spin 1s linear infinite;" viewBox="0 0 24 24" width="24">
+                    <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z" opacity=".25"/>
+                    <path d="M12,4a8,8,0,0,1,7.89,6.7A1.53,1.53,0,0,0,21.38,12h0a1.5,1.5,0,0,0,1.48-1.75,11,11,0,0,0-21.72,0A1.5,1.5,0,0,0,2.62,12h0a1.53,1.53,0,0,0,1.49-1.3A8,8,0,0,1,12,4Z"/>
+                </svg>
+                <div style="margin-left: 10px;">加载中...</div>
+            </div>
+        </div>
+
+        <table class="proxy-table" id="proxyTable">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>国家</th>
+                <th>代码</th>
+                <th>Android版本</th>
+                <th>模板ID</th>
+                <th>纬度</th>
+                <th>经度</th>
+                <th>代理URL</th>
+                <th>语言</th>
+                <th>时区</th>
+                <th>创建时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody id="proxyTableBody">
+            <!-- 通过 JavaScript 动态填充 -->
+            </tbody>
+        </table>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <svg fill="none" height="48" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="48">
+                <path d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3s-4.5 4.03-4.5 9 2.015 9 4.5 9z" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M2 12h20" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h3>暂无代理数据</h3>
+            <p>系统中还没有记录任何代理集合信息</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let allProxyData = [];
+    let filteredProxyData = [];
+
+    // 页面加载时初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        checkAuthStatus().then(() => {
+            loadProxyData();
+            setupEventListeners();
+        });
+    });
+
+    // 设置事件监听器
+    function setupEventListeners() {
+        document.getElementById('applyFilters').addEventListener('click', applyFilters);
+        document.getElementById('resetFilters').addEventListener('click', resetFilters);
+        document.getElementById('searchInput').addEventListener('keyup', debounce(applyFilters, 300));
+        document.getElementById('countryFilter').addEventListener('change', applyFilters);
+        document.getElementById('languageFilter').addEventListener('change', applyFilters);
+    }
+
+    // 认证检查
+    async function checkAuthStatus() {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/auth/verify', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            console.error('认证检查失败:', error);
+            window.location.href = '/login';
+        }
+    }
+
+    // 获取认证头
+    function getAuthHeaders() {
+        const token = localStorage.getItem('access_token');
+        return {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+    }
+
+    // 加载代理数据
+    async function loadProxyData() {
+        const refreshBtn = document.getElementById('refreshBtn');
+        const refreshIcon = document.getElementById('refreshIcon');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        try {
+            // 设置加载状态
+            refreshBtn.disabled = true;
+            refreshIcon.classList.add('loading-spinner');
+            loadingOverlay.style.display = 'flex';
+            hideError();
+
+            const response = await fetch('/proxy-collection', {
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP错误! 状态码: ${response.status}`);
+            }
+
+            allProxyData = await response.json();
+            filteredProxyData = [...allProxyData];
+
+            updateStatistics();
+            updateFilterOptions();
+            renderProxyTable();
+
+        } catch (error) {
+            console.error('加载代理数据失败:', error);
+            showError('加载代理数据失败: ' + error.message);
+        } finally {
+            // 恢复状态
+            refreshBtn.disabled = false;
+            refreshIcon.classList.remove('loading-spinner');
+            loadingOverlay.style.display = 'none';
+        }
+    }
+
+    // 更新统计信息
+    function updateStatistics() {
+        const statsCards = document.getElementById('statsCards');
+
+        if (allProxyData.length === 0) {
+            statsCards.innerHTML = '';
+            return;
+        }
+
+        const uniqueCountries = new Set(allProxyData.map(p => p.country).filter(c => c)).size;
+        const uniqueLanguages = new Set(allProxyData.map(p => p.language).filter(l => l)).size;
+        const uniqueTimezones = new Set(allProxyData.map(p => p.time_zone).filter(t => t)).size;
+        const avgLatitude = allProxyData.filter(p => p.latitude).reduce((sum, p) => sum + p.latitude, 0) / allProxyData.filter(p => p.latitude).length || 0;
+
+        statsCards.innerHTML = `
+            <div class="stat-card">
+                <h3>${allProxyData.length}</h3>
+                <p>代理记录总数</p>
+            </div>
+            <div class="stat-card">
+                <h3>${uniqueCountries}</h3>
+                <p>不同国家数量</p>
+            </div>
+            <div class="stat-card">
+                <h3>${uniqueLanguages}</h3>
+                <p>不同语言数量</p>
+            </div>
+            <div class="stat-card">
+                <h3>${uniqueTimezones}</h3>
+                <p>不同时区数量</p>
+            </div>
+        `;
+    }
+
+    // 更新筛选选项
+    function updateFilterOptions() {
+        const countryFilter = document.getElementById('countryFilter');
+        const languageFilter = document.getElementById('languageFilter');
+
+        // 获取唯一的国家
+        const countries = [...new Set(allProxyData.map(p => p.country).filter(c => c))].sort();
+        countryFilter.innerHTML = '<option value="">所有国家</option>';
+        countries.forEach(country => {
+            const option = document.createElement('option');
+            option.value = country;
+            option.textContent = country;
+            countryFilter.appendChild(option);
+        });
+
+        // 获取唯一的语言
+        const languages = [...new Set(allProxyData.map(p => p.language).filter(l => l))].sort();
+        languageFilter.innerHTML = '<option value="">所有语言</option>';
+        languages.forEach(language => {
+            const option = document.createElement('option');
+            option.value = language;
+            option.textContent = language;
+            languageFilter.appendChild(option);
+        });
+    }
+
+    // 渲染代理表格
+    function renderProxyTable() {
+        const tableBody = document.getElementById('proxyTableBody');
+        const emptyState = document.getElementById('emptyState');
+
+        if (filteredProxyData.length === 0) {
+            tableBody.innerHTML = '';
+            emptyState.style.display = 'block';
+            return;
+        }
+
+        emptyState.style.display = 'none';
+
+        const rows = filteredProxyData.map(proxy => {
+            const coordinates = proxy.latitude && proxy.longitude ?
+                `${proxy.latitude.toFixed(4)}, ${proxy.longitude.toFixed(4)}` :
+                '未设置';
+
+            return `
+                <tr>
+                    <td>${proxy.id || ''}</td>
+                    <td>${proxy.country || '未设置'}</td>
+                    <td>${proxy.code || '未设置'}</td>
+                    <td>${proxy.android_version || '未知'}</td>
+                    <td>${proxy.temple_id || '未设置'}</td>
+                    <td class="coordinates">${proxy.latitude ? proxy.latitude.toFixed(4) : '未设置'}</td>
+                    <td class="coordinates">${proxy.longitude ? proxy.longitude.toFixed(4) : '未设置'}</td>
+                    <td class="proxy-url" title="${proxy.proxy || ''}">${proxy.proxy || '未设置'}</td>
+                    <td>${proxy.language || '未设置'}</td>
+                    <td>${proxy.time_zone || '未设置'}</td>
+                    <td>${formatDateTime(proxy.created_at)}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteProxy(${proxy.id})">删除</button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        tableBody.innerHTML = rows;
+    }
+
+    // 应用筛选
+    function applyFilters() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const countryFilter = document.getElementById('countryFilter').value;
+        const languageFilter = document.getElementById('languageFilter').value;
+
+        filteredProxyData = allProxyData.filter(proxy => {
+            const matchesSearch = !searchTerm ||
+                (proxy.country && proxy.country.toLowerCase().includes(searchTerm)) ||
+                (proxy.code && proxy.code.toLowerCase().includes(searchTerm)) ||
+                (proxy.proxy && proxy.proxy.toLowerCase().includes(searchTerm));
+
+            const matchesCountry = !countryFilter || proxy.country === countryFilter;
+            const matchesLanguage = !languageFilter || proxy.language === languageFilter;
+
+            return matchesSearch && matchesCountry && matchesLanguage;
+        });
+
+        renderProxyTable();
+    }
+
+    // 重置筛选
+    function resetFilters() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('countryFilter').value = '';
+        document.getElementById('languageFilter').value = '';
+        filteredProxyData = [...allProxyData];
+        renderProxyTable();
+    }
+
+    // 删除代理记录
+    async function deleteProxy(proxyId) {
+        if (!confirm('确定要删除这条代理记录吗？此操作无法撤销。')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`/proxy-collection/${proxyId}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error(`删除失败: ${response.status}`);
+            }
+
+            const result = await response.json();
+            showSuccess(result.message);
+
+            // 重新加载数据
+            loadProxyData();
+
+        } catch (error) {
+            console.error('删除代理记录失败:', error);
+            showError('删除失败: ' + error.message);
+        }
+    }
+
+    // 格式化日期时间
+    function formatDateTime(dateString) {
+        if (!dateString) return '未知';
+        try {
+            const date = new Date(dateString);
+            return date.toLocaleString('zh-CN', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        } catch (e) {
+            return dateString;
+        }
+    }
+
+    // 防抖函数
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // 显示错误信息
+    function showError(message) {
+        const errorElement = document.getElementById('error');
+        const errorMessage = document.getElementById('errorMessage');
+        errorMessage.textContent = message;
+        errorElement.style.display = 'flex';
+        setTimeout(() => {
+            errorElement.style.display = 'none';
+        }, 5000);
+    }
+
+    // 隐藏错误信息
+    function hideError() {
+        const errorElement = document.getElementById('error');
+        errorElement.style.display = 'none';
+    }
+
+    // 显示成功信息
+    function showSuccess(message) {
+        const successDiv = document.createElement('div');
+        successDiv.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            max-width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        `;
+        successDiv.textContent = message;
+        document.body.appendChild(successDiv);
+
+        setTimeout(() => {
+            if (successDiv.parentNode) {
+                successDiv.parentNode.removeChild(successDiv);
+            }
+        }, 3000);
+    }
+</script>
+
+<style>
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-spinner {
+        animation: spin 1s linear infinite;
+    }
+
+    .refresh-btn {
+        background-color: var(--success-color);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.2s ease;
+    }
+
+    .refresh-btn:hover {
+        background-color: #219a52;
+    }
+
+    .refresh-btn:disabled {
+        background-color: var(--dark-gray);
+        cursor: not-allowed;
+    }
+</style>
+</body>
+</html>

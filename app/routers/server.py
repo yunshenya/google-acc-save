@@ -62,6 +62,12 @@ async def status(android_code: AndroidPadCodeRequest):
     await replace_pad([android_code.pad_code], template_id=template_id)
     return {"message": "新机成功"}
 
+@router.get("/proxy-collection-page", response_class=HTMLResponse)
+async def proxy_collection_page():
+    """代理集合管理页面"""
+    with open("templates/proxy_collection.html", "r", encoding="utf-8") as f:
+        content = f.read()
+    return HTMLResponse(content=content)
 
 @router.post("/callback", response_model=str)
 async def callback(data: dict) -> str:

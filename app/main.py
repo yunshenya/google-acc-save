@@ -13,7 +13,7 @@ from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.proxy import ProxyResponse
-from app.routers import accounts, proxy, server, status, auth, statistics
+from app.routers import accounts, proxy, server, status, auth, statistics, proxy_collection
 from app.routers import websocket as websocket_router
 from app.services.database import engine, Base
 
@@ -41,6 +41,7 @@ async def startup_event(app: FastAPI):
     app.mount("/static", StaticFiles(directory="static"), name="static")
     app.include_router(auth.router, prefix="/auth", tags=["认证"])
     app.include_router(statistics.router, prefix="/api", tags=["统计"])
+    app.include_router(proxy_collection.router, prefix="", tags=["代理集合"])
     app.include_router(websocket_router.router, tags=["WebSocket"])
     app.include_router(accounts.router, prefix="")
     app.include_router(proxy.router, prefix="")
