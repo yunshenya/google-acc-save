@@ -1,10 +1,13 @@
+from sqlite3 import IntegrityError
 from typing import List, cast
 
 from fastapi import APIRouter, HTTPException
+from loguru import logger
 from sqlalchemy import ColumnElement
 
 from app.curd.status import update_cloud_status
 from app.models.status import StatusResponse, StatusRequest, GetOneCloudStatus
+from app.routers.websocket import ws_manager
 from app.services.database import SessionLocal, Status
 
 router = APIRouter()
@@ -38,3 +41,20 @@ async def get_one_cloud_status(one_cloud_status_request: GetOneCloudStatus) -> S
         if status is None:
             raise HTTPException(status_code=404, detail="云机不存在")
         return status
+
+@router.post("/add_cloud_status", response_model=dict[str, str])
+async def add_cloud_status(status: StatusRequest) -> dict[str, str]:
+    async with SessionLocal() as db:
+        try:
+            db_account = Status(
+                pad_code=status.pad_code,
+                current_status=status.current_status
+            )
+            db.add(db_account)
+            await db.commit()
+            await db.refresh(db_account)
+            return {"msg": f"{status.pad_code}成功"}
+        except IntegrityError:
+            await db.rollback()
+            return {"msg": f"云机已存在: {status.pad_code}"}
+

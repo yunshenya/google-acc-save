@@ -1,12 +1,15 @@
 # 定义任务状态枚举
 import asyncio
+import random
 from enum import IntEnum
 from typing import Any
 
 from loguru import logger
 
-from app.curd.status import update_cloud_status
-from app.dependencies.utils import get_cloud_file_task_info
+from app.config import temple_id_list
+from app.curd.status import update_cloud_status, set_proxy_status
+from app.dependencies.countries import manager
+from app.dependencies.utils import get_cloud_file_task_info, replace_pad
 from app.services.every_task import start_app_state, install_app_task
 
 
@@ -148,6 +151,12 @@ async def replace_pad_stak_status(data, task_manager):
         case TaskStatus.ALL_FAILED:
             await update_cloud_status(pad_code=pad_code, current_status="一键新机任务失败")
             logger.info(f"{pad_code}: 一键新机任务失败")
+            template_id = random.choice(temple_id_list)
+            default_proxy: Any = manager.get_proxy_countries()
+            await set_proxy_status(pad_code, random.choice(default_proxy))
+            await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
+                                      current_status="任务已完成，正在一键新机中")
+            await replace_pad([pad_code], template_id=template_id)
 
 
 async def adb_call_task_status(data):

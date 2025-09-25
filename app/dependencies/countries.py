@@ -24,7 +24,6 @@ def load_proxy_countries():
                         "language": row[4],  # 语言
                         "latitude": float(row[5]),  # 纬度
                         "longitude": float(row[6]),  # 经度
-                        "temple_id": 0
                     }
                     # 仅用于内部过滤，不包含在API响应中
                     if row[7] == "是":  # 只添加可用的代理

@@ -9,7 +9,7 @@ class ProxyResponse(BaseModel):
     language: str
     latitude: float
     longitude: float
-    temple_id: int
+    temple_id: int | None = None
 
 
 class ProxyRequest(BaseModel):

@@ -18,8 +18,7 @@ class ProxyManager:
             time_zone=default_proxy["time_zone"],
             language=default_proxy["language"],
             latitude=default_proxy["latitude"],
-            longitude=default_proxy["longitude"],
-            temple_id = 0
+            longitude=default_proxy["longitude"]
         )
 
     def __new__(cls):

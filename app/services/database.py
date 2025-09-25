@@ -32,7 +32,7 @@ class Status(Base):
     pad_code = Column(String(100), nullable=True, unique=True)
     country = Column(String(100), nullable=False)
     temple_id = Column(Integer, nullable=True)
-    current_status = Column(String(200), default=0, nullable=False)
+    current_status = Column(String(200), nullable=False)
     number_of_run = Column(Integer, default=0, nullable=False)
     phone_number_counts = Column(Integer, default=0, nullable=False)
     created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)

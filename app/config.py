@@ -85,7 +85,7 @@ class Config:
     APP_URLS = AppUrls(
         clash="https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk",
         script="https://file.vmoscloud.com/userFile/95f283d148daefd330b6a164623bb2e8.apk",
-        script2="https://file.vmoscloud.com/userFile/297f666b0189d3680e4b62bf1b8b6968.apk",
+        script2="https://file.vmoscloud.com/userFile/44d024585f4d31b2d463467ec478f875.apk",
         chrome="https://file.vmoscloud.com/userFile/802e02a74ada323819f38ba5858a5fbf.apk"
     )
 
