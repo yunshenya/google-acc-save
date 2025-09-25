@@ -45,6 +45,7 @@ class Status(Base):
     longitude = Column(Float, nullable=False)
     forward_num = Column(Integer, default=0, nullable=False)
     secondary_email_num = Column(Integer, default=0, nullable=False)
+    is_secondary_email = Column(Boolean, nullable=False, default=False)
 
 
 class ProxyCollection(Base):

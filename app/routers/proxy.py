@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any
 
 from fastapi import APIRouter, HTTPException
 
@@ -13,7 +13,7 @@ router = APIRouter()
 @router.post("/proxy", response_model=ProxyResponse)
 async def get_proxy(android_pad_code: AndroidPadCodeRequest):
     """获取当前使用的代理信息"""
-    current_proxy: ProxyResponse = await get_proxy_status(android_pad_code.pad_code)
+    current_proxy : Any = await get_proxy_status(android_pad_code.pad_code)
     url_list = current_proxy.proxy.split("/")[-1]
     country = url_list.split(".")[0].upper()
     new_url = f"https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys-b/{country}.yaml"

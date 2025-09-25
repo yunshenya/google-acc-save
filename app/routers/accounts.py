@@ -1,3 +1,4 @@
+import datetime
 from typing import cast
 
 from fastapi import HTTPException, APIRouter, Query
@@ -26,6 +27,7 @@ async def create_account(account: AccountCreate) -> AccountResponse:
                 code=account.code,
                 for_email=account.for_email,
                 for_password=account.for_password,
+                created_at=datetime.datetime.now()
             )
             db.add(db_account)
             await db.commit()
