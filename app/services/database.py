@@ -51,7 +51,6 @@ class ProxyCollection(Base):
     __tablename__ = "proxy_collection"
     id = Column(Integer, primary_key=True, index=True)
     country = Column(Text, nullable=True)
-    template_id  = Column(Integer, nullable=True)
     android_version = Column(Text, nullable=True)
     temple_id  = Column(Integer, nullable=True)
     code  = Column(Text, nullable=True)

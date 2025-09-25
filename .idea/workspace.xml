@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加统计页面">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/proxy.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/proxy.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -589,15 +586,7 @@
       <workItem from="1758705083929" duration="14520000" />
       <workItem from="1758764040754" duration="5765000" />
       <workItem from="1758769857338" duration="2386000" />
-      <workItem from="1758772406797" duration="5325000" />
-    </task>
-    <task id="LOCAL-00091" summary="开始时随机模板">
-      <option name="closed" value="true" />
-      <created>1755753293177</created>
-      <option name="number" value="00091" />
-      <option name="presentableId" value="LOCAL-00091" />
-      <option name="project" value="LOCAL" />
-      <updated>1755753293177</updated>
+      <workItem from="1758772406797" duration="5648000" />
     </task>
     <task id="LOCAL-00092" summary="设置单个代理">
       <option name="closed" value="true" />
@@ -983,7 +972,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758770449590</updated>
     </task>
-    <option name="localTasksCounter" value="140" />
+    <task id="LOCAL-00140" summary="添加统计页面">
+      <option name="closed" value="true" />
+      <created>1758780515327</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1758780515328</updated>
+    </task>
+    <option name="localTasksCounter" value="141" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
