@@ -8,6 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -587,15 +588,8 @@
       <workItem from="1758699652637" duration="5304000" />
       <workItem from="1758705083929" duration="14520000" />
       <workItem from="1758764040754" duration="5765000" />
-      <workItem from="1758769857338" duration="318000" />
-    </task>
-    <task id="LOCAL-00090" summary="修复多次设置新机的bug">
-      <option name="closed" value="true" />
-      <created>1755752692188</created>
-      <option name="number" value="00090" />
-      <option name="presentableId" value="LOCAL-00090" />
-      <option name="project" value="LOCAL" />
-      <updated>1755752692188</updated>
+      <workItem from="1758769857338" duration="2386000" />
+      <workItem from="1758772406797" duration="5325000" />
     </task>
     <task id="LOCAL-00091" summary="开始时随机模板">
       <option name="closed" value="true" />
@@ -981,7 +975,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758767911849</updated>
     </task>
-    <option name="localTasksCounter" value="139" />
+    <task id="LOCAL-00139" summary="添加统计页面">
+      <option name="closed" value="true" />
+      <created>1758770449590</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1758770449590</updated>
+    </task>
+    <option name="localTasksCounter" value="140" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

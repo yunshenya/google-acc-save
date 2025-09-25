@@ -36,6 +36,7 @@ async def create_account(account: AccountCreate) -> AccountResponse:
             return db_account
         except IntegrityError:
             await db.rollback()
+            logger.info("账号已经传过了, fuck")
             raise HTTPException(status_code=400, detail="账号已存在")
 
 

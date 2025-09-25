@@ -69,19 +69,19 @@ async def update_cloud_status(pad_code: str,
                 status_changed = True
 
             if number_of_run is not None:
-                db_status.number_of_run += int(number_of_run)
+                db_status.number_of_run += number_of_run
 
             if phone_number_counts is not None:
-                db_status.phone_number_counts += int(phone_number_counts)
+                db_status.phone_number_counts += phone_number_counts
 
             if temple_id is not None:
                 db_status.temple_id = temple_id
 
             if secondary_email_num is not None:
-                db_status.secondary_email_num += int(secondary_email_num)
+                db_status.secondary_email_num += secondary_email_num
 
             if forward_num is not None:
-                db_status.forward_num += int(forward_num)
+                db_status.forward_num += forward_num
 
             await db.commit()
             await db.refresh(db_status)
