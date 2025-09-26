@@ -11,14 +11,13 @@ from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
+from app.services.logger import task_logger, get_logger
 from app.services.task_status import (
     reboot_task_status, replace_pad_stak_status,
     app_install_task_status, app_start_task_status,
     app_uninstall_task_status, adb_call_task_status,
-    fileUpdate_task_status, app_reboot_task_status,
-    task_stats
+    fileUpdate_task_status, app_reboot_task_status
 )
-from app.services.logger import task_logger, get_logger
 
 router = APIRouter()
 task_manager = TaskManager()

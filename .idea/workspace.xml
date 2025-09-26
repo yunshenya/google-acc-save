@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="解决一些小bug">
       <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/statistics.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/statistics.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -597,15 +596,7 @@
       <workItem from="1758853769798" duration="1670000" />
       <workItem from="1758857094585" duration="8391000" />
       <workItem from="1758884520805" duration="401000" />
-      <workItem from="1758885351455" duration="4772000" />
-    </task>
-    <task id="LOCAL-00104" summary="最新版">
-      <option name="closed" value="true" />
-      <created>1757930644064</created>
-      <option name="number" value="00104" />
-      <option name="presentableId" value="LOCAL-00104" />
-      <option name="project" value="LOCAL" />
-      <updated>1757930644064</updated>
+      <workItem from="1758885351455" duration="5898000" />
     </task>
     <task id="LOCAL-00105" summary="最新版">
       <option name="closed" value="true" />
@@ -991,7 +982,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758888340565</updated>
     </task>
-    <option name="localTasksCounter" value="153" />
+    <task id="LOCAL-00153" summary="解决一些小bug">
+      <option name="closed" value="true" />
+      <created>1758890154972</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1758890154973</updated>
+    </task>
+    <option name="localTasksCounter" value="154" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
