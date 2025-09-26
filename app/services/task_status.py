@@ -1,4 +1,3 @@
-# 定义任务状态枚举
 import asyncio
 import random
 from enum import IntEnum
@@ -300,44 +299,3 @@ async def adb_call_task_status(data):
         task_logger.error(f"{pad_code}: ADB调用无效状态值 - {task_status}")
     except Exception as e:
         task_logger.error(f"{pad_code}: 处理ADB调用任务状态时出错: {e}")
-
-
-# 任务状态处理统计
-class TaskStatusStats:
-    def __init__(self):
-        self.stats = {
-            "reboot": {"success": 0, "failed": 0, "timeout": 0, "cancelled": 0},
-            "install": {"success": 0, "failed": 0, "timeout": 0, "cancelled": 0},
-            "uninstall": {"success": 0, "failed": 0, "timeout": 0, "cancelled": 0},
-            "replace_pad": {"success": 0, "failed": 0, "timeout": 0, "cancelled": 0},
-            "adb_call": {"success": 0, "failed": 0, "timeout": 0, "cancelled": 0},
-            "app_start": {"success": 0, "failed": 0, "timeout": 0, "cancelled": 0}
-        }
-
-    def record_status(self, task_type: str, status: TaskStatus):
-        """记录任务状态统计"""
-        if task_type not in self.stats:
-            return
-
-        if status == TaskStatus.COMPLETED:
-            self.stats[task_type]["success"] += 1
-        elif status == TaskStatus.ALL_FAILED:
-            self.stats[task_type]["failed"] += 1
-        elif status == TaskStatus.TIMEOUT:
-            self.stats[task_type]["timeout"] += 1
-        elif status == TaskStatus.CANCELLED:
-            self.stats[task_type]["cancelled"] += 1
-
-    def get_stats(self):
-        """获取统计数据"""
-        return self.stats
-
-    def reset_stats(self):
-        """重置统计数据"""
-        for task_type in self.stats:
-            for status in self.stats[task_type]:
-                self.stats[task_type][status] = 0
-
-
-# 全局任务状态统计实例
-task_stats = TaskStatusStats()
