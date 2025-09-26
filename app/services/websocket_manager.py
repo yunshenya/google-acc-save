@@ -164,6 +164,7 @@ class WebSocketManager:
                         "pad_code": status.pad_code,
                         "current_status": status.current_status,
                         "number_of_run": status.number_of_run,
+                        "num_of_success": status.num_of_success,
                         "temple_id": status.temple_id,
                         "phone_number_counts": status.phone_number_counts,
                         "forward_num": status.forward_num,

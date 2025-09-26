@@ -56,7 +56,8 @@ async def update_cloud_status(pad_code: str,
                               temple_id: int = None,
                               phone_number_counts: int = None,
                               secondary_email_num: int = None,
-                              forward_num: int = None
+                              forward_num: int = None,
+                              num_of_success: int = None
                               ) -> StatusResponse:
     """更新云机状态"""
     async with SessionLocal() as db:
@@ -100,6 +101,12 @@ async def update_cloud_status(pad_code: str,
                 old_forward = db_status.forward_num
                 db_status.forward_num += forward_num
                 task_logger.debug(f"{pad_code}: 转发邮箱数量更新 {old_forward} -> {db_status.forward_num}")
+
+
+            if num_of_success is not None:
+                old_num_success = db_status.num_of_success
+                db_status.num_of_success += num_of_success
+                task_logger.debug(f"{pad_code}: 注册成功数量更新 {old_num_success} -> {db_status.num_of_success}")
 
             await db.commit()
             await db.refresh(db_status)

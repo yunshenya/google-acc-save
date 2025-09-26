@@ -14,20 +14,23 @@ router = APIRouter()
 async def get_proxy(android_pad_code: AndroidPadCodeRequest):
     """获取当前使用的代理信息"""
     current_proxy : Any = await get_proxy_status(android_pad_code.pad_code)
-    url_list = current_proxy.proxy.split("/")[-1]
-    country = url_list.split(".")[0].upper()
-    new_url = f"https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys-b/{country}.yaml"
-    proxy = ProxyResponse(
-        proxy= new_url,
-        country =current_proxy.country,
-        code = current_proxy.code,
-        time_zone = current_proxy.time_zone,
-        language = current_proxy.language,
-        latitude = current_proxy.latitude,
-        longitude = current_proxy.longitude,
-        temple_id =  current_proxy.temple_id
-    )
-    return proxy
+    if current_proxy.proxy is not None:
+        url_list = current_proxy.proxy.split("/")[-1]
+        country = url_list.split(".")[0].upper()
+        new_url = f"https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys-b/{country}.yaml"
+        proxy = ProxyResponse(
+            proxy= new_url,
+            country =current_proxy.country,
+            code = current_proxy.code,
+            time_zone = current_proxy.time_zone,
+            language = current_proxy.language,
+            latitude = current_proxy.latitude,
+            longitude = current_proxy.longitude,
+            temple_id =  current_proxy.temple_id
+        )
+        return proxy
+    else:
+        raise HTTPException(status_code=404, detail="代理未配置")
 
 @router.get("/proxy/countries", response_model=List[ProxyResponse])
 async def get_proxy_countries() -> List[ProxyResponse]:

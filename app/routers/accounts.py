@@ -35,6 +35,7 @@ async def create_account(account: AccountCreate) -> AccountResponse:
             if account.pad_code is not None:
                 logger.success(f"{account.pad_code}: 账号上传成功")
                 await update_proxies(pade_code=account.pad_code)
+                await update_cloud_status(pad_code=account.pad_code, num_of_success=1)
 
             return db_account
         except IntegrityError:

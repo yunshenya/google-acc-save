@@ -415,9 +415,10 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             row.innerHTML = `
-            <td title="${status.pad_code}">${status.pad_code}</td>
+            <td title="设备代码">${status.pad_code}</td>
             <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
             <td title="运行次数">${status.number_of_run}</td>
+            <td title="注册成功次数">${status.num_of_success}</td>
             <td title="模板ID">${status.temple_id}</td>
             <td class="${getRatioClass(forwardRatio)}" title="转发邮箱: ${status.forward_num || 0}/${totalRuns}">${forwardRatio}%</td>
             <td class="${getRatioClass(phoneRatio)}" title="手机号: ${status.phone_number_counts || 0}/${totalRuns}">${phoneRatio}%</td>
