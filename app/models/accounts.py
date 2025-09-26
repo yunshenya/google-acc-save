@@ -48,4 +48,6 @@ class ForwardRequest(BaseModel):
 class SecondaryEmail(BaseModel):
     account: str
     pad_code: str
+    for_email: str
+    for_password: str
     is_boned_secondary_email: bool

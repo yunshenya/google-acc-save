@@ -36,11 +36,9 @@ async def create_account(account: AccountCreate) -> AccountResponse:
                 logger.success(f"{account.pad_code}: 账号上传成功")
                 await update_proxies(pade_code=account.pad_code)
                 await update_cloud_status(pad_code=account.pad_code, num_of_success=1)
-
             return db_account
         except IntegrityError:
             await db.rollback()
-            logger.info("账号已经传过了, fuck")
             raise HTTPException(status_code=400, detail="账号已存在")
 
 
@@ -130,6 +128,8 @@ async def update_secondary_mail(secondary_mail: SecondaryEmail) -> AccountRespon
         if account is None:
             raise HTTPException(status_code=404, detail="账号不存在")
         account.is_boned_secondary_email = secondary_mail.is_boned_secondary_email
+        account.for_email = secondary_mail.for_email
+        account.for_password = secondary_mail.for_password
         await db.commit()
         await db.refresh(account)
         await update_cloud_status(pad_code=secondary_mail.pad_code, secondary_email_num=1)
