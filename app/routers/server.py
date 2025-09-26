@@ -62,7 +62,7 @@ async def status(android_code: AndroidPadCodeRequest):
     pad_code = android_code.pad_code
 
     try:
-        if pad_code in temple_id_list:
+        if pad_code in pad_code_list:
             # 取消超时任务
             await task_manager.cancel_timeout_task_only(pad_code)
 
@@ -87,7 +87,7 @@ async def status(android_code: AndroidPadCodeRequest):
                 callback_logger.info(f"{pad_code}: 调试模式 - 模拟一键新机完成")
             return {"message": "一键新机启动成功", "template_id": template_id, "country": selected_proxy.country}
         else:
-            return {"message": "其他机器新机成功"}
+            return {"message": "其他机器成功"}
 
     except Exception as e:
         callback_logger.error(f"{pad_code}: 手动一键新机失败 - {e}")
