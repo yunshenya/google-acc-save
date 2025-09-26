@@ -41,8 +41,8 @@ class AccountResponse(BaseModel):
 class ForwardRequest(BaseModel):
     account: str
     pad_code: str
-    for_email: str
-    for_password: str
+    for_email: str | None
+    for_password: str | None
 
 
 class SecondaryEmail(BaseModel):

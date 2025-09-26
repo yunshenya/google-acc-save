@@ -109,8 +109,11 @@ async def update_forward(forward: ForwardRequest) -> AccountResponse:
         account = result.scalars().first()
         if account is None:
             raise HTTPException(status_code=404, detail="账号不存在")
-        account.for_email = forward.for_email
-        account.for_password = forward.for_password
+        if account.for_email is not None and account.for_password is not None:
+            account.for_email = forward.for_email
+            account.for_password = forward.for_password
+        else:
+            account.status = 2
         await db.commit()
         await db.refresh(account)
         await update_cloud_status(pad_code=forward.pad_code, forward_num=1)
