@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // 认证检查
-    checkAuthStatus().then(r => {});
+    checkAuthStatus().then();
 
     // DOM元素 - 原有元素
     const fetchAllBtn = document.getElementById('fetchAll');
@@ -105,19 +105,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // WebSocket相关函数
     function initWebSocket() {
         if (isConnecting || (websocket && websocket.readyState === WebSocket.OPEN)) {
+            console.log('WebSocket已连接或正在连接中');
             return;
         }
 
         isConnecting = true;
         updateConnectionStatus('connecting');
+
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws`;
+
+        console.log(`尝试连接WebSocket: ${wsUrl}`);
 
         try {
             websocket = new WebSocket(wsUrl);
 
             websocket.onopen = function() {
-                console.log('WebSocket连接已建立');
+                console.log('✅ WebSocket连接已建立');
                 isConnecting = false;
                 reconnectAttempts = 0;
                 updateConnectionStatus('connected');
@@ -128,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     reconnectInterval = null;
                 }
 
-                // 订阅状态更新
+                // 立即请求状态更新
                 if (currentView === 'status') {
                     requestStatusUpdate();
                 }
@@ -139,34 +143,142 @@ document.addEventListener('DOMContentLoaded', function() {
                     const message = JSON.parse(event.data);
                     handleWebSocketMessage(message);
                 } catch (error) {
-                    console.error('解析WebSocket消息失败:', error);
+                    console.error('❌ 解析WebSocket消息失败:', error);
+                    console.log('原始消息:', event.data);
                 }
             };
 
             websocket.onclose = function(event) {
-                console.log('WebSocket连接已关闭:', event.code, event.reason);
+                console.log(`🔌 WebSocket连接已关闭: ${event.code} - ${event.reason}`);
                 isConnecting = false;
                 websocket = null;
-                updateConnectionStatus('disconnected');
 
-                // 如果不是主动关闭且在状态监控页面，尝试重连
-                if (event.code !== 1000 && currentView === 'status') {
+                // 根据关闭代码决定是否重连
+                if (event.code !== 1000 && currentView === 'status') { // 1000 = 正常关闭
+                    updateConnectionStatus('disconnected');
                     attemptReconnect();
+                } else {
+                    updateConnectionStatus('disconnected');
                 }
             };
 
             websocket.onerror = function(error) {
-                console.error('WebSocket错误:', error);
+                console.error('❌ WebSocket错误:', error);
                 isConnecting = false;
                 updateConnectionStatus('error');
             };
 
         } catch (error) {
-            console.error('创建WebSocket连接失败:', error);
+            console.error('❌ 创建WebSocket连接失败:', error);
             isConnecting = false;
             updateConnectionStatus('error');
             attemptReconnect();
         }
+    }
+
+    function handleWebSocketMessage(message) {
+        const messageType = message.type;
+
+        // 添加调试日志
+        console.log(`📨 收到WebSocket消息: ${messageType}`, message);
+
+        switch (messageType) {
+            case 'status_update':
+                if (currentView === 'status' && message.data) {
+                    console.log(`📊 状态更新: ${message.data.length} 条记录`);
+                    renderStatusTable(message.data);
+                }
+                break;
+
+            case 'single_status_update':
+                if (currentView === 'status' && message.data) {
+                    console.log(`📊 单个状态更新: ${message.data.pad_code} -> ${message.data.current_status}`);
+                    updateSingleStatus(message.data);
+                }
+                break;
+
+            case 'ping':
+                // 响应服务器心跳
+                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    websocket.send(JSON.stringify({
+                        type: 'pong',
+                        client_time: new Date().toISOString()
+                    }));
+                    console.log('💓 响应服务器心跳');
+                }
+                break;
+
+            case 'pong':
+                // 服务器响应客户端心跳
+                console.log('💓 收到服务器心跳响应');
+                break;
+
+            case 'error':
+                console.error('❌ 服务器错误消息:', message.message);
+                break;
+
+            default:
+                console.warn('⚠️  未知WebSocket消息类型:', messageType, message);
+        }
+    }
+
+    function requestStatusUpdate() {
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            console.log('📡 请求状态更新');
+            websocket.send(JSON.stringify({
+                type: 'subscribe_status',
+                timestamp: new Date().toISOString()
+            }));
+        } else {
+            console.log('📡 WebSocket未连接，使用HTTP请求状态更新');
+            fetchCloudStatus().then(r => {});
+        }
+    }
+
+    function updateConnectionStatus(status) {
+        if (!connectionStatus) return;
+
+        const statusMap = {
+            'connected': {
+                text: '实时连接',
+                class: 'status-success',
+                icon: '🟢'
+            },
+            'connecting': {
+                text: '连接中...',
+                class: 'status-pending',
+                icon: '🟡'
+            },
+            'reconnecting': {
+                text: '重连中...',
+                class: 'status-pending',
+                icon: '🟡'
+            },
+            'disconnected': {
+                text: '已断开',
+                class: 'status-error',
+                icon: '🔴'
+            },
+            'error': {
+                text: '连接错误',
+                class: 'status-error',
+                icon: '❌'
+            },
+            'failed': {
+                text: '连接失败',
+                class: 'status-error',
+                icon: '❌'
+            }
+        };
+
+        const statusInfo = statusMap[status] || statusMap['disconnected'];
+        connectionStatus.innerHTML = `
+        <span class="${statusInfo.class}">
+            ${statusInfo.icon} ${statusInfo.text}
+        </span>
+    `;
+
+        console.log(`📊 连接状态更新: ${status} - ${statusInfo.text}`);
     }
 
     function closeWebSocket() {
@@ -184,7 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function attemptReconnect() {
         if (reconnectAttempts >= maxReconnectAttempts) {
-            console.log('达到最大重连次数，停止重连');
+            console.log('❌ 达到最大重连次数，停止重连');
             updateConnectionStatus('failed');
             return;
         }
@@ -194,7 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // 指数退避，最大30秒
-        console.log(`${delay}ms后尝试重连... (${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+        console.log(`🔄 ${delay}ms后尝试重连... (${reconnectAttempts + 1}/${maxReconnectAttempts})`);
 
         updateConnectionStatus('reconnecting');
 
@@ -205,93 +317,223 @@ document.addEventListener('DOMContentLoaded', function() {
         }, delay);
     }
 
-    function handleWebSocketMessage(message) {
-        switch (message.type) {
-            case 'status_update':
-                if (currentView === 'status') {
-                    renderStatusTable(message.data);
-                }
-                break;
-
-            case 'single_status_update':
-                if (currentView === 'status') {
-                    updateSingleStatus(message.data);
-                }
-                break;
-
-            case 'pong':
-                // 心跳响应
-                break;
-
-            default:
-                console.log('未知WebSocket消息类型:', message.type);
-        }
-    }
-
-    function requestStatusUpdate() {
-        if (websocket && websocket.readyState === WebSocket.OPEN) {
-            websocket.send(JSON.stringify({
-                type: 'subscribe_status'
-            }));
-        } else {
-            // WebSocket未连接，回退到HTTP请求
-            fetchCloudStatus();
-        }
-    }
-
-    function updateConnectionStatus(status) {
-        if (!connectionStatus) return;
-
-        const statusMap = {
-            'connected': { text: '实时连接', class: 'status-success', icon: '●' },
-            'connecting': { text: '连接中...', class: 'status-pending', icon: '◐' },
-            'reconnecting': { text: '重连中...', class: 'status-pending', icon: '◑' },
-            'disconnected': { text: '已断开', class: 'status-error', icon: '○' },
-            'error': { text: '连接错误', class: 'status-error', icon: '✗' },
-            'failed': { text: '连接失败', class: 'status-error', icon: '✗' }
-        };
-
-        const statusInfo = statusMap[status] || statusMap['disconnected'];
-        connectionStatus.innerHTML = `
-            <span class="${statusInfo.class}">
-                ${statusInfo.icon} ${statusInfo.text}
-            </span>
-        `;
-    }
-
-    function handleVisibilityChange() {
-        if (document.hidden) {
-            // 页面隐藏时暂停WebSocket心跳
-        } else {
-            // 页面显示时恢复连接
-            if (currentView === 'status' && (!websocket || websocket.readyState !== WebSocket.OPEN)) {
-                initWebSocket();
-            }
-        }
-    }
-
-    // 更新单个状态行
+// 更新单个状态行 - 优化版本
     function updateSingleStatus(statusData) {
+        if (!statusTableBody || !statusData.pad_code) {
+            console.warn('⚠️  无效的状态数据或表格元素');
+            return;
+        }
+
         const rows = statusTableBody.querySelectorAll('tr');
+        let updated = false;
+
         for (const row of rows) {
             const padCodeCell = row.cells[0];
-            if (padCodeCell && padCodeCell.textContent === statusData.pad_code) {
-                // 更新状态
+            if (padCodeCell && padCodeCell.textContent.trim() === statusData.pad_code) {
+                // 更新状态列
                 const statusCell = row.cells[1];
-                if (statusCell) {
+                if (statusCell && statusData.current_status) {
+                    const oldStatus = statusCell.textContent;
                     statusCell.textContent = statusData.current_status;
                     statusCell.className = getStatusClass(statusData.current_status);
-                }
 
-                // 如果有运行次数等数据更新，也需要重新计算占比
-                if (statusData.number_of_run !== undefined) {
-                    // 重新获取完整状态数据并重新渲染整行
-                    requestStatusUpdate();
+                    // 添加动画效果
+                    statusCell.style.animation = 'highlight 2s ease-out';
+                    setTimeout(() => {
+                        statusCell.style.animation = '';
+                    }, 2000);
+
+                    console.log(`📊 状态行更新: ${statusData.pad_code} ${oldStatus} -> ${statusData.current_status}`);
+                    updated = true;
                 }
                 break;
             }
         }
+
+        if (!updated) {
+            console.log(`⚠️  未找到设备行: ${statusData.pad_code}，请求完整更新`);
+            // 如果找不到对应行，请求完整更新
+            requestFullStatusUpdate();
+        }
     }
+
+// 请求完整状态更新
+    function requestFullStatusUpdate() {
+        if (websocket && websocket.readyState === WebSocket.OPEN) {
+            websocket.send(JSON.stringify({
+                type: 'request_full_update',
+                timestamp: new Date().toISOString()
+            }));
+            console.log('📡 请求完整状态更新');
+        } else {
+            fetchCloudStatus().then(r => {});
+        }
+    }
+
+// 改进的状态表格渲染函数
+    function renderStatusTable(statusData) {
+        if (!statusTableBody) {
+            console.error('❌ 状态表格元素不存在');
+            return;
+        }
+
+        console.log(`📊 渲染状态表格: ${statusData ? statusData.length : 0} 条记录`);
+
+        // 清空现有内容
+        statusTableBody.innerHTML = '';
+
+        if (!Array.isArray(statusData) || statusData.length === 0) {
+            if (statusEmptyState) statusEmptyState.style.display = 'block';
+            statusTableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px; color: #666;">暂无状态数据</td></tr>';
+            return;
+        }
+
+        if (statusEmptyState) statusEmptyState.style.display = 'none';
+
+        // 使用文档片段提高性能
+        const fragment = document.createDocumentFragment();
+
+        statusData.forEach((status, index) => {
+            const row = document.createElement('tr');
+            row.style.animationDelay = `${index * 50}ms`; // 添加渐入动画
+
+            // 根据状态设置样式
+            const statusClass = getStatusClass(status.current_status);
+
+            // 计算占比
+            const totalRuns = status.number_of_run || 1;
+            const forwardRatio = Math.round(((status.forward_num || 0) / totalRuns) * 100);
+            const phoneRatio = Math.round(((status.phone_number_counts || 0) / totalRuns) * 100);
+            const secondaryEmailRatio = Math.round(((status.secondary_email_num || 0) / totalRuns) * 100);
+
+            // 为占比添加颜色样式
+            const getRatioClass = (ratio) => {
+                if (ratio >= 80) return 'ratio-high';
+                if (ratio >= 50) return 'ratio-medium';
+                if (ratio >= 20) return 'ratio-low';
+                return 'ratio-none';
+            };
+
+            row.innerHTML = `
+            <td title="${status.pad_code}">${status.pad_code}</td>
+            <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
+            <td title="运行次数">${status.number_of_run}</td>
+            <td title="模板ID">${status.temple_id}</td>
+            <td class="${getRatioClass(forwardRatio)}" title="转发邮箱: ${status.forward_num || 0}/${totalRuns}">${forwardRatio}%</td>
+            <td class="${getRatioClass(phoneRatio)}" title="手机号: ${status.phone_number_counts || 0}/${totalRuns}">${phoneRatio}%</td>
+            <td class="${getRatioClass(secondaryEmailRatio)}" title="辅助邮箱: ${status.secondary_email_num || 0}/${totalRuns}">${secondaryEmailRatio}%</td>
+            <td title="国家">${status.country || '未设置'}</td>
+            <td title="更新时间">${formatDateTime(status.updated_at)}</td>
+            <td>
+                <button class="status-btn" onclick="refreshSingleStatus('${status.pad_code}')" title="刷新该设备状态">
+                    🔄
+                </button>
+            </td>
+        `;
+
+            fragment.appendChild(row);
+        });
+
+        statusTableBody.appendChild(fragment);
+        console.log('✅ 状态表格渲染完成');
+    }
+
+// 视图切换函数 - 增强WebSocket管理
+    function toggleView() {
+        console.log(`🔄 切换视图: ${currentView} -> ${currentView === 'accounts' ? 'status' : 'accounts'}`);
+
+        if (currentView === 'accounts') {
+            currentView = 'status';
+            if (accountsSection) accountsSection.style.display = 'none';
+            if (statusSection) statusSection.style.display = 'block';
+            if (toggleViewBtn) toggleViewBtn.textContent = '切换到账户管理';
+
+            // 启动WebSocket连接并开始状态监控
+            console.log('📡 启动状态监控模式');
+            initWebSocket();
+
+            // 如果WebSocket未能立即连接，使用HTTP作为备选
+            setTimeout(() => {
+                if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+                    console.log('📡 WebSocket未连接，使用HTTP获取状态');
+                    fetchCloudStatus().then(r => {});
+                }
+            }, 1000);
+
+        } else {
+            currentView = 'accounts';
+            if (accountsSection) accountsSection.style.display = 'block';
+            if (statusSection) statusSection.style.display = 'none';
+            if (toggleViewBtn) toggleViewBtn.textContent = '切换到状态监控';
+
+            // 关闭WebSocket连接
+            console.log('📡 关闭状态监控模式');
+            closeWebSocket();
+        }
+    }
+
+// 页面可见性变化处理 - 优化
+    function handleVisibilityChange() {
+        if (document.hidden) {
+            console.log('📱 页面隐藏，暂停WebSocket活动');
+            // 页面隐藏时可以选择保持连接但减少活动
+        } else {
+            console.log('📱 页面显示，恢复WebSocket活动');
+            // 页面显示时恢复连接
+            if (currentView === 'status') {
+                if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+                    console.log('📡 重新建立WebSocket连接');
+                    initWebSocket();
+                } else {
+                    // 连接正常，请求最新状态
+                    requestStatusUpdate();
+                }
+            }
+        }
+    }
+
+// 添加状态行高亮动画的CSS
+    const additionalStyles = `
+    @keyframes highlight {
+        0% { background-color: rgba(52, 152, 219, 0.3); }
+        100% { background-color: transparent; }
+    }
+    
+    .status-table-row {
+        transition: background-color 0.3s ease;
+    }
+    
+    .status-btn {
+        min-width: 32px;
+        padding: 4px 8px;
+        font-size: 12px;
+        background-color: var(--primary-color);
+        border: none;
+        color: white;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    
+    .status-btn:hover {
+        background-color: var(--primary-hover);
+    }
+    
+    .connection-status {
+        user-select: none;
+        cursor: default;
+    }
+`;
+
+// 将额外样式添加到页面
+    if (!document.getElementById('additional-styles')) {
+        const styleElement = document.createElement('style');
+        styleElement.id = 'additional-styles';
+        styleElement.textContent = additionalStyles;
+        document.head.appendChild(styleElement);
+    }
+
+
 
     // 认证相关函数
     function getAuthToken() {
@@ -607,7 +849,7 @@ document.addEventListener('DOMContentLoaded', function() {
             updateProgress(30);
 
             if (!response || !response.ok) {
-                throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
+                 new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
             }
 
             const data = await response.json();
@@ -824,58 +1066,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function renderStatusTable(statusData) {
-        if (!statusTableBody) return;
-
-        statusTableBody.innerHTML = '';
-
-        if (!Array.isArray(statusData) || statusData.length === 0) {
-            if (statusEmptyState) statusEmptyState.style.display = 'block';
-            statusTableBody.innerHTML = '<tr><td colspan="10" style="text-align: center;">暂无状态数据</td></tr>';
-            return;
-        }
-
-        if (statusEmptyState) statusEmptyState.style.display = 'none';
-
-        statusData.forEach(status => {
-            const row = document.createElement('tr');
-
-            // 根据状态设置样式
-            const statusClass = getStatusClass(status.current_status);
-
-            // 计算占比
-            const totalRuns = status.number_of_run || 1; // 避免除零
-            const forwardRatio = totalRuns > 0 ? Math.round((status.forward_num || 0) / totalRuns * 100) : 0;
-            const phoneRatio = totalRuns > 0 ? Math.round((status.phone_number_counts || 0) / totalRuns * 100) : 0;
-            const secondaryEmailRatio = totalRuns > 0 ? Math.round((status.secondary_email_num || 0) / totalRuns * 100) : 0;
-
-            // 为占比添加颜色样式
-            const getRatioClass = (ratio) => {
-                if (ratio >= 80) return 'ratio-high';
-                if (ratio >= 50) return 'ratio-medium';
-                if (ratio >= 20) return 'ratio-low';
-                return 'ratio-none';
-            };
-
-            row.innerHTML = `
-            <td>${status.pad_code}</td>
-            <td class="${statusClass}">${status.current_status || '未知'}</td>
-            <td>${status.number_of_run}</td>
-            <td>${status.temple_id}</td>
-            <td class="${getRatioClass(forwardRatio)}">${forwardRatio}%</td>
-            <td class="${getRatioClass(phoneRatio)}">${phoneRatio}%</td>
-            <td class="${getRatioClass(secondaryEmailRatio)}">${secondaryEmailRatio}%</td>
-            <td>${status.country || '未设置'}</td>
-            <td>${formatDateTime(status.updated_at)}</td>
-            <td>
-                <button class="status-btn" onclick="refreshSingleStatus('${status.pad_code}')">刷新</button>
-            </td>
-        `;
-
-            statusTableBody.appendChild(row);
-        });
-    }
-
     function getStatusClass(status) {
         if (!status) return '';
 
@@ -892,24 +1082,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return 'status-info';
     }
 
-    function toggleView() {
-        if (currentView === 'accounts') {
-            currentView = 'status';
-            if (accountsSection) accountsSection.style.display = 'none';
-            if (statusSection) statusSection.style.display = 'block';
-            if (toggleViewBtn) toggleViewBtn.textContent = '切换到账户管理';
-            // 启动WebSocket连接并开始状态监控
-            initWebSocket();
-        } else {
-            currentView = 'accounts';
-            if (accountsSection) accountsSection.style.display = 'block';
-            if (statusSection) statusSection.style.display = 'none';
-            if (toggleViewBtn) toggleViewBtn.textContent = '切换到状态监控';
-            // 关闭WebSocket连接
-            closeWebSocket();
-        }
-    }
-
     async function refreshSingleStatus(padCode) {
         try {
             const response = await authenticatedFetch('/cloud_status', {
@@ -921,7 +1093,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // WebSocket优先，如果WebSocket连接正常，状态会自动更新
                 // 如果WebSocket未连接，则手动刷新
                 if (!websocket || websocket.readyState !== WebSocket.OPEN) {
-                    fetchCloudStatus();
+                    await fetchCloudStatus();
                 }
             }
         } catch (error) {

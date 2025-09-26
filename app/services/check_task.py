@@ -230,6 +230,7 @@ class TaskManager:
                                       md5=InstallAppEnum.chrome_md5)
                     await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
+                    await asyncio.sleep(10)
 
                 else:
                     app_result = app_install_result["data"][0]["apps"]
@@ -242,6 +243,7 @@ class TaskManager:
                                       md5=InstallAppEnum.chrome_md5)
                     await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
+                    await asyncio.sleep(10)
 
             elif task_type.lower() == "clash":
                 app_install_result = await get_app_install_info([pad_code])
@@ -260,6 +262,7 @@ class TaskManager:
                                       md5=InstallAppEnum.chrome_md5)
                     await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
+                    await asyncio.sleep(10)
 
                 else:
                     app_result = app_install_result["data"][0]["apps"]
@@ -273,6 +276,7 @@ class TaskManager:
                                       md5=InstallAppEnum.chrome_md5)
                     await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
+                    await asyncio.sleep(10)
 
 
             elif task_type.lower() == "chrome":
@@ -291,6 +295,7 @@ class TaskManager:
                                       md5=InstallAppEnum.chrome_md5)
                     await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
+                    await asyncio.sleep(10)
 
                 else:
                     app_result = app_install_result["data"][0]["apps"]
@@ -303,6 +308,7 @@ class TaskManager:
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
                     await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
+                    await asyncio.sleep(10)
 
             elif task_type.lower() == "script2":
                 app_install_result = await get_app_install_info([pad_code])
@@ -320,6 +326,7 @@ class TaskManager:
                                       md5=InstallAppEnum.chrome_md5)
                     await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
+                    await asyncio.sleep(10)
 
                 else:
                     app_result = app_install_result["data"][0]["apps"]
@@ -332,6 +339,7 @@ class TaskManager:
                     await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
                     await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
                                       md5=InstallAppEnum.chrome_md5)
+                    await asyncio.sleep(10)
 
         except Exception as e:
             logger.error(f"处理安装结果时出错 {pad_code}: {e}")

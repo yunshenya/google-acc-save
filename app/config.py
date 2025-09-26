@@ -60,7 +60,7 @@ class Config:
     )
 
     # 应用程序标识符
-    PAD_CODES: List[str] = ["AC32010800443","AC32010590813","AC32010780162","AC32011030882","AC32010790283","ACP250924ZG0VI6K","ACP250924STJP7UW","ACP250924LR2980N","ACP250924851YPGS","ACP2509245PR99BZ","ACP250922XZ4JZEP","ACP250920UMKGU2Z","ACP250423RNNLK3X","ACP2504175U3RVGE","AC32010590031","ACP250925YAMC4D4","ACP250925Y4VSIDE","ACP250925Y2BAPZK","ACP2509191FLXX7L"]
+    PAD_CODES: List[str] = ["AC32010800443","AC32010590813","AC32010780162","AC32011030882","AC32010790283","ACP250924ZG0VI6K","ACP250924STJP7UW","ACP250924LR2980N","ACP250924851YPGS","ACP2509245PR99BZ","ACP250922XZ4JZEP","ACP250920UMKGU2Z","ACP250423RNNLK3X","ACP2504175U3RVGE","AC32010590031","ACP250925YAMC4D4","ACP250925Y4VSIDE","ACP250925Y2BAPZK"]
 
     PACKAGE_NAMES: Dict[str, str] = {
         "primary": "com.gasegom.grni",
@@ -68,7 +68,7 @@ class Config:
     }
 
     # Template Configuration
-    TEMPLE_IDS: List[int] = [473]
+    TEMPLE_IDS: List[int] = [459]
 
     # Default Proxy Configuration
     DEFAULT_PROXY = ProxyConfig(
@@ -84,14 +84,14 @@ class Config:
     # Application URLs
     APP_URLS = AppUrls(
         clash="https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk",
-        script="https://file.vmoscloud.com/userFile/95f283d148daefd330b6a164623bb2e8.apk",
-        script2="https://file.vmoscloud.com/userFile/297f666b0189d3680e4b62bf1b8b6968.apk",
+        script="https://file.vmoscloud.com/userFile/4aa79fee6d19188613b11decc18ab895.apk",
+        script2="https://file.vmoscloud.com/userFile/f1f2a2d37bb192939f7dcd436960043e.apk",
         chrome="https://file.vmoscloud.com/userFile/802e02a74ada323819f38ba5858a5fbf.apk"
     )
 
     # Timeout Configuration
     TIMEOUTS = TimeoutConfig(
-        global_timeout=int(os.getenv("GLOBAL_TIMEOUT_MINUTES", "10")),
+        global_timeout=int(os.getenv("GLOBAL_TIMEOUT_MINUTES", "12")),
         check_task_timeout=int(os.getenv("CHECK_TASK_TIMEOUT_MINUTES", "5"))
     )
 

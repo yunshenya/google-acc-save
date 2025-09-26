@@ -3,7 +3,6 @@ from typing import Any
 
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
-from loguru import logger
 from starlette.responses import HTMLResponse
 
 from app.config import pad_code_list, pkg_name, temple_id_list, DEBUG
@@ -12,12 +11,20 @@ from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
-from app.services.task_status import reboot_task_status, replace_pad_stak_status, \
-    app_install_task_status, app_start_task_status, app_uninstall_task_status, adb_call_task_status, \
-    fileUpdate_task_status, app_reboot_task_status
+from app.services.task_status import (
+    reboot_task_status, replace_pad_stak_status,
+    app_install_task_status, app_start_task_status,
+    app_uninstall_task_status, adb_call_task_status,
+    fileUpdate_task_status, app_reboot_task_status,
+    task_stats
+)
+from app.services.logger import task_logger, get_logger
 
 router = APIRouter()
 task_manager = TaskManager()
+
+# 创建专用logger
+callback_logger = get_logger("callback")
 
 
 @router.get("/login", response_class=HTMLResponse)
@@ -28,7 +35,6 @@ async def login_page():
     return HTMLResponse(content=content)
 
 
-# 修改现有的首页路由，添加认证检查
 @router.get("/", response_class=HTMLResponse)
 async def index():
     """主页 - 需要认证"""
@@ -52,15 +58,41 @@ async def favicon() -> FileResponse:
 
 @router.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
-    await task_manager.cancel_timeout_task_only(android_code.pad_code)
-    template_id = random.choice(temple_id_list)
-    default_proxy: Any = manager.get_proxy_countries()
-    await set_proxy_status(android_code.pad_code, random.choice(default_proxy))
-    await update_cloud_status(android_code.pad_code, number_of_run=1, temple_id=template_id,
-                              current_status="任务已完成，正在一键新机中")
-    logger.success(f"{android_code.pad_code}: 任务已完成，正在一键新机中")
-    await replace_pad([android_code.pad_code], template_id=template_id)
-    return {"message": "新机成功"}
+    """手动触发一键新机"""
+    pad_code = android_code.pad_code
+
+    try:
+        # 取消超时任务
+        await task_manager.cancel_timeout_task_only(pad_code)
+
+        # 选择模板和代理
+        template_id = random.choice(temple_id_list)
+        default_proxy: Any = manager.get_proxy_countries()
+        selected_proxy = random.choice(default_proxy)
+
+        await set_proxy_status(pad_code, selected_proxy)
+        await update_cloud_status(
+            pad_code,
+            number_of_run=1,
+            temple_id=template_id,
+            current_status="手动触发一键新机中"
+        )
+
+        task_logger.success(f"{pad_code}: 手动触发一键新机，模板: {template_id}, 代理: {selected_proxy.country}")
+
+        # 执行一键新机
+        if not DEBUG:
+            result = await replace_pad([pad_code], template_id=template_id)
+            callback_logger.info(f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}")
+        else:
+            callback_logger.info(f"{pad_code}: 调试模式 - 模拟一键新机完成")
+
+        return {"message": "一键新机启动成功", "template_id": template_id, "country": selected_proxy.country}
+
+    except Exception as e:
+        callback_logger.error(f"{pad_code}: 手动一键新机失败 - {e}")
+        return {"message": f"一键新机启动失败: {str(e)}", "error": True}
+
 
 @router.get("/proxy-collection-page", response_class=HTMLResponse)
 async def proxy_collection_page():
@@ -69,47 +101,95 @@ async def proxy_collection_page():
         content = f.read()
     return HTMLResponse(content=content)
 
+
 @router.post("/callback", response_model=str)
 async def callback(data: dict) -> str:
+    """云机任务状态回调接口"""
     task_business_type = data.get("taskBusinessType")
-    match int(task_business_type):
-        case 1000:
-            await reboot_task_status(data, pkg_name, task_manager)
-            return "ok"
+    pad_code = data.get("padCode", "未知设备")
+    task_id = data.get("taskId", "未知任务")
 
-        case 1001:
-            logger.success("1001接口回调")
-            return "ok"
+    callback_logger.info(f"收到回调: 设备={pad_code}, 类型={task_business_type}, 任务ID={task_id}")
 
-        case 1002:
-            await adb_call_task_status(data)
-            return "ok"
+    try:
+        match int(task_business_type):
+            case 1000:  # 重启任务
+                callback_logger.info(f"{pad_code}: 处理重启任务回调")
+                await reboot_task_status(data, pkg_name, task_manager)
+                return "ok"
 
-        case 1003:
-            app_install_task_status(data)
-            return "ok"
+            case 1001:  # 未知类型1001
+                callback_logger.info(f"{pad_code}: 1001接口回调")
+                return "ok"
 
-        case 1004:
-            app_uninstall_task_status(data)
-            return "ok"
+            case 1002:  # ADB调用任务
+                callback_logger.info(f"{pad_code}: 处理ADB调用任务回调")
+                await adb_call_task_status(data)
+                return "ok"
 
-        case 1006:
-            app_reboot_task_status(data)
-            return "ok"
+            case 1003:  # 应用安装任务
+                app_name = data.get("apps", {}).get("appName", "未知应用")
+                callback_logger.info(f"{pad_code}: 处理应用安装任务回调 - {app_name}")
+                app_install_task_status(data)
+                return "ok"
 
-        case 1007:
-            app_start_task_status(data)
-            return "ok"
+            case 1004:  # 应用卸载任务
+                app_name = data.get("apps", {}).get("appName", "未知应用")
+                callback_logger.info(f"{pad_code}: 处理应用卸载任务回调 - {app_name}")
+                app_uninstall_task_status(data)
+                return "ok"
 
-        case 1009:
-            await fileUpdate_task_status(data)
-            return "ok"
+            case 1006:  # 应用重启任务
+                callback_logger.info(f"{pad_code}: 处理应用重启任务回调")
+                app_reboot_task_status(data)
+                return "ok"
 
-        case 1124:
-            if (data.get("padCode") in pad_code_list) and not DEBUG:
-                await replace_pad_stak_status(data, task_manager=task_manager)
-            return "ok"
+            case 1007:  # 应用启动任务
+                callback_logger.info(f"{pad_code}: 处理应用启动任务回调")
+                app_start_task_status(data)
+                return "ok"
 
-        case _:
-            logger.success(f"其他接口回调: {data}")
-            return "ok"
+            case 1009:  # 文件更新任务
+                callback_logger.info(f"{pad_code}: 处理文件更新任务回调")
+                await fileUpdate_task_status(data)
+                return "ok"
+
+            case 1124:  # 一键新机任务
+                callback_logger.info(f"{pad_code}: 处理一键新机任务回调")
+                if (pad_code in pad_code_list) and not DEBUG:
+                    await replace_pad_stak_status(data, task_manager=task_manager)
+                elif DEBUG:
+                    callback_logger.info(f"{pad_code}: 调试模式 - 跳过一键新机处理")
+                else:
+                    callback_logger.warning(f"{pad_code}: 设备不在管理列表中")
+                return "ok"
+
+            case _:  # 其他未知类型
+                callback_logger.info(f"{pad_code}: 其他类型回调 (类型: {task_business_type}): {data}")
+                return "ok"
+
+    except ValueError as e:
+        callback_logger.error(f"回调数据格式错误: {e}, 数据: {data}")
+        return "error: invalid task_business_type"
+    except Exception as e:
+        callback_logger.error(f"处理回调时出错: {e}, 数据: {data}")
+        return "error: callback processing failed"
+
+
+@router.get("/callback/stats")
+async def get_callback_stats():
+    """获取回调处理统计信息（调试用）"""
+    stats = task_stats.get_stats()
+    callback_logger.info(f"回调统计查询: {stats}")
+    return {
+        "task_stats": stats,
+        "message": "任务回调统计信息"
+    }
+
+
+@router.post("/callback/reset-stats")
+async def reset_callback_stats():
+    """重置回调统计信息（调试用）"""
+    task_stats.reset_stats()
+    callback_logger.info("回调统计信息已重置")
+    return {"message": "统计信息已重置"}

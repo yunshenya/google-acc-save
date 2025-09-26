@@ -2,7 +2,7 @@ import requests
 
 
 if __name__ == '__main__':
-    url = "http://127.0.0.1:4000/add_cloud_status"
+    url = "http://127.0.0.1:4000/proxy/set"
     header = {"content-type" : "application/json"}
     json_data = {
         "pad_code": "test",
