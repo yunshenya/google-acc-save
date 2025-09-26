@@ -62,32 +62,32 @@ async def status(android_code: AndroidPadCodeRequest):
     pad_code = android_code.pad_code
 
     try:
-        # 取消超时任务
-        await task_manager.cancel_timeout_task_only(pad_code)
+        if pad_code in temple_id_list:
+            # 取消超时任务
+            await task_manager.cancel_timeout_task_only(pad_code)
 
-        # 选择模板和代理
-        template_id = random.choice(temple_id_list)
-        default_proxy: Any = manager.get_proxy_countries()
-        selected_proxy = random.choice(default_proxy)
+            # 选择模板和代理
+            template_id = random.choice(temple_id_list)
+            default_proxy: Any = manager.get_proxy_countries()
+            selected_proxy = random.choice(default_proxy)
 
-        await set_proxy_status(pad_code, selected_proxy)
-        await update_cloud_status(
-            pad_code,
-            number_of_run=1,
-            temple_id=template_id,
-            current_status="手动触发一键新机中"
-        )
+            await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
+            await update_cloud_status(
+                pad_code,
+                temple_id=template_id,
+                current_status="手动触发一键新机中"
+            )
 
-        task_logger.success(f"{pad_code}: 手动触发一键新机，模板: {template_id}, 代理: {selected_proxy.country}")
-
-        # 执行一键新机
-        if not DEBUG:
-            result = await replace_pad([pad_code], template_id=template_id)
-            callback_logger.info(f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}")
+            task_logger.success(f"{pad_code}: 手动触发一键新机，模板: {template_id}, 代理: {selected_proxy.country}")
+            # 执行一键新机
+            if not DEBUG:
+                result = await replace_pad([pad_code], template_id=template_id)
+                callback_logger.info(f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}")
+            else:
+                callback_logger.info(f"{pad_code}: 调试模式 - 模拟一键新机完成")
+            return {"message": "一键新机启动成功", "template_id": template_id, "country": selected_proxy.country}
         else:
-            callback_logger.info(f"{pad_code}: 调试模式 - 模拟一键新机完成")
-
-        return {"message": "一键新机启动成功", "template_id": template_id, "country": selected_proxy.country}
+            return {"message": "其他机器新机成功"}
 
     except Exception as e:
         callback_logger.error(f"{pad_code}: 手动一键新机失败 - {e}")
@@ -174,22 +174,3 @@ async def callback(data: dict) -> str:
     except Exception as e:
         callback_logger.error(f"处理回调时出错: {e}, 数据: {data}")
         return "error: callback processing failed"
-
-
-@router.get("/callback/stats")
-async def get_callback_stats():
-    """获取回调处理统计信息（调试用）"""
-    stats = task_stats.get_stats()
-    callback_logger.info(f"回调统计查询: {stats}")
-    return {
-        "task_stats": stats,
-        "message": "任务回调统计信息"
-    }
-
-
-@router.post("/callback/reset-stats")
-async def reset_callback_stats():
-    """重置回调统计信息（调试用）"""
-    task_stats.reset_stats()
-    callback_logger.info("回调统计信息已重置")
-    return {"message": "统计信息已重置"}

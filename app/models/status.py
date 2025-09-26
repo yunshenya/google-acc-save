@@ -7,7 +7,7 @@ class StatusResponse(BaseModel):
     pad_code: str
     current_status: str | None = None
     number_of_run: int
-    temple_id: int
+    temple_id: int | None = None
     phone_number_counts: int
     country: str | None = None
     updated_at: datetime

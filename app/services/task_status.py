@@ -246,8 +246,8 @@ async def replace_pad_stak_status(data, task_manager):
                 # 一键新机失败时的处理逻辑
                 template_id = random.choice(temple_id_list)
                 default_proxy: Any = manager.get_proxy_countries()
-                await set_proxy_status(pad_code, random.choice(default_proxy))
-                await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
+                await set_proxy_status(pad_code, random.choice(default_proxy), number_of_run=1)
+                await update_cloud_status(pad_code, temple_id=template_id,
                                           current_status="一键新机失败后重试中")
                 await replace_pad([pad_code], template_id=template_id)
 

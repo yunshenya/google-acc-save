@@ -54,6 +54,7 @@ async def add_cloud_status(status: AddStatusRequest) -> dict[str, str]:
                     db_account = Status(
                         pad_code=status.pad_code,
                         country = country.country,
+                        current_status = "调试用机",
                         proxy = country.proxy,
                         code = country.code,
                         time_zone = country.time_zone,

@@ -7,8 +7,12 @@
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加日志系统">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -140,7 +144,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.run">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
@@ -368,8 +372,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test" />
         <item itemvalue="Python.run" />
+        <item itemvalue="Python.test" />
         <item itemvalue="数据库脚本.data.sql" />
         <item itemvalue="Python.status" />
         <item itemvalue="数据库脚本.proxy.sql" />
@@ -598,22 +602,8 @@
       <workItem from="1758851795620" duration="171000" />
       <workItem from="1758853769798" duration="1670000" />
       <workItem from="1758857094585" duration="8391000" />
-    </task>
-    <task id="LOCAL-00101" summary="最新版">
-      <option name="closed" value="true" />
-      <created>1757923601786</created>
-      <option name="number" value="00101" />
-      <option name="presentableId" value="LOCAL-00101" />
-      <option name="project" value="LOCAL" />
-      <updated>1757923601786</updated>
-    </task>
-    <task id="LOCAL-00102" summary="最新版">
-      <option name="closed" value="true" />
-      <created>1757924001005</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1757924001005</updated>
+      <workItem from="1758884520805" duration="401000" />
+      <workItem from="1758885351455" duration="2946000" />
     </task>
     <task id="LOCAL-00103" summary="最新版">
       <option name="closed" value="true" />
@@ -991,7 +981,23 @@
       <option name="project" value="LOCAL" />
       <updated>1758878631243</updated>
     </task>
-    <option name="localTasksCounter" value="150" />
+    <task id="LOCAL-00150" summary="增加日志系统">
+      <option name="closed" value="true" />
+      <created>1758880230396</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1758880230396</updated>
+    </task>
+    <task id="LOCAL-00151" summary="增加日志系统">
+      <option name="closed" value="true" />
+      <created>1758880808714</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1758880808714</updated>
+    </task>
+    <option name="localTasksCounter" value="152" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

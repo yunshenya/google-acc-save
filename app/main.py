@@ -89,7 +89,7 @@ async def startup_event(app: FastAPI):
 
                 default_proxy: list[ProxyResponse] = manager.get_proxy_countries()
                 selected_proxy = random.choice(default_proxy)
-                await set_proxy_status(pad_code, selected_proxy)
+                await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
 
                 if not DEBUG:
                     result = await replace_pad([pad_code], template_id=template_id)

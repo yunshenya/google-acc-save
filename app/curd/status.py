@@ -129,7 +129,7 @@ async def update_cloud_status(pad_code: str,
             raise HTTPException(status_code=400, detail="云机状态已存在")
 
 
-async def set_proxy_status(pad_code: str, proxy_response: ProxyResponse) -> StatusResponse:
+async def set_proxy_status(pad_code: str, proxy_response: ProxyResponse, number_of_run: int = None) -> StatusResponse:
     """设置代理状态"""
     async with SessionLocal() as db:
         try:
@@ -149,6 +149,8 @@ async def set_proxy_status(pad_code: str, proxy_response: ProxyResponse) -> Stat
             db_status.latitude = proxy_response.latitude
             db_status.longitude = proxy_response.longitude
             db_status.language = proxy_response.language
+            if number_of_run is not None:
+                db_status.number_of_run += number_of_run
 
             await db.commit()
             await db.refresh(db_status)
