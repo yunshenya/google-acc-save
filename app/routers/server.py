@@ -74,7 +74,7 @@ async def status(android_code: AndroidPadCodeRequest):
             await update_cloud_status(
                 pad_code,
                 temple_id=template_id,
-                current_status="手动触发一键新机中"
+                current_status="一键新机中"
             )
 
             task_logger.success(f"{pad_code}: 手动触发一键新机，模板: {template_id}, 代理: {selected_proxy.country}")
