@@ -1,8 +1,7 @@
-import json
 import os
 from dataclasses import dataclass, asdict
-from typing import Dict, List, Any, Optional
 from pathlib import Path
+from typing import Dict, Any, Optional
 
 from dotenv import load_dotenv, set_key
 
@@ -115,6 +114,68 @@ class ConfigManager:
     def reload_env() -> None:
         """重新加载环境变量文件"""
         load_dotenv(override=True)
+import ast
+import json
+from typing import List
+
+
+def safe_parse_int_list(env_value: str, default: List[int] = None) -> List[int]:
+    """安全解析环境变量为整数列表"""
+    if not env_value:
+        return default or []
+
+    # 处理中文逗号
+    env_value = env_value.replace('，', ',')
+
+    # 尝试作为JSON解析
+    try:
+        result = json.loads(env_value)
+        if isinstance(result, list):
+            return [int(item) for item in result]
+    except (json.JSONDecodeError, TypeError, ValueError):
+        pass
+
+    # 尝试作为Python字面量解析
+    try:
+        result = ast.literal_eval(env_value)
+        if isinstance(result, (list, tuple)):
+            return [int(item) for item in result]
+    except (ValueError, SyntaxError):
+        pass
+
+    # 作为逗号分隔的字符串处理
+    try:
+        return [int(item.strip()) for item in env_value.split(',') if item.strip()]
+    except ValueError:
+        print(f"Warning: Cannot parse TEMPLE_IDS value: {env_value}")
+        return default or []
+
+def safe_parse_str_list(env_value: str, default: List[str] = None) -> List[str]:
+    """安全解析环境变量为字符串列表"""
+    if not env_value:
+        return default or []
+
+    # 处理中文逗号
+    env_value = env_value.replace('，', ',')
+
+    # 尝试作为JSON解析
+    try:
+        result = json.loads(env_value)
+        if isinstance(result, list):
+            return [str(item) for item in result]
+    except (json.JSONDecodeError, TypeError):
+        pass
+
+    # 尝试作为Python字面量解析
+    try:
+        result = ast.literal_eval(env_value)
+        if isinstance(result, (list, tuple)):
+            return [str(item) for item in result]
+    except (ValueError, SyntaxError):
+        pass
+
+    # 作为逗号分隔的字符串处理
+    return [item.strip() for item in env_value.split(',') if item.strip()]
 
 
 class Config:
@@ -141,11 +202,9 @@ class Config:
 
     PACKAGE_NAMES: Dict[str, str] = json.loads(os.getenv('PACKAGE_NAMES', '{}'))
 
-    # Template Configuration
-    temple_ids_str = os.getenv('TEMPLE_IDS', '')
-    TEMPLE_IDS = [int(id.strip()) for id in temple_ids_str.split(',') if id.strip()]
+    TEMPLE_IDS = safe_parse_int_list(os.getenv('TEMPLE_IDS'), [459])
 
-    # Default Proxy Configuration
+# Default Proxy Configuration
     DEFAULT_PROXY = ProxyConfig.from_env() if os.getenv('PROXY_CONFIG') else None
 
     # Application URLs

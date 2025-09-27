@@ -30,6 +30,7 @@
             <excludedPath local="true" path="$PROJECT_DIR$/.gitignore" />
             <excludedPath local="true" path="$PROJECT_DIR$/.python-version" />
             <excludedPath local="true" path="$PROJECT_DIR$/logs" />
+            <excludedPath local="true" path="$PROJECT_DIR$/.env" />
           </excludedPaths>
         </serverdata>
       </paths>

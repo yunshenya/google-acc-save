@@ -68,7 +68,7 @@ async def status(android_code: AndroidPadCodeRequest):
     pad_code = android_code.pad_code
 
     try:
-        if pad_code in config.pad_codes:
+        if pad_code in config.PAD_CODES:
             # 取消超时任务
             await task_manager.cancel_timeout_task_only(pad_code)
 
