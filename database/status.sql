@@ -17,7 +17,8 @@ CREATE TABLE cloud_status (
                               forward_num INT NOT NULL DEFAULT 0,
                               secondary_email_num INT NOT NULL DEFAULT 0,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                              updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                              num_of_error INT NOT NULL DEFAULT 0
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()

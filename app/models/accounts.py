@@ -15,6 +15,7 @@ class AccountCreate(BaseModel):
 
 class AndroidPadCodeRequest(BaseModel):
     pad_code: str
+    type: int | None = None
 
 
 class AccountUpdate(BaseModel):
@@ -51,3 +52,4 @@ class SecondaryEmail(BaseModel):
     for_email: str
     for_password: str
     is_boned_secondary_email: bool
+

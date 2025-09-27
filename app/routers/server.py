@@ -70,9 +70,13 @@ async def config_page():
 
 @router.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
-    """手动触发一键新机"""
     pad_code = android_code.pad_code
-
+    print(android_code.type)
+    match android_code.type:
+        case 0:
+            await update_cloud_status(pad_code, num_other_error=1)
+        case 1:
+            await update_cloud_status(pad_code=pad_code, num_of_error=1)
     try:
         if pad_code in config.PAD_CODES:
             # 取消超时任务

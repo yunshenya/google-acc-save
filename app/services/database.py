@@ -47,6 +47,8 @@ class Status(Base):
     secondary_email_num = Column(Integer, default=0, nullable=False)
     is_secondary_email = Column(Boolean, nullable=False, default=False)
     num_of_success = Column(Integer, default=0, nullable=False)
+    num_of_error = Column(Integer, nullable=False, default=0)
+    num_other_error = Column(Integer, nullable=False, default=0)
 
 
 class ProxyCollection(Base):

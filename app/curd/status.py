@@ -57,7 +57,9 @@ async def update_cloud_status(pad_code: str,
                               phone_number_counts: int = None,
                               secondary_email_num: int = None,
                               forward_num: int = None,
-                              num_of_success: int = None
+                              num_of_success: int = None,
+                              num_of_error: int = None,
+                              num_other_error: int = None
                               ) -> StatusResponse:
     """更新云机状态"""
     async with SessionLocal() as db:
@@ -108,6 +110,16 @@ async def update_cloud_status(pad_code: str,
                 db_status.num_of_success += num_of_success
                 task_logger.debug(f"{pad_code}: 注册成功数量更新 {old_num_success} -> {db_status.num_of_success}")
 
+            if num_of_error is not None:
+                old_num_error = db_status.num_of_error
+                db_status.num_of_error += num_of_error
+                task_logger.debug(f"{pad_code}: 注册失败数量更新 {old_num_error} -> {db_status.num_of_error}")
+
+            if num_other_error is not None:
+                old_num_other_error = db_status.num_other_error
+                db_status.num_other_error += num_other_error
+                task_logger.debug(f"{pad_code}: 其他错误数量更新 {old_num_other_error} -> {db_status.num_other_error}")
+
             await db.commit()
             await db.refresh(db_status)
 
@@ -115,7 +127,7 @@ async def update_cloud_status(pad_code: str,
             from app.services.websocket_manager import ws_manager
 
             # 如果状态发生变化或有重要更新，通知WebSocket客户端
-            if status_changed or number_of_run or phone_number_counts or secondary_email_num or forward_num:
+            if status_changed or number_of_run or phone_number_counts or secondary_email_num or forward_num or num_of_success or num_of_error or temple_id or forward_num:
                 if status_changed:
                     # 状态变化时发送单个状态更新
                     await ws_manager.notify_status_change(pad_code, current_status)

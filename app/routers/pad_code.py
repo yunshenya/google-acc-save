@@ -1,3 +1,4 @@
+import datetime
 from typing import List, Dict, Any
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
@@ -58,6 +59,9 @@ async def get_available_pad_codes(_: str = Depends(verify_token)) -> Dict[str, A
         # 格式化数据
         formatted_data = []
         for pad in pad_data:
+            expirationTime = pad.get("signExpirationTime")
+            timestamp_seconds = expirationTime / 1000
+            dt = datetime.datetime.fromtimestamp(timestamp_seconds)
             formatted_data.append({
                 "padCode": pad.get("padCode"),
                 "deviceIp": pad.get("deviceIp"),
@@ -66,7 +70,7 @@ async def get_available_pad_codes(_: str = Depends(verify_token)) -> Dict[str, A
                 "padName": pad.get("padName"),
                 "androidVersion": pad.get("androidVersion"),
                 "goodName": pad.get("goodName"),
-                "signExpirationTime": pad.get("signExpirationTime"),
+                "signExpirationTime": dt.strftime('%Y年%m月%d日'),
                 "status": pad.get("status"),
                 "bootTime": pad.get("bootTime"),
                 "isInConfig": pad.get("padCode") in Config.PAD_CODES  # 是否已在配置中

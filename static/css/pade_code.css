@@ -228,18 +228,6 @@
     flex-wrap: wrap;
 }
 
-.loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(255, 255, 255, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
 
 .comparison-grid {
     display: grid;
@@ -349,19 +337,6 @@
     animation: spin 1s linear infinite;
 }
 
-.refresh-btn {
-    background-color: var(--success-color);
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background-color 0.2s ease;
-}
 
 .refresh-btn:hover {
     background-color: #219a52;
@@ -413,10 +388,10 @@
 }
 
 .action-group {
-    background: #f8f9fa;
+    background: #9f9fad;
     padding: 15px;
     border-radius: 8px;
-    border: 1px solid #e9ecef;
+    border: 1px solid #4a4e56;
 }
 
 .action-group h5 {
@@ -441,8 +416,8 @@
 
 /* 全局操作区域 */
 .global-actions {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 1px solid #dee2e6;
+    background: linear-gradient(135deg, #bec0c5 0%, #5a5d60 100%);
+    border: 1px solid #7c8285;
 }
 
 .global-actions h4 {
@@ -837,7 +812,7 @@
     font-weight: 600;
     text-transform: uppercase;
     font-size: 12px;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
 }
 
 .pad-table tbody tr {

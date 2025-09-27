@@ -177,7 +177,8 @@ class WebSocketManager:
                         "longitude": status.longitude,
                         "language": status.language,
                         "time_zone": status.time_zone,
-                        "proxy": status.proxy
+                        "proxy": status.proxy,
+                        "num_of_error": status.num_of_error
                     }
                     status_data.append(status_dict)
 
