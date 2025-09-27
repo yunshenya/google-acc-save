@@ -1,6 +1,7 @@
+import json
 import os
-from dataclasses import dataclass
-from typing import Dict, List, Any
+from dataclasses import dataclass, asdict
+from typing import Dict, List, Any, Optional
 
 from dotenv import load_dotenv
 
@@ -30,6 +31,15 @@ class ProxyConfig:
             "longitude": self.longitude
         }
 
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'ProxyConfig':
+        return cls(**data)
+
+    @classmethod
+    def from_env(cls) -> 'ProxyConfig':
+        config_data = json.loads(os.getenv('PROXY_CONFIG'))
+        return cls.from_dict(config_data)
+
 
 @dataclass
 class AppUrls:
@@ -38,6 +48,27 @@ class AppUrls:
     script: str
     script2: str
     chrome: str
+
+    def to_dict(self) -> Dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'AppUrls':
+        return cls(**data)
+
+    @classmethod
+    def from_env(cls, env_var: str = 'APP_URLS') -> Optional['AppUrls']:
+        """从环境变量加载应用URLs"""
+        urls_str = os.getenv(env_var)
+        if not urls_str:
+            return None
+
+        try:
+            urls_data = json.loads(urls_str)
+            return cls.from_dict(urls_data)
+        except (json.JSONDecodeError, TypeError) as e:
+            print(f"Error parsing {env_var}: {e}")
+            return None
 
 
 @dataclass
@@ -60,44 +91,19 @@ class Config:
     )
 
     # 应用程序标识符
-    PAD_CODES: List[str] = ["AC32010800443","AC32010590813","AC32010780162","AC32011030882",
-                            "AC32010790283","ACP250924ZG0VI6K","ACP250924STJP7UW",
-                            "ACP250924LR2980N","ACP250924851YPGS","ACP2509245PR99BZ",
-                            "ACP250922XZ4JZEP","ACP250920UMKGU2Z","ACP250423RNNLK3X",
-                            "ACP2504175U3RVGE","AC32010590031","ACP250925YAMC4D4","ACP250925Y4VSIDE",
-                            "ACP250925Y2BAPZK","ACP250921P28PPW2","ACP250425R3P1ST1","ATP250925XGTFG0B",
-                            "ATP250925UBX0C3N","ATP250925FGPRF6T","ATP250925U9LA8YZ","ATP250925PDYEYP6",
-                            "ATP250925X3FQMNR","ATP250925UGRCZLW","ACP250605CF6AISS","ACP250326XA2KRDK","ACP2504306ZXY0KU",
-                            "AC32010961023","ACP250914XYMS4I6","ACP250401MXFDKDI","ACP250317B0L0MLT","ACP250925YATHR1V",
-                            "ACP2509258F099QF","ACP250925KH1RFNF","ACP250924M8GLRSD"]
+    PAD_CODES: List[str] = os.getenv('PADE_CODE_LIST').split(',')
 
 
-    PACKAGE_NAMES: Dict[str, str] = {
-        "primary": "com.gasegom.grni",
-        "secondary": "com.agyucmbsz.cc7c1ioku"
-    }
+    PACKAGE_NAMES: Dict[str, str] = json.loads(os.getenv('PACKAGE_NAMES'))
 
     # Template Configuration
     TEMPLE_IDS: List[int] = [459]
 
     # Default Proxy Configuration
-    DEFAULT_PROXY = ProxyConfig(
-        country="摩洛哥",
-        code="ma",
-        proxy="https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/ma.yaml",
-        time_zone="Africa/Casablanca",
-        language="English",
-        latitude=35.7758,
-        longitude=-5.7909
-    )
+    DEFAULT_PROXY = ProxyConfig.from_env()
 
     # Application URLs
-    APP_URLS = AppUrls(
-        clash="https://file.vmoscloud.com/userFile/b250a566f01210cb6783cf4e5d82313f.apk",
-        script="https://file.vmoscloud.com/userFile/4aa79fee6d19188613b11decc18ab895.apk",
-        script2="https://file.vmoscloud.com/userFile/2a125188c61b3a69a0ac871891c956d2.apk",
-        chrome="https://file.vmoscloud.com/userFile/802e02a74ada323819f38ba5858a5fbf.apk"
-    )
+    APP_URLS = AppUrls.from_env()
 
     # Timeout Configuration
     TIMEOUTS = TimeoutConfig(

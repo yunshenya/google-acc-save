@@ -4,14 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="解决一些小bug">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/data_source_mapping.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/data_source_mapping.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加热更新">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -606,23 +602,7 @@
       <workItem from="1758893039529" duration="273000" />
       <workItem from="1758893388917" duration="84000" />
       <workItem from="1758893513373" duration="321000" />
-      <workItem from="1758936451676" duration="2315000" />
-    </task>
-    <task id="LOCAL-00108" summary="修改后">
-      <option name="closed" value="true" />
-      <created>1758017498737</created>
-      <option name="number" value="00108" />
-      <option name="presentableId" value="LOCAL-00108" />
-      <option name="project" value="LOCAL" />
-      <updated>1758017498737</updated>
-    </task>
-    <task id="LOCAL-00109" summary="修改后">
-      <option name="closed" value="true" />
-      <created>1758018096456</created>
-      <option name="number" value="00109" />
-      <option name="presentableId" value="LOCAL-00109" />
-      <option name="project" value="LOCAL" />
-      <updated>1758018096456</updated>
+      <workItem from="1758936451676" duration="5526000" />
     </task>
     <task id="LOCAL-00110" summary="修改后">
       <option name="closed" value="true" />
@@ -1000,7 +980,23 @@
       <option name="project" value="LOCAL" />
       <updated>1758892214589</updated>
     </task>
-    <option name="localTasksCounter" value="157" />
+    <task id="LOCAL-00157" summary="解决一些小bug">
+      <option name="closed" value="true" />
+      <created>1758938780476</created>
+      <option name="number" value="00157" />
+      <option name="presentableId" value="LOCAL-00157" />
+      <option name="project" value="LOCAL" />
+      <updated>1758938780476</updated>
+    </task>
+    <task id="LOCAL-00158" summary="添加热更新">
+      <option name="closed" value="true" />
+      <created>1758940898797</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1758940898797</updated>
+    </task>
+    <option name="localTasksCounter" value="159" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1022,7 +1018,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="日志优化" />
     <MESSAGE value="新增加md5" />
     <MESSAGE value="减少取值次数优化性能" />
     <MESSAGE value="获取之后删除数据" />
@@ -1047,6 +1042,7 @@
     <MESSAGE value="添加统计页面" />
     <MESSAGE value="增加日志系统" />
     <MESSAGE value="解决一些小bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="解决一些小bug" />
+    <MESSAGE value="添加热更新" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加热更新" />
   </component>
 </project>
