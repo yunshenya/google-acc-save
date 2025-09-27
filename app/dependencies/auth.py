@@ -9,7 +9,7 @@ import aiohttp
 
 
 class VmosUtil(object):
-    def __init__(self, url, data):
+    def __init__(self, url, data=None):
         self._url = url
         self._data = data
         self._ak = "nx9xwcQ5KEap2nUqrJZTBoxJK7G61uvj"
