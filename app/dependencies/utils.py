@@ -177,7 +177,7 @@ async def get_cloud_phone_info(pad_code: str):
 
     return await VmosUtil(url, body).send()
 
-async def get_phone_list() -> dict[str, str]:
+async def get_pad_code_list() -> dict[str, str]:
     list_url = "/vcpcloud/api/padApi/userPadList"
     return await VmosUtil(list_url).send()
 

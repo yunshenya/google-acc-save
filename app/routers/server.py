@@ -2,6 +2,7 @@ import random
 from typing import Any
 
 from fastapi import APIRouter
+from fastapi import Request
 from fastapi.responses import FileResponse
 from starlette.responses import HTMLResponse
 
@@ -107,6 +108,12 @@ async def proxy_collection_page():
         content = f.read()
     return HTMLResponse(content=content)
 
+
+@router.get("/ipinfo")
+async def get_client_ip(request: Request):
+    # 获取客户端IP地址
+    client_ip = request.client.host
+    return {"client_ip": client_ip}
 
 @router.post("/callback", response_model=str)
 async def callback(data: dict) -> str:
