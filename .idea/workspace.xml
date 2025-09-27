@@ -5,12 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化文件结构">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/pade_code.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/pade_code.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/pade_code.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/pade_code.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/pade_code.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/pade_code.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,9 +17,10 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
-        <option value="CSS File" />
         <option value="Python Script" />
         <option value="JavaScript File" />
+        <option value="TypeScript File" />
+        <option value="CSS File" />
       </list>
     </option>
   </component>
@@ -65,68 +62,69 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;JavaScript 调试.index.html.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.accounts.executor&quot;: &quot;Run&quot;,
-    &quot;Python.config.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.proxy (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.proxy.executor&quot;: &quot;Run&quot;,
-    &quot;Python.run.executor&quot;: &quot;Run&quot;,
-    &quot;Python.status.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test (1).executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.rust.reset.selective.auto.import&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowPanel.toolwindow.highlight.mappings&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowPanel.toolwindow.highlight.symlinks&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowPanel.toolwindow.show.date&quot;: &quot;false&quot;,
-    &quot;WebServerToolWindowPanel.toolwindow.show.permissions&quot;: &quot;false&quot;,
-    &quot;WebServerToolWindowPanel.toolwindow.show.size&quot;: &quot;false&quot;,
-    &quot;database.data.extractors.current.export.id&quot;: &quot;Comma-separated (CSV)_id&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Document/PythonProjects/google-acc-save&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;org.rust.cargo.project.model.PROJECT_DISCOVERY&quot;: &quot;true&quot;,
-    &quot;org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon&quot;: &quot;&quot;,
-    &quot;org.rust.first.attach.projects&quot;: &quot;true&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;database.data.views.appearance&quot;,
-    &quot;to.speed.mode.migration.done&quot;: &quot;true&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;数据库脚本.data.sql.executor&quot;: &quot;Run&quot;,
-    &quot;数据库脚本.proxy.sql.executor&quot;: &quot;Run&quot;,
-    &quot;数据库脚本.status.sql.executor&quot;: &quot;Run&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "JavaScript 调试.index.html.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.accounts.executor": "Run",
+    "Python.config.executor": "Run",
+    "Python.main (1).executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.proxy (1).executor": "Run",
+    "Python.proxy.executor": "Run",
+    "Python.run.executor": "Run",
+    "Python.status.executor": "Run",
+    "Python.test (1).executor": "Run",
+    "Python.test.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "WebServerToolWindowPanel.toolwindow.highlight.mappings": "true",
+    "WebServerToolWindowPanel.toolwindow.highlight.symlinks": "true",
+    "WebServerToolWindowPanel.toolwindow.show.date": "false",
+    "WebServerToolWindowPanel.toolwindow.show.permissions": "false",
+    "WebServerToolWindowPanel.toolwindow.show.size": "false",
+    "database.data.extractors.current.export.id": "Comma-separated (CSV)_id",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "D:/Document/PythonProjects/google-acc-save",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "settings.editor.selected.configurable": "database.data.views.appearance",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "C:\\Users\\admin\\AppData\\Local\\Programs\\RustRover\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true",
+    "数据库脚本.data.sql.executor": "Run",
+    "数据库脚本.proxy.sql.executor": "Run",
+    "数据库脚本.status.sql.executor": "Run"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;,
-      &quot;mysql_aurora&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql",
+      "mysql_aurora"
     ],
-    &quot;RunConfigurationTargetLRU&quot;: [
-      &quot;b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\&quot;google-manager\&quot;/schema/\&quot;public\&quot;&quot;,
-      &quot;c5a3980d-5ed6-4bef-8027-60388d38edf8/database/\&quot;google-manager\&quot;/schema/\&quot;public\&quot;&quot;,
-      &quot;b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\&quot;google-manager\&quot;&quot;,
-      &quot;bee75e2c-7daf-4c88-afe8-d45a6d17d75c&quot;,
-      &quot;bee75e2c-7daf-4c88-afe8-d45a6d17d75c/database/\&quot;postgres\&quot;&quot;
+    "RunConfigurationTargetLRU": [
+      "b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\"google-manager\"/schema/\"public\"",
+      "c5a3980d-5ed6-4bef-8027-60388d38edf8/database/\"google-manager\"/schema/\"public\"",
+      "b11d5334-a1ec-4ad7-b714-9c084d1bbdd4/database/\"google-manager\"",
+      "bee75e2c-7daf-4c88-afe8-d45a6d17d75c",
+      "bee75e2c-7daf-4c88-afe8-d45a6d17d75c/database/\"postgres\""
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Document\PythonProjects\google-acc-save\static" />
@@ -606,23 +604,7 @@
       <workItem from="1758893513373" duration="321000" />
       <workItem from="1758936451676" duration="9634000" />
       <workItem from="1758949609644" duration="4826000" />
-      <workItem from="1758957326496" duration="6491000" />
-    </task>
-    <task id="LOCAL-00122" summary="增加登录页面">
-      <option name="closed" value="true" />
-      <created>1758546075001</created>
-      <option name="number" value="00122" />
-      <option name="presentableId" value="LOCAL-00122" />
-      <option name="project" value="LOCAL" />
-      <updated>1758546075001</updated>
-    </task>
-    <task id="LOCAL-00123" summary="安装两个">
-      <option name="closed" value="true" />
-      <created>1758633816000</created>
-      <option name="number" value="00123" />
-      <option name="presentableId" value="LOCAL-00123" />
-      <option name="project" value="LOCAL" />
-      <updated>1758633816000</updated>
+      <workItem from="1758957326496" duration="12577000" />
     </task>
     <task id="LOCAL-00124" summary="安装两个">
       <option name="closed" value="true" />
@@ -1000,7 +982,23 @@
       <option name="project" value="LOCAL" />
       <updated>1758962479376</updated>
     </task>
-    <option name="localTasksCounter" value="171" />
+    <task id="LOCAL-00171" summary="优化文件结构">
+      <option name="closed" value="true" />
+      <created>1758963867835</created>
+      <option name="number" value="00171" />
+      <option name="presentableId" value="LOCAL-00171" />
+      <option name="project" value="LOCAL" />
+      <updated>1758963867836</updated>
+    </task>
+    <task id="LOCAL-00172" summary="优化文件结构">
+      <option name="closed" value="true" />
+      <created>1758970637025</created>
+      <option name="number" value="00172" />
+      <option name="presentableId" value="LOCAL-00172" />
+      <option name="project" value="LOCAL" />
+      <updated>1758970637025</updated>
+    </task>
+    <option name="localTasksCounter" value="173" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
