@@ -1,0 +1,211 @@
+.proxy-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.proxy-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.proxy-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.search-filter-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.search-input {
+    flex: 1;
+    max-width: 300px;
+}
+
+.filter-select {
+    min-width: 120px;
+}
+
+.proxy-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.proxy-table th,
+.proxy-table td {
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 0;
+}
+
+.proxy-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* 列宽设置 */
+.proxy-table th:nth-child(1) { width: 60px; }   /* ID */
+.proxy-table th:nth-child(2) { width: 120px; }  /* 国家 */
+.proxy-table th:nth-child(3) { width: 60px; }   /* 代码 */
+.proxy-table th:nth-child(4) { width: 120px; }  /* Android版本 */
+.proxy-table th:nth-child(5) { width: 80px; }   /* 模板ID */
+.proxy-table th:nth-child(6) { width: 80px; }   /* 纬度 */
+.proxy-table th:nth-child(7) { width: 80px; }   /* 经度 */
+.proxy-table th:nth-child(8) { width: 200px; }  /* 代理URL */
+.proxy-table th:nth-child(9) { width: 80px; }   /* 语言 */
+.proxy-table th:nth-child(10) { width: 140px; } /* 时区 */
+.proxy-table th:nth-child(11) { width: 140px; } /* 创建时间 */
+.proxy-table th:nth-child(12) { width: 80px; }  /* 操作 */
+
+.proxy-url {
+    font-family: monospace;
+    font-size: 11px;
+    max-width: 200px;
+    word-break: break-all;
+}
+
+.coordinates {
+    font-family: monospace;
+    font-size: 12px;
+    color: var(--primary-color);
+}
+
+.country-flag {
+    margin-right: 5px;
+}
+
+.delete-btn {
+    background-color: var(--danger-color) !important;
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    min-width: auto;
+    border-radius: 3px;
+}
+
+.delete-btn:hover {
+    background-color: #c0392b !important;
+}
+
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.stat-card h3 {
+    color: var(--primary-color);
+    margin: 0 0 8px 0;
+    font-size: 20px;
+}
+
+.stat-card p {
+    color: var(--dark-gray);
+    margin: 0;
+    font-size: 12px;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .proxy-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .proxy-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-filter-row {
+        flex-direction: column;
+    }
+
+    .search-input,
+    .filter-select {
+        max-width: 100%;
+    }
+
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .proxy-table th,
+    .proxy-table td {
+        font-size: 11px;
+        padding: 8px 4px;
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+.refresh-btn {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.refresh-btn:hover {
+    background-color: #219a52;
+}
+
+.refresh-btn:disabled {
+    background-color: var(--dark-gray);
+    cursor: not-allowed;
+}
