@@ -7,7 +7,7 @@
     <link href="../static/css/index.css" rel="stylesheet">
     <style>
         .config-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -25,6 +25,45 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .config-tabs {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(2px);
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         .config-section {
@@ -80,11 +119,6 @@
             box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
         .array-input {
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -124,6 +158,58 @@
             margin-top: 5px;
         }
 
+        .env-var-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .env-var-table th,
+        .env-var-table td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .env-var-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .env-var-table .system-var {
+            background-color: #fff3cd;
+        }
+
+        .env-var-table .custom-var {
+            background-color: #d1ecf1;
+        }
+
+        .backup-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .backup-info h4 {
+            margin: 0 0 5px 0;
+            color: var(--text-color);
+        }
+
+        .backup-info p {
+            margin: 0;
+            color: var(--dark-gray);
+            font-size: 12px;
+        }
+
+        .backup-actions {
+            display: flex;
+            gap: 8px;
+        }
+
         .validation-status {
             padding: 10px 15px;
             border-radius: 4px;
@@ -149,30 +235,6 @@
             border: 1px solid #ffeaa7;
         }
 
-        .validation-list {
-            margin: 8px 0 0 20px;
-        }
-
-        .validation-list li {
-            margin-bottom: 5px;
-        }
-
-        .config-actions button {
-            margin-left: 10px;
-        }
-
-        .save-btn {
-            background-color: var(--success-color) !important;
-        }
-
-        .reset-btn {
-            background-color: var(--warning-color) !important;
-        }
-
-        .validate-btn {
-            background-color: var(--primary-color) !important;
-        }
-
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -184,6 +246,19 @@
             justify-content: center;
             align-items: center;
             z-index: 1000;
+        }
+
+        .danger-zone {
+            border: 2px solid var(--danger-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #fff5f5;
+        }
+
+        .danger-zone h3 {
+            color: var(--danger-color);
+            margin-top: 0;
         }
 
         @media (max-width: 768px) {
@@ -200,6 +275,40 @@
             .form-grid {
                 grid-template-columns: 1fr;
             }
+
+            .config-tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .validation-list {
+            margin: 8px 0 0 20px;
+        }
+
+        .validation-list li {
+            margin-bottom: 5px;
+        }
+
+        .save-btn {
+            background-color: var(--success-color) !important;
+        }
+
+        .reset-btn {
+            background-color: var(--warning-color) !important;
+        }
+
+        .validate-btn {
+            background-color: var(--primary-color) !important;
         }
     </style>
 </head>
@@ -209,6 +318,7 @@
         <h1>⚙️ 系统配置管理</h1>
         <div class="config-actions">
             <button id="validateBtn" class="validate-btn">验证配置</button>
+            <button id="backupBtn" class="secondary">💾 备份配置</button>
             <button id="resetBtn" class="reset-btn">重置默认</button>
             <button id="saveBtn" class="save-btn">保存配置</button>
             <button class="secondary" onclick="window.location.href='/'">返回主页</button>
@@ -237,126 +347,229 @@
     <!-- 验证状态 -->
     <div id="validationStatus" style="display: none;"></div>
 
-    <!-- 设备代码配置 -->
-    <div class="config-section">
-        <h3>📱 设备代码配置</h3>
-        <div class="form-group">
-            <label>设备代码列表</label>
-            <div class="array-input" id="padCodesContainer">
-                <!-- 动态生成 -->
+    <!-- 配置标签页 -->
+    <div class="config-tabs">
+        <button class="tab-btn active" onclick="switchTab('basic')">🔧 基础配置</button>
+        <button class="tab-btn" onclick="switchTab('security')">🔐 安全配置</button>
+        <button class="tab-btn" onclick="switchTab('environment')">🌍 环境变量</button>
+        <button class="tab-btn" onclick="switchTab('backup')">💾 备份管理</button>
+    </div>
+
+    <!-- 基础配置标签页 -->
+    <div id="basicTab" class="tab-content active">
+        <!-- 设备代码配置 -->
+        <div class="config-section">
+            <h3>📱 设备代码配置</h3>
+            <div class="form-group">
+                <label>设备代码列表</label>
+                <div class="array-input" id="padCodesContainer">
+                    <!-- 动态生成 -->
+                </div>
+                <button type="button" class="add-btn" onclick="addPadCode()">+ 添加设备代码</button>
             </div>
-            <button type="button" class="add-btn" onclick="addPadCode()">+ 添加设备代码</button>
+        </div>
+
+        <!-- 包名配置 -->
+        <div class="config-section">
+            <h3>📦 应用包名配置</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>主要包名</label>
+                    <input type="text" id="primaryPackage" placeholder="com.example.primary">
+                </div>
+                <div class="form-group">
+                    <label>次要包名</label>
+                    <input type="text" id="secondaryPackage" placeholder="com.example.secondary">
+                </div>
+            </div>
+        </div>
+
+        <!-- 模板ID配置 -->
+        <div class="config-section">
+            <h3>🎯 模板ID配置</h3>
+            <div class="form-group">
+                <label>模板ID列表</label>
+                <div class="array-input" id="templeIdsContainer">
+                    <!-- 动态生成 -->
+                </div>
+                <button type="button" class="add-btn" onclick="addTempleId()">+ 添加模板ID</button>
+            </div>
+        </div>
+
+        <!-- 默认代理配置 -->
+        <div class="config-section">
+            <h3>🌐 默认代理配置</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>国家</label>
+                    <input type="text" id="proxyCountry" placeholder="摩洛哥">
+                </div>
+                <div class="form-group">
+                    <label>国家代码</label>
+                    <input type="text" id="proxyCode" placeholder="ma">
+                </div>
+                <div class="form-group">
+                    <label>代理URL</label>
+                    <input type="url" id="proxyUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>时区</label>
+                    <input type="text" id="proxyTimezone" placeholder="Africa/Casablanca">
+                </div>
+                <div class="form-group">
+                    <label>语言</label>
+                    <input type="text" id="proxyLanguage" placeholder="English">
+                </div>
+                <div class="form-group">
+                    <label>纬度</label>
+                    <input type="number" id="proxyLatitude" step="0.0001" min="-90" max="90" placeholder="35.7758">
+                </div>
+                <div class="form-group">
+                    <label>经度</label>
+                    <input type="number" id="proxyLongitude" step="0.0001" min="-180" max="180" placeholder="-5.7909">
+                </div>
+            </div>
+        </div>
+
+        <!-- 应用URL配置 -->
+        <div class="config-section">
+            <h3>🔗 应用下载链接配置</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Clash 下载链接</label>
+                    <input type="url" id="clashUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Script 下载链接</label>
+                    <input type="url" id="scriptUrl" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Script2 下载链接</label>
+                    <input type="url" id="script2Url" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Chrome 下载链接</label>
+                    <input type="url" id="chromeUrl" placeholder="https://...">
+                </div>
+            </div>
+        </div>
+
+        <!-- 超时配置 -->
+        <div class="config-section">
+            <h3>⏱️ 超时配置</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>全局超时时间（分钟）</label>
+                    <input type="number" id="globalTimeout" min="1" max="120" placeholder="12">
+                </div>
+                <div class="form-group">
+                    <label>任务检查超时时间（分钟）</label>
+                    <input type="number" id="checkTaskTimeout" min="1" max="60" placeholder="5">
+                </div>
+            </div>
+        </div>
+
+        <!-- 调试配置 -->
+        <div class="config-section">
+            <h3>🐛 调试配置</h3>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="debugMode" style="width: auto;">
+                    启用调试模式
+                </label>
+            </div>
         </div>
     </div>
 
-    <!-- 包名配置 -->
-    <div class="config-section">
-        <h3>📦 应用包名配置</h3>
-        <div class="form-grid">
+    <!-- 安全配置标签页 -->
+    <div id="securityTab" class="tab-content">
+        <div class="config-section">
+            <h3>🔐 JWT 配置</h3>
             <div class="form-group">
-                <label>主要包名</label>
-                <input type="text" id="primaryPackage" placeholder="com.example.primary">
+                <label>JWT 密钥</label>
+                <input type="password" id="jwtSecretKey" placeholder="请输入JWT密钥">
+                <small style="color: var(--dark-gray);">建议长度至少32个字符</small>
             </div>
+        </div>
+
+        <div class="config-section">
+            <h3>👤 管理员账户</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>管理员用户名</label>
+                    <input type="text" id="adminUsername" placeholder="admin">
+                </div>
+                <div class="form-group">
+                    <label>管理员密码</label>
+                    <input type="password" id="adminPassword" placeholder="请输入密码">
+                    <small style="color: var(--dark-gray);">建议长度至少6个字符</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-section">
+            <h3>🗄️ 数据库配置</h3>
             <div class="form-group">
-                <label>次要包名</label>
-                <input type="text" id="secondaryPackage" placeholder="com.example.secondary">
+                <label>数据库连接URL</label>
+                <input type="text" id="databaseUrl" placeholder="postgresql+asyncpg://user:password@host:port/database">
             </div>
         </div>
     </div>
 
-    <!-- 模板ID配置 -->
-    <div class="config-section">
-        <h3>🎯 模板ID配置</h3>
-        <div class="form-group">
-            <label>模板ID列表</label>
-            <div class="array-input" id="templeIdsContainer">
-                <!-- 动态生成 -->
-            </div>
-            <button type="button" class="add-btn" onclick="addTempleId()">+ 添加模板ID</button>
-        </div>
-    </div>
+    <!-- 环境变量标签页 -->
+    <div id="environmentTab" class="tab-content">
+        <div class="config-section">
+            <h3>🌍 环境变量管理</h3>
 
-    <!-- 默认代理配置 -->
-    <div class="config-section">
-        <h3>🌐 默认代理配置</h3>
-        <div class="form-grid">
             <div class="form-group">
-                <label>国家</label>
-                <input type="text" id="proxyCountry" placeholder="摩洛哥">
+                <label>添加新的环境变量</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" id="newEnvKey" placeholder="变量名" style="flex: 1;">
+                    <input type="text" id="newEnvValue" placeholder="变量值" style="flex: 2;">
+                    <button type="button" onclick="addEnvVar()" class="add-btn">添加</button>
+                </div>
             </div>
+
             <div class="form-group">
-                <label>国家代码</label>
-                <input type="text" id="proxyCode" placeholder="ma">
-            </div>
-            <div class="form-group">
-                <label>代理URL</label>
-                <input type="url" id="proxyUrl" placeholder="https://...">
-            </div>
-            <div class="form-group">
-                <label>时区</label>
-                <input type="text" id="proxyTimezone" placeholder="Africa/Casablanca">
-            </div>
-            <div class="form-group">
-                <label>语言</label>
-                <input type="text" id="proxyLanguage" placeholder="English">
-            </div>
-            <div class="form-group">
-                <label>纬度</label>
-                <input type="number" id="proxyLatitude" step="0.0001" min="-90" max="90" placeholder="35.7758">
-            </div>
-            <div class="form-group">
-                <label>经度</label>
-                <input type="number" id="proxyLongitude" step="0.0001" min="-180" max="180" placeholder="-5.7909">
+                <label>当前环境变量</label>
+                <table class="env-var-table" id="envVarTable">
+                    <thead>
+                    <tr>
+                        <th>变量名</th>
+                        <th>变量值</th>
+                        <th>类型</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="envVarTableBody">
+                    <!-- 动态填充 -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
-    <!-- 应用URL配置 -->
-    <div class="config-section">
-        <h3>🔗 应用下载链接配置</h3>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Clash 下载链接</label>
-                <input type="url" id="clashUrl" placeholder="https://...">
+    <!-- 备份管理标签页 -->
+    <div id="backupTab" class="tab-content">
+        <div class="config-section">
+            <h3>💾 配置备份</h3>
+            <div style="margin-bottom: 20px;">
+                <button type="button" onclick="createBackup()" class="add-btn">🔄 创建新备份</button>
+                <button type="button" onclick="loadBackups()" class="secondary" style="margin-left: 10px;">🔄 刷新列表</button>
             </div>
-            <div class="form-group">
-                <label>Script 下载链接</label>
-                <input type="url" id="scriptUrl" placeholder="https://...">
-            </div>
-            <div class="form-group">
-                <label>Script2 下载链接</label>
-                <input type="url" id="script2Url" placeholder="https://...">
-            </div>
-            <div class="form-group">
-                <label>Chrome 下载链接</label>
-                <input type="url" id="chromeUrl" placeholder="https://...">
+
+            <div id="backupList">
+                <!-- 动态填充备份列表 -->
             </div>
         </div>
-    </div>
 
-    <!-- 超时配置 -->
-    <div class="config-section">
-        <h3>⏱️ 超时配置</h3>
-        <div class="form-grid">
-            <div class="form-group">
-                <label>全局超时时间（分钟）</label>
-                <input type="number" id="globalTimeout" min="1" max="120" placeholder="12">
+        <div class="danger-zone">
+            <h3>⚠️ 危险区域</h3>
+            <p>以下操作可能影响系统稳定性，请谨慎操作：</p>
+            <div style="margin-top: 15px;">
+                <button type="button" onclick="confirmReset()" class="remove-btn">🔄 重置所有配置</button>
+                <button type="button" onclick="clearAllEnvVars()" class="remove-btn" style="margin-left: 10px;">🗑️ 清空自定义环境变量</button>
             </div>
-            <div class="form-group">
-                <label>任务检查超时时间（分钟）</label>
-                <input type="number" id="checkTaskTimeout" min="1" max="60" placeholder="5">
-            </div>
-        </div>
-    </div>
-
-    <!-- 调试配置 -->
-    <div class="config-section">
-        <h3>🐛 调试配置</h3>
-        <div class="form-group">
-            <label style="display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" id="debugMode" style="width: auto;">
-                启用调试模式
-            </label>
         </div>
     </div>
 </div>
@@ -374,12 +587,14 @@
 
 <script>
     let currentConfig = {};
+    let currentTab = 'basic';
 
     // 页面加载时初始化
     document.addEventListener('DOMContentLoaded', function() {
         checkAuthStatus().then(() => {
             loadConfig();
             setupEventListeners();
+            loadEnvVars();
         });
     });
 
@@ -388,6 +603,38 @@
         document.getElementById('saveBtn').addEventListener('click', saveConfig);
         document.getElementById('resetBtn').addEventListener('click', resetConfig);
         document.getElementById('validateBtn').addEventListener('click', validateConfig);
+        document.getElementById('backupBtn').addEventListener('click', createBackup);
+    }
+
+    // 切换标签页
+    function switchTab(tabName) {
+        // 隐藏所有标签内容
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // 移除所有按钮的活跃状态
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // 显示选中的标签内容
+        document.getElementById(tabName + 'Tab').classList.add('active');
+
+        // 激活对应按钮
+        event.target.classList.add('active');
+
+        currentTab = tabName;
+
+        // 如果切换到环境变量标签，加载环境变量
+        if (tabName === 'environment') {
+            loadEnvVars();
+        }
+
+        // 如果切换到备份标签，加载备份列表
+        if (tabName === 'backup') {
+            loadBackups();
+        }
     }
 
     // 认证检查
@@ -450,17 +697,13 @@
 
     // 填充表单
     function populateForm(config) {
-        // 设备代码
+        // 基础配置
         populateArrayInput('padCodesContainer', config.pad_codes, 'pad_code');
-
-        // 包名
         document.getElementById('primaryPackage').value = config.package_names.primary || '';
         document.getElementById('secondaryPackage').value = config.package_names.secondary || '';
-
-        // 模板ID
         populateArrayInput('templeIdsContainer', config.temple_ids, 'temple_id');
 
-        // 默认代理
+        // 代理配置
         const proxy = config.default_proxy;
         document.getElementById('proxyCountry').value = proxy.country || '';
         document.getElementById('proxyCode').value = proxy.code || '';
@@ -484,6 +727,12 @@
 
         // 调试模式
         document.getElementById('debugMode').checked = config.debug || false;
+
+        // 安全配置
+        document.getElementById('jwtSecretKey').value = config.jwt_secret_key || '';
+        document.getElementById('adminUsername').value = config.admin_credentials.username || '';
+        document.getElementById('adminPassword').value = config.admin_credentials.password || '';
+        document.getElementById('databaseUrl').value = config.database_url || '';
     }
 
     // 填充数组输入
@@ -604,12 +853,31 @@
         // 调试模式
         formData.debug = document.getElementById('debugMode').checked;
 
+        // 安全配置
+        const jwtKey = document.getElementById('jwtSecretKey').value.trim();
+        if (jwtKey) {
+            formData.jwt_secret_key = jwtKey;
+        }
+
+        const adminUsername = document.getElementById('adminUsername').value.trim();
+        const adminPassword = document.getElementById('adminPassword').value.trim();
+        if (adminUsername || adminPassword) {
+            formData.admin_credentials = {};
+            if (adminUsername) formData.admin_credentials.username = adminUsername;
+            if (adminPassword) formData.admin_credentials.password = adminPassword;
+        }
+
+        const dbUrl = document.getElementById('databaseUrl').value.trim();
+        if (dbUrl) {
+            formData.database_url = dbUrl;
+        }
+
         return formData;
     }
 
     // 保存配置
     async function saveConfig() {
-        if (!confirm('确定要保存这些配置更改吗？\n\n更改将立即生效，可能影响系统运行。')) {
+        if (!confirm('确定要保存这些配置更改吗？\n\n更改将立即生效并持久化到.env文件，可能影响系统运行。')) {
             return;
         }
 
@@ -646,7 +914,7 @@
 
     // 重置配置
     async function resetConfig() {
-        if (!confirm('确定要重置所有配置为默认值吗？\n\n这将覆盖当前的所有配置更改！')) {
+        if (!confirm('确定要重置所有配置为默认值吗？\n\n这将覆盖当前的所有配置更改并持久化！')) {
             return;
         }
 
@@ -746,6 +1014,241 @@
         }
     }
 
+    // 环境变量管理
+    async function loadEnvVars() {
+        try {
+            const response = await fetch('/api/config/env-vars', {
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error('获取环境变量失败');
+            }
+
+            const envVars = await response.json();
+            renderEnvVarTable(envVars);
+
+        } catch (error) {
+            console.error('加载环境变量失败:', error);
+            showError('加载环境变量失败: ' + error.message);
+        }
+    }
+
+    function renderEnvVarTable(envVars) {
+        const tbody = document.getElementById('envVarTableBody');
+        tbody.innerHTML = '';
+
+        envVars.forEach(envVar => {
+            const row = document.createElement('tr');
+            row.className = envVar.is_system ? 'system-var' : 'custom-var';
+
+            row.innerHTML = `
+                <td>${envVar.key}</td>
+                <td style="font-family: monospace; max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${envVar.value}</td>
+                <td>
+                    <span style="padding: 2px 6px; border-radius: 3px; font-size: 11px; color: white; background-color: ${envVar.is_system ? '#ffc107' : '#17a2b8'};">
+                        ${envVar.is_system ? '系统' : '自定义'}
+                    </span>
+                </td>
+                <td>
+                    ${envVar.is_system ?
+                '<span style="color: #666;">受保护</span>' :
+                `<button class="remove-btn" onclick="deleteEnvVar('${envVar.key}')">删除</button>`
+            }
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // 添加环境变量
+    async function addEnvVar() {
+        const key = document.getElementById('newEnvKey').value.trim();
+        const value = document.getElementById('newEnvValue').value.trim();
+
+        if (!key || !value) {
+            showError('请输入变量名和变量值');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/config/env-var', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ key, value })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '添加失败');
+            }
+
+            const result = await response.json();
+            showSuccess(result.message);
+
+            // 清空输入框
+            document.getElementById('newEnvKey').value = '';
+            document.getElementById('newEnvValue').value = '';
+
+            // 重新加载环境变量列表
+            loadEnvVars();
+
+        } catch (error) {
+            console.error('添加环境变量失败:', error);
+            showError('添加环境变量失败: ' + error.message);
+        }
+    }
+
+    // 删除环境变量
+    async function deleteEnvVar(key) {
+        if (!confirm(`确定要删除环境变量 "${key}" 吗？`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/config/env-var', {
+                method: 'DELETE',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ key })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '删除失败');
+            }
+
+            const result = await response.json();
+            showSuccess(result.message);
+
+            // 重新加载环境变量列表
+            loadEnvVars();
+
+        } catch (error) {
+            console.error('删除环境变量失败:', error);
+            showError('删除环境变量失败: ' + error.message);
+        }
+    }
+
+    // 备份管理
+    async function createBackup() {
+        showLoading(true);
+        try {
+            const response = await fetch('/api/config/backup', {
+                method: 'POST',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '备份失败');
+            }
+
+            const result = await response.json();
+            showSuccess(result.message);
+
+            // 重新加载备份列表
+            loadBackups();
+
+        } catch (error) {
+            console.error('创建备份失败:', error);
+            showError('创建备份失败: ' + error.message);
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    async function loadBackups() {
+        try {
+            const response = await fetch('/api/config/backups', {
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                throw new Error('获取备份列表失败');
+            }
+
+            const backups = await response.json();
+            renderBackupList(backups);
+
+        } catch (error) {
+            console.error('加载备份列表失败:', error);
+            showError('加载备份列表失败: ' + error.message);
+        }
+    }
+
+    function renderBackupList(backups) {
+        const container = document.getElementById('backupList');
+
+        if (backups.length === 0) {
+            container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">暂无备份文件</p>';
+            return;
+        }
+
+        container.innerHTML = backups.map(backup => `
+            <div class="backup-item">
+                <div class="backup-info">
+                    <h4>${backup.filename}</h4>
+                    <p>创建时间: ${new Date(backup.created_at * 1000).toLocaleString()}</p>
+                    <p>文件大小: ${(backup.size / 1024).toFixed(2)} KB</p>
+                </div>
+                <div class="backup-actions">
+                    <button class="secondary" onclick="restoreBackup('${backup.filename}')">恢复</button>
+                    <button class="remove-btn" onclick="deleteBackup('${backup.filename}')">删除</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    async function restoreBackup(filename) {
+        if (!confirm(`确定要从备份 "${filename}" 恢复配置吗？\n\n这将覆盖当前所有配置！`)) {
+            return;
+        }
+
+        showLoading(true);
+        try {
+            const response = await fetch(`/api/config/restore/${filename}`, {
+                method: 'POST',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '恢复失败');
+            }
+
+            const result = await response.json();
+            showSuccess(result.message);
+
+            // 重新加载配置
+            setTimeout(() => {
+                loadConfig();
+            }, 1000);
+
+        } catch (error) {
+            console.error('恢复备份失败:', error);
+            showError('恢复备份失败: ' + error.message);
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // 危险操作确认
+    function confirmReset() {
+        if (confirm('⚠️ 警告：这将重置所有配置为默认值！\n\n确定要继续吗？')) {
+            resetConfig();
+        }
+    }
+
+    async function clearAllEnvVars() {
+        if (!confirm('⚠️ 警告：这将删除所有自定义环境变量！\n\n确定要继续吗？')) {
+            return;
+        }
+
+        // 这里可以实现批量删除自定义环境变量的逻辑
+        // 为简化，暂时提示用户手动删除
+        showError('请手动删除需要移除的自定义环境变量');
+    }
+
     // 显示/隐藏加载状态
     function showLoading(show) {
         const overlay = document.getElementById('loadingOverlay');
@@ -795,11 +1298,5 @@
     });
 </script>
 
-<style>
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-</style>
 </body>
 </html>

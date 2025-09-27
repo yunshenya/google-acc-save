@@ -2,11 +2,15 @@ import json
 import os
 from dataclasses import dataclass, asdict
 from typing import Dict, List, Any, Optional
+from pathlib import Path
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, set_key
 
 # 加载环境变量
 load_dotenv()
+
+# 环境变量文件路径
+ENV_FILE = Path(".env")
 
 
 @dataclass
@@ -78,6 +82,41 @@ class TimeoutConfig:
     check_task_timeout: int
 
 
+class ConfigManager:
+    """配置管理器 - 负责环境变量的持久化"""
+
+    @staticmethod
+    def update_env_var(key: str, value: Any) -> None:
+        """更新单个环境变量到 .env 文件"""
+        if isinstance(value, (dict, list)):
+            value = json.dumps(value, ensure_ascii=False)
+        elif isinstance(value, bool):
+            value = str(value).lower()
+        else:
+            value = str(value)
+
+        # 更新 .env 文件
+        set_key(ENV_FILE, key, value)
+        # 同时更新当前进程的环境变量
+        os.environ[key] = value
+
+    @staticmethod
+    def update_multiple_env_vars(updates: Dict[str, Any]) -> None:
+        """批量更新环境变量"""
+        for key, value in updates.items():
+            ConfigManager.update_env_var(key, value)
+
+    @staticmethod
+    def get_env_var(key: str, default: Any = None) -> Any:
+        """获取环境变量"""
+        return os.getenv(key, default)
+
+    @staticmethod
+    def reload_env() -> None:
+        """重新加载环境变量文件"""
+        load_dotenv(override=True)
+
+
 class Config:
     """主配置类"""
 
@@ -90,17 +129,23 @@ class Config:
         "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
     )
 
+    # JWT 配置
+    JWT_SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", '+H~I52e."@bM5BC"?-5mpKUnr\}{+nh,>>SrV4Sx@qfthW/_D9')
+
+    # 管理员账户配置
+    ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "admin")
+    ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "admin123")
+
     # 应用程序标识符
-    PAD_CODES: List[str] = os.getenv('PADE_CODE_LIST').split(',')
+    PAD_CODES: List[str] = os.getenv('PADE_CODE_LIST', '').split(',') if os.getenv('PADE_CODE_LIST') else []
 
-
-    PACKAGE_NAMES: Dict[str, str] = json.loads(os.getenv('PACKAGE_NAMES'))
+    PACKAGE_NAMES: Dict[str, str] = json.loads(os.getenv('PACKAGE_NAMES', '{}'))
 
     # Template Configuration
     TEMPLE_IDS: List[int] = [459]
 
     # Default Proxy Configuration
-    DEFAULT_PROXY = ProxyConfig.from_env()
+    DEFAULT_PROXY = ProxyConfig.from_env() if os.getenv('PROXY_CONFIG') else None
 
     # Application URLs
     APP_URLS = AppUrls.from_env()
@@ -114,12 +159,14 @@ class Config:
     @classmethod
     def get_package_name(cls, package_type: str = "primary") -> str:
         """Get package name by type"""
-        return cls.PACKAGE_NAMES.get(package_type, cls.PACKAGE_NAMES["primary"])
+        return cls.PACKAGE_NAMES.get(package_type, cls.PACKAGE_NAMES.get("primary", ""))
 
     @classmethod
     def get_app_url(cls, app_name: str) -> str:
         """Get application download URL by name"""
-        return getattr(cls.APP_URLS, app_name, "")
+        if cls.APP_URLS:
+            return getattr(cls.APP_URLS, app_name, "")
+        return ""
 
     @classmethod
     def is_debug_mode(cls) -> bool:
@@ -133,45 +180,56 @@ class Config:
 
     @classmethod
     def update_config(cls, updates: dict) -> None:
-        """热更新配置"""
+        """热更新配置并持久化到 .env 文件"""
         from app.services.logger import get_logger
         logger = get_logger("config")
 
         updated_fields = []
+        env_updates = {}
 
+        # PAD_CODES 更新
         if "pad_codes" in updates:
             cls.PAD_CODES = updates["pad_codes"]
+            env_updates["PADE_CODE_LIST"] = ",".join(cls.PAD_CODES)
             # 更新全局变量
             global pad_code_list
             pad_code_list = cls.PAD_CODES
             updated_fields.append("PAD_CODES")
 
+        # PACKAGE_NAMES 更新
         if "package_names" in updates:
             cls.PACKAGE_NAMES.update(updates["package_names"])
+            env_updates["PACKAGE_NAMES"] = cls.PACKAGE_NAMES
             # 更新全局变量
             global pkg_name, pkg_name2
             pkg_name = cls.get_package_name("primary")
             pkg_name2 = cls.get_package_name("secondary")
             updated_fields.append("PACKAGE_NAMES")
 
+        # TEMPLE_IDS 更新
         if "temple_ids" in updates:
             cls.TEMPLE_IDS = updates["temple_ids"]
+            env_updates["TEMPLE_IDS"] = cls.TEMPLE_IDS
             # 更新全局变量
             global temple_id_list
             temple_id_list = cls.TEMPLE_IDS
             updated_fields.append("TEMPLE_IDS")
 
+        # DEFAULT_PROXY 更新
         if "default_proxy" in updates:
             proxy_data = updates["default_proxy"]
             cls.DEFAULT_PROXY = ProxyConfig(**proxy_data)
+            env_updates["PROXY_CONFIG"] = cls.DEFAULT_PROXY.to_dict()
             # 更新全局变量
             global default_proxy
             default_proxy = cls.DEFAULT_PROXY.to_dict()
             updated_fields.append("DEFAULT_PROXY")
 
+        # APP_URLS 更新
         if "app_urls" in updates:
             url_data = updates["app_urls"]
             cls.APP_URLS = AppUrls(**url_data)
+            env_updates["APP_URLS"] = cls.APP_URLS.to_dict()
             # 更新全局变量
             global clash_install_url, script_install_url, script2_install_url, chrome_install_url
             clash_install_url = cls.get_app_url("clash")
@@ -180,24 +238,56 @@ class Config:
             chrome_install_url = cls.get_app_url("chrome")
             updated_fields.append("APP_URLS")
 
+        # TIMEOUTS 更新
         if "timeouts" in updates:
             timeout_data = updates["timeouts"]
             cls.TIMEOUTS = TimeoutConfig(**timeout_data)
+            env_updates["GLOBAL_TIMEOUT_MINUTES"] = cls.TIMEOUTS.global_timeout
+            env_updates["CHECK_TASK_TIMEOUT_MINUTES"] = cls.TIMEOUTS.check_task_timeout
             # 更新全局变量
             global global_timeout_minute, check_task_timeout_minute
             global_timeout_minute = cls.get_timeout("global")
             check_task_timeout_minute = cls.get_timeout("check_task")
             updated_fields.append("TIMEOUTS")
 
+        # DEBUG 更新
         if "debug" in updates:
             cls.DEBUG = updates["debug"]
+            env_updates["DEBUG"] = cls.DEBUG
             # 更新全局变量
             global DEBUG
             DEBUG = cls.DEBUG
             updated_fields.append("DEBUG")
 
+        # JWT_SECRET_KEY 更新
+        if "jwt_secret_key" in updates:
+            cls.JWT_SECRET_KEY = updates["jwt_secret_key"]
+            env_updates["JWT_SECRET_KEY"] = cls.JWT_SECRET_KEY
+            updated_fields.append("JWT_SECRET_KEY")
+
+        # ADMIN 凭据更新
+        if "admin_credentials" in updates:
+            admin_data = updates["admin_credentials"]
+            if "username" in admin_data:
+                cls.ADMIN_USERNAME = admin_data["username"]
+                env_updates["ADMIN_USERNAME"] = cls.ADMIN_USERNAME
+            if "password" in admin_data:
+                cls.ADMIN_PASSWORD = admin_data["password"]
+                env_updates["ADMIN_PASSWORD"] = cls.ADMIN_PASSWORD
+            updated_fields.append("ADMIN_CREDENTIALS")
+
+        # DATABASE_URL 更新
+        if "database_url" in updates:
+            cls.DATABASE_URL = updates["database_url"]
+            env_updates["DATABASE_URL"] = cls.DATABASE_URL
+            updated_fields.append("DATABASE_URL")
+
+        # 批量更新环境变量到 .env 文件
+        if env_updates:
+            ConfigManager.update_multiple_env_vars(env_updates)
+
         if updated_fields:
-            logger.info(f"配置已更新: {', '.join(updated_fields)}")
+            logger.info(f"配置已更新并持久化: {', '.join(updated_fields)}")
 
     @classmethod
     def get_current_config(cls) -> dict:
@@ -206,25 +296,26 @@ class Config:
             "pad_codes": cls.PAD_CODES,
             "package_names": cls.PACKAGE_NAMES,
             "temple_ids": cls.TEMPLE_IDS,
-            "default_proxy": cls.DEFAULT_PROXY.to_dict(),
-            "app_urls": {
-                "clash": cls.APP_URLS.clash,
-                "script": cls.APP_URLS.script,
-                "script2": cls.APP_URLS.script2,
-                "chrome": cls.APP_URLS.chrome
-            },
+            "default_proxy": cls.DEFAULT_PROXY.to_dict() if cls.DEFAULT_PROXY else {},
+            "app_urls": cls.APP_URLS.to_dict() if cls.APP_URLS else {},
             "timeouts": {
                 "global_timeout": cls.TIMEOUTS.global_timeout,
                 "check_task_timeout": cls.TIMEOUTS.check_task_timeout
             },
-            "debug": cls.DEBUG
+            "debug": cls.DEBUG,
+            "jwt_secret_key": cls.JWT_SECRET_KEY,
+            "admin_credentials": {
+                "username": cls.ADMIN_USERNAME,
+                "password": cls.ADMIN_PASSWORD
+            },
+            "database_url": cls.DATABASE_URL
         }
 
     @classmethod
     def reset_to_defaults(cls) -> None:
-        """重置为默认配置"""
+        """重置为默认配置并持久化"""
         # 重新加载环境变量
-        load_dotenv()
+        ConfigManager.reload_env()
 
         # 重置为初始值
         cls.DEBUG = os.getenv("DEBUG", "false").lower() == "true"
@@ -232,9 +323,25 @@ class Config:
             "DATABASE_URL",
             "postgresql+asyncpg://postgres:1332@localhost:5432/google-manager"
         )
+        cls.JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", '+H~I52e."@bM5BC"?-5mpKUnr\}{+nh,>>SrV4Sx@qfthW/_D9')
+        cls.ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
+        cls.ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin123")
 
-        # 重置其他配置为硬编码的默认值
-        # 这里可以根据需要添加重置逻辑
+        # 重新解析其他配置
+        cls.PAD_CODES = os.getenv('PADE_CODE_LIST', '').split(',') if os.getenv('PADE_CODE_LIST') else []
+        cls.PACKAGE_NAMES = json.loads(os.getenv('PACKAGE_NAMES', '{}'))
+        cls.TEMPLE_IDS = json.loads(os.getenv('TEMPLE_IDS', '[459]'))
+
+        if os.getenv('PROXY_CONFIG'):
+            cls.DEFAULT_PROXY = ProxyConfig.from_env()
+
+        if os.getenv('APP_URLS'):
+            cls.APP_URLS = AppUrls.from_env()
+
+        cls.TIMEOUTS = TimeoutConfig(
+            global_timeout=int(os.getenv("GLOBAL_TIMEOUT_MINUTES", "12")),
+            check_task_timeout=int(os.getenv("CHECK_TASK_TIMEOUT_MINUTES", "5"))
+        )
 
         # 更新全局变量
         global DEBUG, DATABASE_URL, pad_code_list, pkg_name, pkg_name2
@@ -246,7 +353,7 @@ class Config:
         pad_code_list = cls.PAD_CODES
         pkg_name = cls.get_package_name("primary")
         pkg_name2 = cls.get_package_name("secondary")
-        default_proxy = cls.DEFAULT_PROXY.to_dict()
+        default_proxy = cls.DEFAULT_PROXY.to_dict() if cls.DEFAULT_PROXY else {}
         temple_id_list = cls.TEMPLE_IDS
         clash_install_url = cls.get_app_url("clash")
         script_install_url = cls.get_app_url("script")
@@ -254,6 +361,34 @@ class Config:
         chrome_install_url = cls.get_app_url("chrome")
         global_timeout_minute = cls.get_timeout("global")
         check_task_timeout_minute = cls.get_timeout("check_task")
+
+    @classmethod
+    def add_custom_env_var(cls, key: str, value: Any) -> None:
+        """添加自定义环境变量"""
+        ConfigManager.update_env_var(key, value)
+
+    @classmethod
+    def get_custom_env_var(cls, key: str, default: Any = None) -> Any:
+        """获取自定义环境变量"""
+        return ConfigManager.get_env_var(key, default)
+
+    @classmethod
+    def remove_env_var(cls, key: str) -> None:
+        """删除环境变量（从 .env 文件和当前进程）"""
+        # 从当前进程删除
+        if key in os.environ:
+            del os.environ[key]
+
+        # 从 .env 文件删除（通过重写文件）
+        if ENV_FILE.exists():
+            lines = []
+            with open(ENV_FILE, 'r', encoding='utf-8') as f:
+                for line in f:
+                    if not line.strip().startswith(f"{key}="):
+                        lines.append(line)
+
+            with open(ENV_FILE, 'w', encoding='utf-8') as f:
+                f.writelines(lines)
 
 
 # 创建全局配置实例以便于访问
@@ -265,7 +400,7 @@ DATABASE_URL = config.DATABASE_URL
 pad_code_list = config.PAD_CODES
 pkg_name = config.get_package_name("primary")
 pkg_name2 = config.get_package_name("secondary")
-default_proxy = config.DEFAULT_PROXY.to_dict()
+default_proxy = config.DEFAULT_PROXY.to_dict() if config.DEFAULT_PROXY else {}
 temple_id_list = config.TEMPLE_IDS
 clash_install_url = config.get_app_url("clash")
 script_install_url = config.get_app_url("script")
