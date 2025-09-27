@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const errorMessage = document.getElementById('errorMessage');
 
     // 检查是否已经登录
-    checkAuthStatus();
+    checkAuthStatus().then(r => {});
 
     loginForm.addEventListener('submit', async function (e) {
         e.preventDefault();

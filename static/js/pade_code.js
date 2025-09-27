@@ -73,65 +73,16 @@ async function handleKeyboardShortcuts(event) {
     }
 }
 
-// 认证检查
-async function checkAuthStatus() {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-        window.location.href = '/login';
-        return;
-    }
-
-    try {
-        const response = await fetch('/auth/verify', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            window.location.href = '/login';
-        }
-    } catch (error) {
-        console.error('认证检查失败:', error);
-        window.location.href = '/login';
-    }
-}
-
-// 获取认证头
-function getAuthHeaders() {
-    const token = localStorage.getItem('access_token');
-    return {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
-}
-
 // 切换标签页
 function switchTab(tabName) {
     // 隐藏所有标签内容
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-
-    // 移除所有按钮的活跃状态
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    // 显示选中的标签内容
-    document.getElementById(tabName + 'Tab').classList.add('active');
-
-    // 激活对应按钮
-    event.target.classList.add('active');
-
-    currentTab = tabName;
+    hideTableContent(tabName);
 
     // 根据标签页加载对应数据
     if (tabName === 'current') {
-        loadCurrentPadCodes();
+        loadCurrentPadCodes().then(r => {});
     } else if (tabName === 'compare') {
-        loadComparison();
+        loadComparison().then(r => {});
     }
 
     // 清空选择
@@ -155,7 +106,7 @@ async function loadAvailablePadCodes() {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP错误! 状态码: ${response.status}`);
+            new Error(`HTTP错误! 状态码: ${response.status}`);
         }
 
         const result = await response.json();
@@ -259,7 +210,7 @@ function renderAvailableTable() {
 
     emptyState.style.display = 'none';
 
-    const rows = filteredAvailableCodes.map((pad, index) => {
+    tableBody.innerHTML = filteredAvailableCodes.map((pad, index) => {
         const isSelected = selectedCodes.has(pad.padCode);
         const statusBadge = pad.status === 1 ?
             '<span class="status-badge status-active">在线</span>' :
@@ -320,8 +271,6 @@ function renderAvailableTable() {
             </tr>
         `;
     }).join('');
-
-    tableBody.innerHTML = rows;
 
     // 添加渐入动画
     const rowElements = tableBody.querySelectorAll('tr');
@@ -839,8 +788,8 @@ async function executeAdvancedImport() {
     let devicesToImport = availablePadCodes.filter(pad => {
         if (onlineOnly && pad.status !== 1) return false;
         if (androidVersion && pad.androidVersion !== androidVersion) return false;
-        if (excludeConfigured && pad.isInConfig) return false;
-        return true;
+        return !(excludeConfigured && pad.isInConfig);
+
     });
 
     if (devicesToImport.length === 0) {

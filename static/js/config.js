@@ -4,9 +4,9 @@ let currentTab = 'basic';
 // 页面加载时初始化
 document.addEventListener('DOMContentLoaded', function() {
     checkAuthStatus().then(() => {
-        loadConfig();
+        loadConfig().then(r => {});
         setupEventListeners();
-        loadEnvVars();
+        loadEnvVars().then(r => {});
     });
 });
 
@@ -21,66 +21,17 @@ function setupEventListeners() {
 // 切换标签页
 function switchTab(tabName) {
     // 隐藏所有标签内容
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.remove('active');
-    });
-
-    // 移除所有按钮的活跃状态
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    // 显示选中的标签内容
-    document.getElementById(tabName + 'Tab').classList.add('active');
-
-    // 激活对应按钮
-    event.target.classList.add('active');
-
-    currentTab = tabName;
+    hideTableContent(tabName);
 
     // 如果切换到环境变量标签，加载环境变量
     if (tabName === 'environment') {
-        loadEnvVars();
+        loadEnvVars().then(r => {});
     }
 
     // 如果切换到备份标签，加载备份列表
     if (tabName === 'backup') {
-        loadBackups();
+        loadBackups().then(r => {});
     }
-}
-
-// 认证检查
-async function checkAuthStatus() {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-        window.location.href = '/login';
-        return;
-    }
-
-    try {
-        const response = await fetch('/auth/verify', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            window.location.href = '/login';
-        }
-    } catch (error) {
-        console.error('认证检查失败:', error);
-        window.location.href = '/login';
-    }
-}
-
-// 获取认证头
-function getAuthHeaders() {
-    const token = localStorage.getItem('access_token');
-    return {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
 }
 
 // 加载配置
@@ -503,7 +454,7 @@ async function addEnvVar() {
         document.getElementById('newEnvValue').value = '';
 
         // 重新加载环境变量列表
-        loadEnvVars();
+        await loadEnvVars();
 
     } catch (error) {
         console.error('添加环境变量失败:', error);
@@ -533,7 +484,7 @@ async function deleteEnvVar(key) {
         showSuccess(result.message);
 
         // 重新加载环境变量列表
-        loadEnvVars();
+        await loadEnvVars();
 
     } catch (error) {
         console.error('删除环境变量失败:', error);
@@ -552,14 +503,14 @@ async function createBackup() {
 
         if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.detail || '备份失败');
+            new Error(errorData.detail || '备份失败');
         }
 
         const result = await response.json();
         showSuccess(result.message);
 
         // 重新加载备份列表
-        loadBackups();
+        await loadBackups();
 
     } catch (error) {
         console.error('创建备份失败:', error);
@@ -676,9 +627,9 @@ async function deleteBackup(filename) {
 }
 
 // 危险操作确认
-function confirmReset() {
+async function confirmReset() {
     if (confirm('⚠️ 警告：这将重置所有配置为默认值！\n\n确定要继续吗？')) {
-        resetConfig();
+        await resetConfig();
     }
 }
 

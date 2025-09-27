@@ -31,7 +31,7 @@ async def get_config(_: str = Depends(verify_token)) -> ConfigResponse:
                 for line in f:
                     line = line.strip()
                     if line and not line.startswith('#') and '=' in line:
-                        key, value = line.split('=', 1)
+                        key, value = line.split(sep='=')
                         # 跳过系统配置的变量
                         if key not in ['DEBUG', 'DATABASE_URL', 'JWT_SECRET_KEY', 'ADMIN_USERNAME',
                                        'ADMIN_PASSWORD', 'PADE_CODE_LIST', 'PACKAGE_NAMES',

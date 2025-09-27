@@ -7,7 +7,7 @@ from fastapi.responses import FileResponse
 from starlette.responses import HTMLResponse
 
 from app.config import config
-from app.curd.status import update_cloud_status, set_proxy_status
+from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_status
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
@@ -102,7 +102,7 @@ async def status(android_code: AndroidPadCodeRequest):
                 callback_logger.info(f"{pad_code}: 调试模式 - 模拟一键新机完成")
             return {"message": "一键新机启动成功", "template_id": template_id, "country": selected_proxy.country}
         else:
-
+            await remove_cloud_status(pad_code=pad_code)
             return {"message": "其他机器成功"}
 
     except Exception as e:

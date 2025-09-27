@@ -4,7 +4,7 @@ let filteredProxyData = [];
 // 页面加载时初始化
 document.addEventListener('DOMContentLoaded', function() {
     checkAuthStatus().then(() => {
-        loadProxyData();
+        loadProxyData().then(r => {});
         setupEventListeners();
     });
 });
@@ -18,39 +18,6 @@ function setupEventListeners() {
     document.getElementById('languageFilter').addEventListener('change', applyFilters);
 }
 
-// 认证检查
-async function checkAuthStatus() {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-        window.location.href = '/login';
-        return;
-    }
-
-    try {
-        const response = await fetch('/auth/verify', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            window.location.href = '/login';
-        }
-    } catch (error) {
-        console.error('认证检查失败:', error);
-        window.location.href = '/login';
-    }
-}
-
-// 获取认证头
-function getAuthHeaders() {
-    const token = localStorage.getItem('access_token');
-    return {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-    };
-}
 
 // 加载代理数据
 async function loadProxyData() {
@@ -70,7 +37,7 @@ async function loadProxyData() {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP错误! 状态码: ${response.status}`);
+            new Error(`HTTP错误! 状态码: ${response.status}`);
         }
 
         allProxyData = await response.json();
@@ -103,7 +70,6 @@ function updateStatistics() {
     const uniqueCountries = new Set(allProxyData.map(p => p.country).filter(c => c)).size;
     const uniqueLanguages = new Set(allProxyData.map(p => p.language).filter(l => l)).size;
     const uniqueTimezones = new Set(allProxyData.map(p => p.time_zone).filter(t => t)).size;
-    const avgLatitude = allProxyData.filter(p => p.latitude).reduce((sum, p) => sum + p.latitude, 0) / allProxyData.filter(p => p.latitude).length || 0;
 
     statsCards.innerHTML = `
             <div class="stat-card">
@@ -164,11 +130,7 @@ function renderProxyTable() {
 
     emptyState.style.display = 'none';
 
-    const rows = filteredProxyData.map(proxy => {
-        const coordinates = proxy.latitude && proxy.longitude ?
-            `${proxy.latitude.toFixed(4)}, ${proxy.longitude.toFixed(4)}` :
-            '未设置';
-
+    tableBody.innerHTML = filteredProxyData.map(proxy => {
         return `
                 <tr>
                     <td>${proxy.id || ''}</td>
@@ -188,8 +150,6 @@ function renderProxyTable() {
                 </tr>
             `;
     }).join('');
-
-    tableBody.innerHTML = rows;
 }
 
 // 应用筛选
@@ -235,14 +195,14 @@ async function deleteProxy(proxyId) {
         });
 
         if (!response.ok) {
-            throw new Error(`删除失败: ${response.status}`);
+            new Error(`删除失败: ${response.status}`);
         }
 
         const result = await response.json();
         showSuccess(result.message);
 
         // 重新加载数据
-        loadProxyData();
+        await loadProxyData();
 
     } catch (error) {
         console.error('删除代理记录失败:', error);

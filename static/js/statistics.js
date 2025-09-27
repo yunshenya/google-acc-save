@@ -6,7 +6,7 @@ let chartData = null;
 // 页面加载时初始化
 document.addEventListener('DOMContentLoaded', function() {
     checkAuthStatus().then(() => {
-        loadStatistics();
+        loadStatistics().then(r => {});
         // 每5分钟自动刷新一次
         refreshInterval = setInterval(loadStatistics, 5 * 60 * 1000);
     });
@@ -18,31 +18,6 @@ window.addEventListener('beforeunload', function() {
         clearInterval(refreshInterval);
     }
 });
-
-// 认证检查
-async function checkAuthStatus() {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-        window.location.href = '/login';
-        return;
-    }
-
-    try {
-        const response = await fetch('/auth/verify', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            window.location.href = '/login';
-        }
-    } catch (error) {
-        console.error('认证检查失败:', error);
-        window.location.href = '/login';
-    }
-}
 
 // 获取认证头
 function getAuthHeaders() {
@@ -74,7 +49,7 @@ async function loadStatistics() {
         ]);
 
         if (!growthResponse.ok || !summaryResponse.ok) {
-            throw new Error('获取统计数据失败');
+            new Error('获取统计数据失败');
         }
 
         chartData = await growthResponse.json();
