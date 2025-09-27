@@ -93,7 +93,7 @@ async def status(android_code: AndroidPadCodeRequest):
                 current_status="一键新机中"
             )
 
-            task_logger.success(f"{pad_code}: 手动触发一键新机，模板: {template_id}, 代理: {selected_proxy.country}")
+            task_logger.success(f"{pad_code}: 模板: {template_id}, 代理: {selected_proxy.country}")
             # 执行一键新机
             if not config.DEBUG:
                 result = await replace_pad([pad_code], template_id=template_id)
