@@ -142,7 +142,8 @@ class Config:
     PACKAGE_NAMES: Dict[str, str] = json.loads(os.getenv('PACKAGE_NAMES', '{}'))
 
     # Template Configuration
-    TEMPLE_IDS: List[int] = [459]
+    temple_ids_str = os.getenv('TEMPLE_IDS', '')
+    TEMPLE_IDS = [int(id.strip()) for id in temple_ids_str.split(',') if id.strip()]
 
     # Default Proxy Configuration
     DEFAULT_PROXY = ProxyConfig.from_env() if os.getenv('PROXY_CONFIG') else None
