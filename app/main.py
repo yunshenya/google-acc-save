@@ -15,6 +15,7 @@ from app.models.proxy import ProxyResponse
 from app.routers import accounts, proxy, server, status, auth, statistics, proxy_collection
 from app.routers import websocket as websocket_router
 from app.services.database import engine, Base
+from app.routers import config as config_router
 
 # 导入日志配置
 from app.services.logger import get_logger, task_logger
@@ -67,6 +68,7 @@ async def startup_event(app: FastAPI):
         app.include_router(statistics.router, prefix="/api", tags=["统计"])
         app.include_router(proxy_collection.router, prefix="", tags=["代理集合"])
         app.include_router(websocket_router.router, tags=["WebSocket"])
+        app.include_router(config_router.router, prefix="/api", tags=["配置管理"])
         app.include_router(accounts.router, prefix="")
         app.include_router(proxy.router, prefix="")
         app.include_router(server.router, prefix="")

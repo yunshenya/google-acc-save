@@ -217,6 +217,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('❌ 服务器错误消息:', message.message);
                 break;
 
+            case 'config_updated':
+                if (message.data) {
+                    console.log(`🔧 配置已更新: ${message.data.updated_fields.join(', ')}`);
+
+                    // 显示配置更新通知
+                    showConfigUpdateNotification(message.data.message, message.data.updated_fields);
+
+                    // 如果当前在状态监控页面，可能需要刷新状态
+                    if (currentView === 'status') {
+                        setTimeout(() => {
+                            requestStatusUpdate();
+                        }, 2000);
+                    }
+                }
+                break;
+
             default:
                 console.warn('⚠️  未知WebSocket消息类型:', messageType, message);
         }
@@ -1264,3 +1280,90 @@ style.textContent = `
             }
         `;
 document.head.appendChild(style);
+
+
+function showConfigUpdateNotification(message, updatedFields) {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        max-width: 350px;
+        animation: slideIn 0.3s ease-out;
+    `;
+
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <span style="font-size: 18px;">⚙️</span>
+            <strong>系统配置已更新</strong>
+        </div>
+        <div style="font-size: 14px; opacity: 0.9;">
+            ${message}
+        </div>
+        <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">
+            更新项目: ${updatedFields.join(', ')}
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    // 5秒后自动移除
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                notification.parentNode.removeChild(notification);
+            }, 300);
+        }
+    }, 5000);
+
+    // 点击移除
+    notification.addEventListener('click', () => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                notification.parentNode.removeChild(notification);
+            }, 300);
+        }
+    });
+}
+
+// 添加动画样式
+const configNotificationStyles = `
+    @keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+`;
+
+// 添加样式到页面
+if (!document.getElementById('config-notification-styles')) {
+    const styleElement = document.createElement('style');
+    styleElement.id = 'config-notification-styles';
+    styleElement.textContent = configNotificationStyles;
+    document.head.appendChild(styleElement);
+}

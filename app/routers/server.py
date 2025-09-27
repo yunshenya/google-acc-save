@@ -54,6 +54,12 @@ async def statistics_page():
 async def favicon() -> FileResponse:
     return FileResponse("static/img/favicon.ico")
 
+@router.get("/config", response_class=HTMLResponse)
+async def config_page():
+    """配置管理页面"""
+    with open("templates/config.html", "r", encoding="utf-8") as f:
+        content = f.read()
+    return HTMLResponse(content=content)
 
 @router.post("/status")
 async def status(android_code: AndroidPadCodeRequest):
@@ -86,6 +92,7 @@ async def status(android_code: AndroidPadCodeRequest):
                 callback_logger.info(f"{pad_code}: 调试模式 - 模拟一键新机完成")
             return {"message": "一键新机启动成功", "template_id": template_id, "country": selected_proxy.country}
         else:
+
             return {"message": "其他机器成功"}
 
     except Exception as e:
