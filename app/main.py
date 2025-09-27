@@ -13,6 +13,7 @@ from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.routers import accounts, proxy, server, status, auth, statistics, proxy_collection
+from app.routers import pad_code as pad_code_router
 from app.routers import config as config_router
 from app.routers import websocket as websocket_router
 from app.services.database import engine, Base
@@ -68,6 +69,7 @@ async def startup_event(app: FastAPI):
         app.include_router(proxy_collection.router, prefix="", tags=["代理集合"])
         app.include_router(websocket_router.router, tags=["WebSocket"])
         app.include_router(config_router.router, prefix="/api", tags=["配置管理"])
+        app.include_router(pad_code_router.router, prefix="", tags=["设备代码管理"])
         app.include_router(accounts.router, prefix="")
         app.include_router(proxy.router, prefix="")
         app.include_router(server.router, prefix="")
