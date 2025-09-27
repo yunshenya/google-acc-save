@@ -18,7 +18,7 @@ class Account(Base):
     account = Column(String(50), unique=True, nullable=False)
     password = Column(String(100), nullable=False)
     type = Column(Integer, default=0, nullable=False)
-    status = Column(Integer, default=0, nullable=False)
+    status = Column(Integer, default=2, nullable=False)
     code = Column(String(32), nullable=True)
     for_email = Column(Text, nullable=True)
     for_password = Column(Text, nullable=True)

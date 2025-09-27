@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/app/routers/statistics.py" value="b11d5334-a1ec-4ad7-b714-9c084d1bbdd4" />
-    <file url="file://$PROJECT_DIR$/database/data.sql" value="3f88973b-af52-4202-9e39-d850b25d60eb" />
-    <file url="file://$PROJECT_DIR$/database/proxy.sql" value="3f88973b-af52-4202-9e39-d850b25d60eb" />
-    <file url="file://$PROJECT_DIR$/database/status.sql" value="3f88973b-af52-4202-9e39-d850b25d60eb" />
-  </component>
-</project>

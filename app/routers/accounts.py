@@ -107,11 +107,9 @@ async def update_forward(forward: ForwardRequest) -> AccountResponse:
         account = result.scalars().first()
         if account is None:
             raise HTTPException(status_code=404, detail="账号不存在")
-        if account.for_email is not None and account.for_password is not None:
-            account.for_email = forward.for_email
-            account.for_password = forward.for_password
-        else:
-            account.status = 2
+        account.for_email = forward.for_email
+        account.for_password = forward.for_password
+        account.status = 0
         await db.commit()
         await db.refresh(account)
         await update_cloud_status(pad_code=forward.pad_code, forward_num=1)
@@ -130,6 +128,7 @@ async def update_secondary_mail(secondary_mail: SecondaryEmail) -> AccountRespon
         account.is_boned_secondary_email = secondary_mail.is_boned_secondary_email
         account.for_email = secondary_mail.for_email
         account.for_password = secondary_mail.for_password
+        account.status = 0
         await db.commit()
         await db.refresh(account)
         await update_cloud_status(pad_code=secondary_mail.pad_code, secondary_email_num=1)
