@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加热更新">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化文件结构">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/data.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/pade_code.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/pade_code.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/pade_code.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/pade_code.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/pade_code.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/pade_code.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,10 +20,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JavaScript File" />
-        <option value="CSS File" />
         <option value="HTML File" />
+        <option value="CSS File" />
         <option value="Python Script" />
+        <option value="JavaScript File" />
       </list>
     </option>
   </component>
@@ -602,23 +606,7 @@
       <workItem from="1758893513373" duration="321000" />
       <workItem from="1758936451676" duration="9634000" />
       <workItem from="1758949609644" duration="4826000" />
-      <workItem from="1758957326496" duration="3450000" />
-    </task>
-    <task id="LOCAL-00120" summary="增加登录页面">
-      <option name="closed" value="true" />
-      <created>1758521215678</created>
-      <option name="number" value="00120" />
-      <option name="presentableId" value="LOCAL-00120" />
-      <option name="project" value="LOCAL" />
-      <updated>1758521215678</updated>
-    </task>
-    <task id="LOCAL-00121" summary="增加登录页面">
-      <option name="closed" value="true" />
-      <created>1758542554806</created>
-      <option name="number" value="00121" />
-      <option name="presentableId" value="LOCAL-00121" />
-      <option name="project" value="LOCAL" />
-      <updated>1758542554806</updated>
+      <workItem from="1758957326496" duration="6491000" />
     </task>
     <task id="LOCAL-00122" summary="增加登录页面">
       <option name="closed" value="true" />
@@ -996,7 +984,23 @@
       <option name="project" value="LOCAL" />
       <updated>1758960091527</updated>
     </task>
-    <option name="localTasksCounter" value="169" />
+    <task id="LOCAL-00169" summary="添加热更新">
+      <option name="closed" value="true" />
+      <created>1758960807318</created>
+      <option name="number" value="00169" />
+      <option name="presentableId" value="LOCAL-00169" />
+      <option name="project" value="LOCAL" />
+      <updated>1758960807318</updated>
+    </task>
+    <task id="LOCAL-00170" summary="优化文件结构">
+      <option name="closed" value="true" />
+      <created>1758962479376</created>
+      <option name="number" value="00170" />
+      <option name="presentableId" value="LOCAL-00170" />
+      <option name="project" value="LOCAL" />
+      <updated>1758962479376</updated>
+    </task>
+    <option name="localTasksCounter" value="171" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1018,7 +1022,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="新增加md5" />
     <MESSAGE value="减少取值次数优化性能" />
     <MESSAGE value="获取之后删除数据" />
     <MESSAGE value="添加一个创建时间字段" />
@@ -1043,6 +1046,7 @@
     <MESSAGE value="增加日志系统" />
     <MESSAGE value="解决一些小bug" />
     <MESSAGE value="添加热更新" />
-    <option name="LAST_COMMIT_MESSAGE" value="添加热更新" />
+    <MESSAGE value="优化文件结构" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化文件结构" />
   </component>
 </project>

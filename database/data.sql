@@ -16,7 +16,7 @@ CREATE TABLE google_account (
                                 account VARCHAR(50) NOT NULL UNIQUE,
                                 password VARCHAR(100) NOT NULL,
                                 type INT DEFAULT 0,
-                                status INT DEFAULT 0,
+                                status INT DEFAULT 2,
                                 code VARCHAR(32),
                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                 for_email TEXT,

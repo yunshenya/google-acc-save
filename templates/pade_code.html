@@ -52,6 +52,7 @@
     <!-- 标签页 -->
     <div class="tabs-container">
         <button class="tab-btn active" onclick="switchTab('available')">🌐 云端可用设备</button>
+        <button class="tab-btn" onclick="switchTab('current')">📋 当前配置设备</button>
         <button class="tab-btn" onclick="switchTab('compare')">🔍 差异对比</button>
     </div>
 
@@ -74,23 +75,67 @@
             <button class="secondary" id="resetFilters">重置筛选</button>
         </div>
 
-        <!-- 批量操作控制 -->
+        <!-- 增强的批量操作控制 -->
         <div class="selection-controls">
-            <label style="display: flex; align-items: center; gap: 8px;">
-                <input type="checkbox" id="selectAll"> 全选
-            </label>
-            <span class="selected-count" id="selectedCount">已选择: 0</span>
-            <button id="selectNotInConfig" class="secondary">选择未配置的设备</button>
-            <button id="selectOnlineOnly" class="secondary">选择在线设备</button>
+            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="selectAll"> 全选
+                </label>
+                <span class="selected-count" id="selectedCount">已选择: 0</span>
+
+                <!-- 快速选择按钮 -->
+                <div class="quick-select-buttons" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button id="selectNotInConfig" class="secondary small-btn">选择未配置</button>
+                    <button id="selectOnlineOnly" class="secondary small-btn">选择在线设备</button>
+                    <button id="selectOfflineOnly" class="secondary small-btn">选择离线设备</button>
+                    <button id="selectByAndroidVersion" class="secondary small-btn">按Android版本选择</button>
+                </div>
+            </div>
         </div>
 
-        <!-- 批量操作区域 -->
+        <!-- 改进的批量操作区域 -->
         <div class="bulk-actions" id="bulkActions">
-            <h4>批量操作</h4>
-            <div class="bulk-action-buttons">
-                <button onclick="syncSelectedCodes()" class="add-btn">✅ 同步选中设备</button>
-                <button onclick="addSelectedCodes()" class="add-btn">➕ 添加选中设备</button>
-                <button onclick="removeSelectedCodes()" class="remove-btn">➖ 移除选中设备</button>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <h4>批量操作 - 选中 <span id="bulkSelectedCount">0</span> 台设备</h4>
+                <button onclick="clearSelection()" class="secondary small-btn">清空选择</button>
+            </div>
+
+            <div class="bulk-action-grid">
+                <!-- 导入操作 -->
+                <div class="action-group">
+                    <h5>📥 导入操作</h5>
+                    <div class="action-buttons">
+                        <button onclick="importSelectedDevices('add')" class="add-btn">
+                            ➕ 添加到配置
+                        </button>
+                        <button onclick="importSelectedDevices('sync')" class="add-btn">
+                            🔄 同步到配置
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 筛选导入 -->
+                <div class="action-group">
+                    <h5>🎯 条件导入</h5>
+                    <div class="action-buttons">
+                        <button onclick="importOnlineOnly()" class="add-btn">
+                            📡 仅导入在线设备
+                        </button>
+                        <button onclick="importByAndroidVersion()" class="add-btn">
+                            🤖 按Android版本导入
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 移除操作 -->
+                <div class="action-group">
+                    <h5>🗑️ 移除操作</h5>
+                    <div class="action-buttons">
+                        <button onclick="removeSelectedCodes()" class="remove-btn">
+                            ➖ 从配置移除
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -109,7 +154,9 @@
             <table class="pad-table" id="availableTable">
                 <thead>
                 <tr>
-                    <th class="checkbox-cell">选择</th>
+                    <th class="checkbox-cell">
+                        <input type="checkbox" id="headerSelectAll" onchange="toggleSelectAllFromHeader()">
+                    </th>
                     <th>设备代码</th>
                     <th>设备名称</th>
                     <th>状态</th>
@@ -119,6 +166,7 @@
                     <th>配置名称</th>
                     <th>到期时间</th>
                     <th>启动时间</th>
+                    <th>单独操作</th>
                 </tr>
                 </thead>
                 <tbody id="availableTableBody">
@@ -136,11 +184,23 @@
             </div>
         </div>
 
-        <!-- 快速操作 -->
-        <div style="margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-            <button onclick="syncAllAvailable()" class="add-btn">🔄 同步所有可用设备</button>
-            <button onclick="syncOnlineOnly()" class="add-btn">📡 仅同步在线设备</button>
-            <button onclick="syncNotInConfig()" class="add-btn">🆕 仅同步未配置设备</button>
+        <!-- 全局快速操作 -->
+        <div class="global-actions" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <h4>🚀 全局快速操作</h4>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+                <button onclick="syncAllAvailable()" class="add-btn">
+                    🔄 导入所有可用设备
+                </button>
+                <button onclick="syncOnlineOnly()" class="add-btn">
+                    📡 仅导入在线设备
+                </button>
+                <button onclick="syncNotInConfig()" class="add-btn">
+                    🆕 仅导入未配置设备
+                </button>
+                <button onclick="showAdvancedImportDialog()" class="secondary">
+                    ⚙️ 高级导入选项
+                </button>
+            </div>
         </div>
     </div>
 
@@ -208,6 +268,46 @@
                 <button onclick="replaceWithCloudCodes()" class="remove-btn">🔄 用云端代码完全替换本地配置</button>
                 <button onclick="clearAllCodes()" class="remove-btn">🗑️ 清空所有设备代码</button>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- 高级导入对话框 -->
+<div id="advancedImportModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>⚙️ 高级导入选项</h3>
+            <button class="modal-close" onclick="closeAdvancedImportDialog()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="onlineOnlyCheck"> 仅导入在线设备
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Android版本筛选:</label>
+                <select id="androidVersionSelect">
+                    <option value="">所有版本</option>
+                    <!-- 动态填充 -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label>导入模式:</label>
+                <select id="importModeSelect">
+                    <option value="add">添加到现有配置</option>
+                    <option value="replace">替换现有配置</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="excludeConfiguredCheck"> 排除已配置的设备
+                </label>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button onclick="executeAdvancedImport()" class="add-btn">开始导入</button>
+            <button onclick="closeAdvancedImportDialog()" class="secondary">取消</button>
         </div>
     </div>
 </div>
