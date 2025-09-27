@@ -1185,18 +1185,18 @@
         }
 
         container.innerHTML = backups.map(backup => `
-            <div class="backup-item">
-                <div class="backup-info">
-                    <h4>${backup.filename}</h4>
-                    <p>创建时间: ${new Date(backup.created_at * 1000).toLocaleString()}</p>
-                    <p>文件大小: ${(backup.size / 1024).toFixed(2)} KB</p>
-                </div>
-                <div class="backup-actions">
-                    <button class="secondary" onclick="restoreBackup('${backup.filename}')">恢复</button>
-                    <button class="remove-btn" onclick="deleteBackup('${backup.filename}')">删除</button>
-                </div>
+        <div class="backup-item">
+            <div class="backup-info">
+                <h4>${backup.filename}</h4>
+                <p>创建时间: ${new Date(backup.created_at * 1000).toLocaleString()}</p>
+                <p>文件大小: ${(backup.size / 1024).toFixed(2)} KB</p>
             </div>
-        `).join('');
+            <div class="backup-actions">
+                <button class="secondary" onclick="restoreBackup('${backup.filename}')" title="从此备份恢复配置">恢复</button>
+                <button class="remove-btn" onclick="deleteBackup('${backup.filename}')" title="删除此备份文件">删除</button>
+            </div>
+        </div>
+    `).join('');
     }
 
     async function restoreBackup(filename) {
@@ -1227,6 +1227,37 @@
         } catch (error) {
             console.error('恢复备份失败:', error);
             showError('恢复备份失败: ' + error.message);
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    async function deleteBackup(filename) {
+        if (!confirm(`确定要删除备份文件 "${filename}" 吗？\n\n此操作无法撤销！`)) {
+            return;
+        }
+
+        showLoading(true);
+        try {
+            const response = await fetch(`/api/config/backup/${filename}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '删除失败');
+            }
+
+            const result = await response.json();
+            showSuccess(result.message || '备份文件删除成功');
+
+            // 重新加载备份列表
+            await loadBackups();
+
+        } catch (error) {
+            console.error('删除备份失败:', error);
+            showError('删除备份失败: ' + error.message);
         } finally {
             showLoading(false);
         }

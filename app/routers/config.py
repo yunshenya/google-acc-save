@@ -480,3 +480,56 @@ async def restore_config(
     except Exception as e:
         logger.error(f"配置恢复失败: {e}")
         raise HTTPException(status_code=500, detail=f"配置恢复失败: {str(e)}")
+
+
+@router.delete("/config/backup/{backup_filename}", response_model=Dict[str, str])
+async def delete_backup(
+        backup_filename: str,
+        _: str = Depends(verify_token)
+) -> Dict[str, str]:
+    """删除指定的备份文件"""
+    try:
+        from pathlib import Path
+        import os
+
+        # 验证文件名安全性，防止路径遍历攻击
+        if '..' in backup_filename or '/' in backup_filename or '\\' in backup_filename:
+            raise HTTPException(status_code=400, detail="非法的文件名")
+
+        backup_file = Path("config_backups") / backup_filename
+
+        if not backup_file.exists():
+            raise HTTPException(status_code=404, detail="备份文件不存在")
+
+        # 检查文件是否是配置备份文件
+        if not backup_filename.startswith('config_backup_') or not backup_filename.endswith('.json'):
+            raise HTTPException(status_code=400, detail="只能删除配置备份文件")
+
+        # 删除主备份文件
+        os.remove(backup_file)
+
+        # 尝试删除对应的环境变量备份文件
+        env_backup_file = Path("config_backups") / backup_filename.replace('config_backup_', 'env_backup_').replace('.json', '.env')
+        if env_backup_file.exists():
+            os.remove(env_backup_file)
+
+        logger.info(f"备份文件删除成功: {backup_filename}")
+
+        try:
+            await ws_manager.broadcast({
+                "type": "config_updated",
+                "data": {
+                    "updated_fields": ["backup_deleted"],
+                    "message": f"备份文件 {backup_filename} 已删除"
+                }
+            })
+        except Exception as e:
+            logger.warning(f"发送备份删除通知失败: {e}")
+
+        return {"message": f"备份文件 {backup_filename} 删除成功"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"删除备份文件失败: {e}")
+        raise HTTPException(status_code=500, detail=f"删除备份文件失败: {str(e)}")
