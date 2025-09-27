@@ -5,8 +5,7 @@ from typing import Any, Dict, Set
 
 from loguru import logger
 
-from app.config import clash_install_url, script_install_url, temple_id_list, pkg_name, global_timeout_minute, \
-    check_task_timeout_minute, chrome_install_url, script2_install_url, pkg_name2
+from app.config import config
 from app.curd.status import get_proxy_status, update_cloud_status
 from app.dependencies.utils import get_cloud_file_task_info, get_app_install_info, open_root, install_app, \
     replace_pad, update_language, update_time_zone, gps_in_ject_info
@@ -39,6 +38,15 @@ class TaskManager:
         # 正在清理的任务，防止重复清理
         self._cleaning: Set[str] = set()
         self._lock = asyncio.Lock()
+        self._clash_install_url = config.get_app_url("clash")
+        self._script_install_url = config.get_app_url("script")
+        self._script2_install_url = config.get_app_url("script2")
+        self._chrome_install_url = config.get_app_url("chrome")
+        self._global_timeout_minute = config.get_timeout("global")
+        self._check_task_timeout_minute = config.get_timeout("check_task")
+        self._temple_id_list = config.TEMPLE_IDS
+        self._pkg_name = config.get_package_name("primary")
+        self._pkg_name2 = config.get_package_name("secondary")
 
     async def add_task(self, pad_code: str, task: asyncio.Task) -> None:
         """添加主任务"""
@@ -95,7 +103,7 @@ class TaskManager:
     async def start_task_with_timeout(self, pad_code: str, main_task_coro, timeout_seconds: int = None) -> None:
         """启动带超时的任务"""
         if timeout_seconds is None:
-            timeout_seconds = global_timeout_minute * 60
+            timeout_seconds = self._global_timeout_minute * 60
 
         if await self.has_task(pad_code):
             raise ValueError(f"标识符 {pad_code} 已在使用")
@@ -124,7 +132,7 @@ class TaskManager:
             logger.warning(f"任务超时: {pad_code}")
 
             # 执行替换逻辑
-            temple_id = random.choice(temple_id_list)
+            temple_id = random.choice(self._temple_id_list)
             await replace_pad([pad_code], template_id=temple_id)
             await update_cloud_status(
                 pad_code=pad_code,
@@ -193,9 +201,9 @@ class TaskManager:
                             await update_cloud_status(pad_code=pad_code, current_status="安装成功")
 
                             # 设置root权限
-                            await open_root(pad_code_list=[pad_code], pkg_name=pkg_name)
+                            await open_root(pad_code_list=[pad_code], pkg_name=self._pkg_name)
                             await asyncio.sleep(2)
-                            await open_root(pad_code_list=[pad_code], pkg_name=pkg_name2)
+                            await open_root(pad_code_list=[pad_code], pkg_name=self._pkg_name2)
 
                             # 获取代理信息并设置
                             current_proxy: ProxyResponse = await get_proxy_status(pad_code)
@@ -213,7 +221,7 @@ class TaskManager:
 
                             await asyncio.sleep(10)
                             await update_cloud_status(pad_code=pad_code, current_status="开始启动应用")
-                            await start_app_state(package_name=pkg_name, pad_code=pad_code, task_manager=task_manager)
+                            await start_app_state(package_name=self._pkg_name, pad_code=pad_code, task_manager=task_manager)
 
                             await self.complete_main_task(pad_code)
                             return True
@@ -223,12 +231,12 @@ class TaskManager:
                 elif app_count == 0:
                     logger.warning(f"{pad_code}: 重新上传")
                     await update_cloud_status(pad_code=pad_code, current_status=f"{task_type}重新安装")
-                    await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._clash_install_url, md5=InstallAppEnum.clash_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=self._script_install_url,
                                       md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._chrome_install_url,
                                       md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
                     await asyncio.sleep(10)
 
@@ -238,10 +246,10 @@ class TaskManager:
                         logger.warning(f"安装成功: {app_result_one['appName']}")
                         await update_cloud_status(pad_code=pad_code,
                                                   current_status=f"安装成功: {app_result_one['appName']}")
-                    await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._clash_install_url, md5=InstallAppEnum.clash_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=self._chrome_install_url,
                                       md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
                     await asyncio.sleep(10)
 
@@ -255,12 +263,12 @@ class TaskManager:
                 elif app_count == 0:
                     logger.warning(f"{pad_code}: 重新上传")
                     await update_cloud_status(pad_code=pad_code, current_status="上传失败，重新上传")
-                    await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._clash_install_url, md5=InstallAppEnum.clash_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=self._script_install_url,
                                       md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._chrome_install_url,
                                       md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
                     await asyncio.sleep(10)
 
@@ -270,11 +278,11 @@ class TaskManager:
                         logger.warning(f"安装成功: {app_result_one['appName']}")
                         await update_cloud_status(pad_code=pad_code,
                                                   current_status=f"安装成功: {app_result_one['appName']}")
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script_install_url,
                                       md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._chrome_install_url,
                                       md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
                     await asyncio.sleep(10)
 
@@ -288,12 +296,12 @@ class TaskManager:
                 elif app_count == 0:
                     logger.warning(f"{pad_code}: 重新上传")
                     await update_cloud_status(pad_code=pad_code, current_status="上传失败，重新上传")
-                    await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._clash_install_url, md5=InstallAppEnum.clash_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=self._script_install_url,
                                       md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._chrome_install_url,
                                       md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
                     await asyncio.sleep(10)
 
@@ -303,10 +311,10 @@ class TaskManager:
                         logger.warning(f"安装成功: {app_result_one['appName']}")
                         await update_cloud_status(pad_code=pad_code,
                                                   current_status=f"安装成功: {app_result_one['appName']}")
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script_install_url,
                                       md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._clash_install_url, md5=InstallAppEnum.clash_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=self._script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
                     await asyncio.sleep(10)
 
@@ -319,12 +327,12 @@ class TaskManager:
                 elif app_count == 0:
                     logger.warning(f"{pad_code}: 重新上传")
                     await update_cloud_status(pad_code=pad_code, current_status="上传失败，重新上传")
-                    await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._clash_install_url, md5=InstallAppEnum.clash_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=self._script_install_url,
                                       md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._chrome_install_url,
                                       md5=InstallAppEnum.chrome_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=script2_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script2_install_url,
                                       md5=InstallAppEnum.script2_md5)
                     await asyncio.sleep(10)
 
@@ -334,10 +342,10 @@ class TaskManager:
                         logger.warning(f"安装成功: {app_result_one['appName']}")
                         await update_cloud_status(pad_code=pad_code,
                                                   current_status=f"安装成功: {app_result_one['appName']}")
-                    await install_app(pad_code_list=[pad_code], app_url=script_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._script_install_url,
                                       md5=InstallAppEnum.script_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=clash_install_url, md5=InstallAppEnum.clash_md5)
-                    await install_app(pad_code_list=[pad_code], app_url=chrome_install_url,
+                    await install_app(pad_code_list=[pad_code], app_url=self._clash_install_url, md5=InstallAppEnum.clash_md5)
+                    await install_app(pad_code_list=[pad_code], app_url=self._chrome_install_url,
                                       md5=InstallAppEnum.chrome_md5)
                     await asyncio.sleep(10)
 
@@ -352,18 +360,18 @@ class TaskManager:
         """检查任务状态"""
         app_url = ""
         if timeout_seconds is None:
-            timeout_seconds = check_task_timeout_minute * 60
+            timeout_seconds = config.get_timeout("check_task") * 60
         if task_type.lower() == "script":
-            app_url = script_install_url
+            app_url = self._script_install_url
 
         elif task_type.lower() == "clash":
-            app_url = clash_install_url
+            app_url = self._clash_install_url
 
         if task_type.lower() == "chrome":
-            app_url = chrome_install_url
+            app_url = self._chrome_install_url
 
         if task_type.lower() == "script2":
-            app_url = script2_install_url
+            app_url = self._script2_install_url
 
         app_md5_list: Any = app_url.split("/")
         app_md5 = app_md5_list[-1].replace(".apk", "")
@@ -432,7 +440,7 @@ class TaskManager:
         pad_code = result["data"][0]["padCode"]
         if 'pad_code' in locals():
             if await self.has_task(pad_code):
-                temple_id = random.choice(temple_id_list)
+                temple_id = random.choice(self._temple_id_list)
                 await replace_pad([pad_code], template_id=temple_id)
                 await update_cloud_status(
                     pad_code=pad_code,

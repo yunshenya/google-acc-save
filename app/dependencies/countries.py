@@ -3,7 +3,7 @@ from typing import Any
 
 from loguru import logger
 
-from app.config import default_proxy
+from app.config import config
 from app.dependencies.proxy import ProxyManager
 
 manager = ProxyManager()  ## 全局代理管理
@@ -32,4 +32,4 @@ def load_proxy_countries():
     except Exception as e:
         logger.error(f"加载代理国家列表失败: {e}")
         # 如果加载失败，使用默认代理
-        manager.set_proxy_countries(default_proxy)
+        manager.set_proxy_countries(config.DEFAULT_PROXY.to_dict())

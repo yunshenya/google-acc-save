@@ -192,28 +192,19 @@ class Config:
         if "pad_codes" in updates:
             cls.PAD_CODES = updates["pad_codes"]
             env_updates["PADE_CODE_LIST"] = ",".join(cls.PAD_CODES)
-            # 更新全局变量
-            global pad_code_list
-            pad_code_list = cls.PAD_CODES
             updated_fields.append("PAD_CODES")
 
         # PACKAGE_NAMES 更新
         if "package_names" in updates:
             cls.PACKAGE_NAMES.update(updates["package_names"])
             env_updates["PACKAGE_NAMES"] = cls.PACKAGE_NAMES
-            # 更新全局变量
-            global pkg_name, pkg_name2
-            pkg_name = cls.get_package_name("primary")
-            pkg_name2 = cls.get_package_name("secondary")
+
             updated_fields.append("PACKAGE_NAMES")
 
         # TEMPLE_IDS 更新
         if "temple_ids" in updates:
             cls.TEMPLE_IDS = updates["temple_ids"]
             env_updates["TEMPLE_IDS"] = cls.TEMPLE_IDS
-            # 更新全局变量
-            global temple_id_list
-            temple_id_list = cls.TEMPLE_IDS
             updated_fields.append("TEMPLE_IDS")
 
         # DEFAULT_PROXY 更新
@@ -221,9 +212,6 @@ class Config:
             proxy_data = updates["default_proxy"]
             cls.DEFAULT_PROXY = ProxyConfig(**proxy_data)
             env_updates["PROXY_CONFIG"] = cls.DEFAULT_PROXY.to_dict()
-            # 更新全局变量
-            global default_proxy
-            default_proxy = cls.DEFAULT_PROXY.to_dict()
             updated_fields.append("DEFAULT_PROXY")
 
         # APP_URLS 更新
@@ -231,12 +219,6 @@ class Config:
             url_data = updates["app_urls"]
             cls.APP_URLS = AppUrls(**url_data)
             env_updates["APP_URLS"] = cls.APP_URLS.to_dict()
-            # 更新全局变量
-            global clash_install_url, script_install_url, script2_install_url, chrome_install_url
-            clash_install_url = cls.get_app_url("clash")
-            script_install_url = cls.get_app_url("script")
-            script2_install_url = cls.get_app_url("script2")
-            chrome_install_url = cls.get_app_url("chrome")
             updated_fields.append("APP_URLS")
 
         # TIMEOUTS 更新
@@ -245,19 +227,12 @@ class Config:
             cls.TIMEOUTS = TimeoutConfig(**timeout_data)
             env_updates["GLOBAL_TIMEOUT_MINUTES"] = cls.TIMEOUTS.global_timeout
             env_updates["CHECK_TASK_TIMEOUT_MINUTES"] = cls.TIMEOUTS.check_task_timeout
-            # 更新全局变量
-            global global_timeout_minute, check_task_timeout_minute
-            global_timeout_minute = cls.get_timeout("global")
-            check_task_timeout_minute = cls.get_timeout("check_task")
             updated_fields.append("TIMEOUTS")
 
         # DEBUG 更新
         if "debug" in updates:
             cls.DEBUG = updates["debug"]
             env_updates["DEBUG"] = cls.DEBUG
-            # 更新全局变量
-            global DEBUG
-            DEBUG = cls.DEBUG
             updated_fields.append("DEBUG")
 
         # JWT_SECRET_KEY 更新
@@ -344,25 +319,6 @@ class Config:
             check_task_timeout=int(os.getenv("CHECK_TASK_TIMEOUT_MINUTES", "5"))
         )
 
-        # 更新全局变量
-        global DEBUG, DATABASE_URL, pad_code_list, pkg_name, pkg_name2
-        global default_proxy, temple_id_list, clash_install_url, script_install_url
-        global script2_install_url, chrome_install_url, global_timeout_minute, check_task_timeout_minute
-
-        DEBUG = cls.DEBUG
-        DATABASE_URL = cls.DATABASE_URL
-        pad_code_list = cls.PAD_CODES
-        pkg_name = cls.get_package_name("primary")
-        pkg_name2 = cls.get_package_name("secondary")
-        default_proxy = cls.DEFAULT_PROXY.to_dict() if cls.DEFAULT_PROXY else {}
-        temple_id_list = cls.TEMPLE_IDS
-        clash_install_url = cls.get_app_url("clash")
-        script_install_url = cls.get_app_url("script")
-        script2_install_url = cls.get_app_url("script2")
-        chrome_install_url = cls.get_app_url("chrome")
-        global_timeout_minute = cls.get_timeout("global")
-        check_task_timeout_minute = cls.get_timeout("check_task")
-
     @classmethod
     def add_custom_env_var(cls, key: str, value: Any) -> None:
         """添加自定义环境变量"""
@@ -394,18 +350,3 @@ class Config:
 
 # 创建全局配置实例以便于访问
 config = Config()
-
-# 向后兼容性 - 如果您需要保留原始变量名称
-DEBUG = config.DEBUG
-DATABASE_URL = config.DATABASE_URL
-pad_code_list = config.PAD_CODES
-pkg_name = config.get_package_name("primary")
-pkg_name2 = config.get_package_name("secondary")
-default_proxy = config.DEFAULT_PROXY.to_dict() if config.DEFAULT_PROXY else {}
-temple_id_list = config.TEMPLE_IDS
-clash_install_url = config.get_app_url("clash")
-script_install_url = config.get_app_url("script")
-script2_install_url = config.get_app_url("script2")
-chrome_install_url = config.get_app_url("chrome")
-global_timeout_minute = config.get_timeout("global")
-check_task_timeout_minute = config.get_timeout("check_task")

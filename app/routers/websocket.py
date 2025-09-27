@@ -82,9 +82,9 @@ async def websocket_endpoint(websocket: WebSocket):
                         "type": "error",
                         "message": "服务器处理消息时出错"
                     }))
-                except:
+                except Exception as e:
                     # 如果发送失败，说明连接已经断开
-                    ws_logger.warning(f"向客户端发送错误消息失败，连接可能已断开: {client_ip}")
+                    ws_logger.warning(f"向客户端发送错误消息失败，连接可能已断开: {client_ip}: {e}")
                     break
 
     except WebSocketDisconnect:

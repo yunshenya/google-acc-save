@@ -5,8 +5,7 @@ from typing import Any
 
 from loguru import logger
 
-from app.config import clash_install_url, script_install_url, temple_id_list, global_timeout_minute, chrome_install_url, \
-    script2_install_url
+from app.config import config
 from app.curd.status import update_cloud_status
 from app.dependencies.utils import start_app, install_app, \
     check_padTaskDetail, replace_pad, click, Position, ActionType
@@ -26,7 +25,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                     logger.warning(f"{pad_code}: 启动任务正在一键新机")
                     await update_cloud_status(pad_code=pad_code, current_status="启动任务正在一键新机")
                     await task_manager.cancel_timeout_task_only(pad_code)
-                    template_id = random.choice(temple_id_list)
+                    template_id = random.choice(config.TEMPLE_IDS)
                     await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
                                               current_status="正在一键新机中")
                     await replace_pad([pad_code], template_id=template_id)
@@ -115,7 +114,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                 case -1:
                     logger.warning(f"{pad_code}: 正在一键新机")
                     await task_manager.cancel_timeout_task_only(pad_code)
-                    template_id = random.choice(temple_id_list)
+                    template_id = random.choice(config.TEMPLE_IDS)
                     await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
                                               current_status="正在一键新机中")
                     await replace_pad([pad_code], template_id=template_id)
@@ -138,27 +137,27 @@ async def install_app_main_logic(pad_code_str: str, task_manager):
     # 开始安装
     clash_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],
-        app_url=clash_install_url,
+        app_url=config.get_app_url("clash"),
         md5=InstallAppEnum.clash_md5
     )
     logger.info(f"Clash 安装结果: {clash_install_result['msg']}")
 
     script_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],
-        app_url=script_install_url,
+        app_url=config.get_app_url("script"),
         md5=InstallAppEnum.script_md5
     )
     logger.info(f"脚本安装结果: {script_install_result['msg']}")
 
     chrome_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],
-        app_url=chrome_install_url,
+        app_url=config.get_app_url("chrome"),
         md5=InstallAppEnum.chrome_md5
     )
 
     script2_install_result: Any = await install_app(
         pad_code_list=[pad_code_str],
-        app_url=script2_install_url,
+        app_url=config.get_app_url("script2"),
         md5=InstallAppEnum.script2_md5
     )
 
@@ -219,5 +218,5 @@ async def install_app_task(pad_code_str, task_manager):
     await task_manager.start_task_with_timeout(
         pad_code_str,
         install_app_main_logic(pad_code_str, task_manager),
-        timeout_seconds=global_timeout_minute * 60
+        timeout_seconds= config.get_timeout("global") * 60
     )

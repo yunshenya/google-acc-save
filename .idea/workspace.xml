@@ -5,10 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="添加热更新">
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies/countries.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/countries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/proxy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entity/install_app_enum.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/entity/install_app_enum.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/websocket.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/websocket.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,7 +50,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/app/main.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/app/main.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/routers/server.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/app/services/check_task.py" root0="FORCE_HIGHLIGHTING" />
   </component>
@@ -603,15 +611,7 @@
       <workItem from="1758893388917" duration="84000" />
       <workItem from="1758893513373" duration="321000" />
       <workItem from="1758936451676" duration="9634000" />
-      <workItem from="1758949609644" duration="1084000" />
-    </task>
-    <task id="LOCAL-00114" summary="增加登录页面">
-      <option name="closed" value="true" />
-      <created>1758077003575</created>
-      <option name="number" value="00114" />
-      <option name="presentableId" value="LOCAL-00114" />
-      <option name="project" value="LOCAL" />
-      <updated>1758077003575</updated>
+      <workItem from="1758949609644" duration="2786000" />
     </task>
     <task id="LOCAL-00115" summary="增加登录页面">
       <option name="closed" value="true" />
@@ -997,7 +997,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758945707508</updated>
     </task>
-    <option name="localTasksCounter" value="163" />
+    <task id="LOCAL-00163" summary="添加热更新">
+      <option name="closed" value="true" />
+      <created>1758950704422</created>
+      <option name="number" value="00163" />
+      <option name="presentableId" value="LOCAL-00163" />
+      <option name="project" value="LOCAL" />
+      <updated>1758950704422</updated>
+    </task>
+    <option name="localTasksCounter" value="164" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -1,7 +1,7 @@
 import threading
 from typing import List, Dict, Union
 
-from app.config import default_proxy
+from app.config import config
 from app.models.proxy import ProxyResponse
 
 
@@ -10,6 +10,7 @@ class ProxyManager:
     _lock = threading.Lock()
 
     def __init__(self):
+        default_proxy  = config.DEFAULT_PROXY.to_dict()
         self._proxy_countries: List[ProxyResponse] = []
         self._current_proxy: ProxyResponse = ProxyResponse(
             proxy=default_proxy["proxy"],

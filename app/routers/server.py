@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from starlette.responses import HTMLResponse
 
-from app.config import pad_code_list, pkg_name, temple_id_list, DEBUG
+from app.config import config
 from app.curd.status import update_cloud_status, set_proxy_status
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
@@ -67,12 +67,12 @@ async def status(android_code: AndroidPadCodeRequest):
     pad_code = android_code.pad_code
 
     try:
-        if pad_code in pad_code_list:
+        if pad_code in config.pad_codes:
             # 取消超时任务
             await task_manager.cancel_timeout_task_only(pad_code)
 
             # 选择模板和代理
-            template_id = random.choice(temple_id_list)
+            template_id = random.choice(config.TEMPLE_IDS)
             default_proxy: Any = manager.get_proxy_countries()
             selected_proxy = random.choice(default_proxy)
 
@@ -85,7 +85,7 @@ async def status(android_code: AndroidPadCodeRequest):
 
             task_logger.success(f"{pad_code}: 手动触发一键新机，模板: {template_id}, 代理: {selected_proxy.country}")
             # 执行一键新机
-            if not DEBUG:
+            if not config.DEBUG:
                 result = await replace_pad([pad_code], template_id=template_id)
                 callback_logger.info(f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}")
             else:
@@ -121,7 +121,7 @@ async def callback(data: dict) -> str:
         match int(task_business_type):
             case 1000:  # 重启任务
                 callback_logger.info(f"{pad_code}: 处理重启任务回调")
-                await reboot_task_status(data, pkg_name, task_manager)
+                await reboot_task_status(data, config.get_package_name("primary"), task_manager)
                 return "ok"
 
             case 1001:  # 未知类型1001
@@ -162,9 +162,9 @@ async def callback(data: dict) -> str:
 
             case 1124:  # 一键新机任务
                 callback_logger.info(f"{pad_code}: 处理一键新机任务回调")
-                if (pad_code in pad_code_list) and not DEBUG:
+                if (pad_code in config.PAD_CODES) and not config.DEBUG:
                     await replace_pad_stak_status(data, task_manager=task_manager)
-                elif DEBUG:
+                elif config.DEBUG:
                     callback_logger.info(f"{pad_code}: 调试模式 - 跳过一键新机处理")
                 else:
                     callback_logger.warning(f"{pad_code}: 设备不在管理列表中")

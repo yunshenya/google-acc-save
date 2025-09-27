@@ -1,22 +1,21 @@
 import logging
 import random
 from contextlib import asynccontextmanager
+from typing import Any
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.config import pad_code_list, temple_id_list, DEBUG
+from app.config import config
 from app.curd.status import add_cloud_status, remove_cloud_status, set_proxy_status
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
-from app.models.proxy import ProxyResponse
 from app.routers import accounts, proxy, server, status, auth, statistics, proxy_collection
+from app.routers import config as config_router
 from app.routers import websocket as websocket_router
 from app.services.database import engine, Base
-from app.routers import config as config_router
-
 # 导入日志配置
 from app.services.logger import get_logger, task_logger
 
@@ -82,24 +81,24 @@ async def startup_event(app: FastAPI):
         logger.info("数据库表创建/检查完成")
 
         # 初始化云机状态
-        logger.info(f"开始初始化 {len(pad_code_list)} 台云机")
+        logger.info(f"开始初始化 {len(config.PAD_CODES)} 台云机")
 
-        for i, pad_code in enumerate(pad_code_list):
+        for i, pad_code in enumerate(config.PAD_CODES):
             try:
-                template_id = random.choice(temple_id_list)
+                template_id = random.choice(config.TEMPLE_IDS)
                 await add_cloud_status(pad_code, template_id)
 
-                default_proxy: list[ProxyResponse] = manager.get_proxy_countries()
+                default_proxy: Any = manager.get_proxy_countries()
                 selected_proxy = random.choice(default_proxy)
                 await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
 
-                if not DEBUG:
+                if not config.DEBUG:
                     result = await replace_pad([pad_code], template_id=template_id)
                     task_logger.info(f"云机启动完成: {pad_code}, 模板: {template_id}, 结果: {result.get('msg', '未知')}")
                 else:
                     task_logger.info(f"调试模式 - 云机模拟启动: {pad_code}, 模板: {template_id}")
 
-                logger.info(f"云机初始化进度: {i+1}/{len(pad_code_list)} ({pad_code})")
+                logger.info(f"云机初始化进度: {i+1}/{len(config.PAD_CODES)} ({pad_code})")
 
             except Exception as e:
                 logger.error(f"初始化云机 {pad_code} 失败: {e}")
@@ -118,7 +117,7 @@ async def startup_event(app: FastAPI):
 
     try:
         # 清理云机状态
-        for pad_code in pad_code_list:
+        for pad_code in config.PAD_CODES:
             try:
                 await remove_cloud_status(pad_code)
             except Exception as e:

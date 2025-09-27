@@ -5,10 +5,10 @@ from sqlalchemy import Column, Integer, String, DateTime, Float, Text, Boolean
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-from app.config import DATABASE_URL
+from app.config import config
 
 Base = declarative_base()
-engine: Any = create_async_engine(DATABASE_URL)
+engine: Any = create_async_engine(config.DATABASE_URL)
 SessionLocal = sessionmaker(class_=AsyncSession, bind=engine, autoflush=False, autocommit=False)
 
 

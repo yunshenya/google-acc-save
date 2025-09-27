@@ -3,7 +3,7 @@ import random
 from enum import IntEnum
 from typing import Any
 
-from app.config import temple_id_list
+from app.config import config
 from app.curd.status import update_cloud_status, set_proxy_status
 from app.dependencies.countries import manager
 from app.dependencies.utils import get_cloud_file_task_info, replace_pad
@@ -243,7 +243,7 @@ async def replace_pad_stak_status(data, task_manager):
                 await update_cloud_status(pad_code=pad_code, current_status="一键新机任务失败，准备重试")
 
                 # 一键新机失败时的处理逻辑
-                template_id = random.choice(temple_id_list)
+                template_id = random.choice(config.TEMPLE_IDS)
                 default_proxy: Any = manager.get_proxy_countries()
                 await set_proxy_status(pad_code, random.choice(default_proxy), number_of_run=1)
                 await update_cloud_status(pad_code, temple_id=template_id,
