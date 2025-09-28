@@ -21,7 +21,7 @@ async def get_hourly_account_growth():
         query = text("""
                      SELECT DATE_TRUNC('hour', created_at) as hour,
                             COUNT(*)                       as account_count,
-                            COUNT(CASE WHEN for_email IS NOT NULL AND for_email != '' THEN 1 END) as forward_email_count
+                            COUNT(CASE WHEN is_forward_email = true  THEN 1 END) as forward_email_count
                      FROM google_account
                      WHERE created_at >= :start_time
                      GROUP BY DATE_TRUNC('hour', created_at)
@@ -112,15 +112,15 @@ async def get_overall_summary():
         # 获取账号统计数据，包含转发邮箱统计
         account_stats_query = text("""
                                    SELECT COUNT(*)                                                              as total_accounts,
-                                          COUNT(CASE WHEN for_email IS NOT NULL AND for_email != '' THEN 1 END) as total_forward_emails,
+                                          COUNT(CASE WHEN is_forward_email = true  THEN 1 END) as total_forward_emails,
                                           MIN(created_at)                                                       as first_account_time,
                                           MAX(created_at)                                                       as last_account_time,
                                           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '24 hours' THEN 1 END) as accounts_24h,
-                                          COUNT(CASE WHEN created_at >= NOW() - INTERVAL '24 hours' AND for_email IS NOT NULL AND for_email != '' THEN 1 END) as forward_emails_24h,
+                                          COUNT(CASE WHEN created_at >= NOW() - INTERVAL '24 hours' AND is_forward_email = true THEN 1 END) as forward_emails_24h,
                                           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '1 hour' THEN 1 END)   as accounts_1h,
-                                          COUNT(CASE WHEN created_at >= NOW() - INTERVAL '1 hour' AND for_email IS NOT NULL AND for_email != '' THEN 1 END) as forward_emails_1h,
+                                          COUNT(CASE WHEN created_at >= NOW() - INTERVAL '1 hour' AND is_forward_email = true  THEN 1 END) as forward_emails_1h,
                                           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '7 days' THEN 1 END)   as accounts_7d,
-                                          COUNT(CASE WHEN created_at >= NOW() - INTERVAL '7 days' AND for_email IS NOT NULL AND for_email != '' THEN 1 END) as forward_emails_7d
+                                          COUNT(CASE WHEN created_at >= NOW() - INTERVAL '7 days' AND is_forward_email = true  THEN 1 END) as forward_emails_7d
                                    FROM google_account
                                    """)
 

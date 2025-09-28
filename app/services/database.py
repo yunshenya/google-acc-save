@@ -25,6 +25,7 @@ class Account(Base):
     created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)
     is_boned_secondary_email = Column(Boolean, nullable=False, default=False)
     proxy_platform = Column(Text, nullable=True)
+    is_forward_email = Column(Boolean, nullable=False, default=False)
     image_base64 = Column(Text, nullable=True)
 
 

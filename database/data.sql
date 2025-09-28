@@ -23,7 +23,8 @@ CREATE TABLE google_account (
                                 for_password TEXT,
                                 is_boned_secondary_email BOOLEAN NOT NULL DEFAULT false,
                                 proxy_platform TEXT,
-                                image_base64 TEXT
+                                image_base64 TEXT,
+                                is_forward_email BOOLEAN NOT NULL DEFAULT false
 );
 
 -- Set table owner

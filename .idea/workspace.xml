@@ -4,11 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="修复新机bug">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化安装逻辑">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/statistics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/data.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/statistics.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/statistics.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/statistics.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/statistics.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -607,23 +611,7 @@
       <workItem from="1758936451676" duration="9634000" />
       <workItem from="1758949609644" duration="4826000" />
       <workItem from="1758957326496" duration="23075000" />
-      <workItem from="1759023042696" duration="29034000" />
-    </task>
-    <task id="LOCAL-00136" summary="添加统计页面">
-      <option name="closed" value="true" />
-      <created>1758715041409</created>
-      <option name="number" value="00136" />
-      <option name="presentableId" value="LOCAL-00136" />
-      <option name="project" value="LOCAL" />
-      <updated>1758715041409</updated>
-    </task>
-    <task id="LOCAL-00137" summary="添加统计页面">
-      <option name="closed" value="true" />
-      <created>1758716223514</created>
-      <option name="number" value="00137" />
-      <option name="presentableId" value="LOCAL-00137" />
-      <option name="project" value="LOCAL" />
-      <updated>1758716223514</updated>
+      <workItem from="1759023042696" duration="31169000" />
     </task>
     <task id="LOCAL-00138" summary="添加统计页面">
       <option name="closed" value="true" />
@@ -1001,7 +989,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759049007361</updated>
     </task>
-    <option name="localTasksCounter" value="185" />
+    <task id="LOCAL-00185" summary="优化安装逻辑">
+      <option name="closed" value="true" />
+      <created>1759056004783</created>
+      <option name="number" value="00185" />
+      <option name="presentableId" value="LOCAL-00185" />
+      <option name="project" value="LOCAL" />
+      <updated>1759056004783</updated>
+    </task>
+    <task id="LOCAL-00186" summary="优化安装逻辑">
+      <option name="closed" value="true" />
+      <created>1759056468956</created>
+      <option name="number" value="00186" />
+      <option name="presentableId" value="LOCAL-00186" />
+      <option name="project" value="LOCAL" />
+      <updated>1759056468956</updated>
+    </task>
+    <option name="localTasksCounter" value="187" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1023,7 +1027,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="增加一些判断" />
     <MESSAGE value="更改目录结构" />
     <MESSAGE value="解决跨域问题，以及增加前端页面" />
     <MESSAGE value="增加云机状态" />
@@ -1048,6 +1051,7 @@
     <MESSAGE value="增加图片" />
     <MESSAGE value="增加图片拖拽功能" />
     <MESSAGE value="修复新机bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="修复新机bug" />
+    <MESSAGE value="优化安装逻辑" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化安装逻辑" />
   </component>
 </project>

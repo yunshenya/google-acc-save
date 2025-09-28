@@ -1,6 +1,6 @@
 let growthChart = null;
 let refreshInterval = null;
-let currentChart = 'total'; // 'total', 'average', 'forward_total', 'forward_average'
+let currentChart = 'total'; // 'total', 'average'
 let chartData = null;
 
 // 页面加载时初始化
@@ -49,7 +49,7 @@ async function loadStatistics() {
         ]);
 
         if (!growthResponse.ok || !summaryResponse.ok) {
-            new Error('获取统计数据失败');
+            throw new Error('获取统计数据失败');
         }
 
         chartData = await growthResponse.json();
@@ -78,8 +78,6 @@ function switchChart(type) {
     // 更新按钮状态
     document.getElementById('totalTab').classList.toggle('active', type === 'total');
     document.getElementById('avgTab').classList.toggle('active', type === 'average');
-    document.getElementById('forwardTotalTab').classList.toggle('active', type === 'forward_total');
-    document.getElementById('forwardAvgTab').classList.toggle('active', type === 'forward_average');
 
     // 更新图表
     if (chartData) {
@@ -97,34 +95,19 @@ function updateSummaryCards(chartSummary, overallSummary) {
                     <div class="subtitle">活跃设备数量</div>
                 </div>
                 <div class="summary-card">
-                    <h3>${chartSummary.total_accounts_24h}</h3>
-                    <p>24小时新增账号</p>
-                    <div class="subtitle">所有设备总计</div>
+                    <h3>${chartSummary.total_accounts_24h} / ${chartSummary.total_forward_emails_24h}</h3>
+                    <p>24小时新增</p>
+                    <div class="subtitle">账号 / 转发邮箱 (${chartSummary.forward_email_rate_24h}%)</div>
                 </div>
                 <div class="summary-card">
-                    <h3>${chartSummary.total_forward_emails_24h}</h3>
-                    <p>24小时新增转发邮箱</p>
-                    <div class="subtitle">转发邮箱总计 (${chartSummary.forward_email_rate_24h}%)</div>
-                </div>
-                <div class="summary-card">
-                    <h3>${chartSummary.avg_per_device_24h}</h3>
+                    <h3>${chartSummary.avg_per_device_24h} / ${chartSummary.avg_forward_per_device_24h}</h3>
                     <p>平均每设备24小时</p>
-                    <div class="subtitle">账号增长数</div>
+                    <div class="subtitle">账号 / 转发邮箱增长数</div>
                 </div>
                 <div class="summary-card">
-                    <h3>${chartSummary.avg_forward_per_device_24h}</h3>
-                    <p>平均每设备24小时</p>
-                    <div class="subtitle">转发邮箱增长数</div>
-                </div>
-                <div class="summary-card">
-                    <h3>${overallSummary.total_accounts}</h3>
-                    <p>历史总账号数</p>
-                    <div class="subtitle">所有时间累计</div>
-                </div>
-                <div class="summary-card">
-                    <h3>${overallSummary.total_forward_emails}</h3>
-                    <p>历史转发邮箱总数</p>
-                    <div class="subtitle">转发邮箱累计 (${overallSummary.forward_rate_total}%)</div>
+                    <h3>${overallSummary.total_accounts} / ${overallSummary.total_forward_emails}</h3>
+                    <p>历史总计</p>
+                    <div class="subtitle">账号 / 转发邮箱 (${overallSummary.forward_rate_total}%)</div>
                 </div>
             `;
 }
@@ -143,73 +126,75 @@ function updateChart(data) {
     let title, yAxisTitle;
 
     if (currentChart === 'total') {
-        title = '过去24小时总账号增长趋势';
-        yAxisTitle = '账号总数';
-        datasets = [{
-            label: '总账号数',
-            data: data.total_accounts_data,
-            borderColor: '#3498db',
-            backgroundColor: '#3498db20',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#3498db',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
-        }];
+        title = '过去24小时账号和转发邮箱增长趋势';
+        yAxisTitle = '数量';
+        datasets = [
+            {
+                label: '总账号数',
+                data: data.total_accounts_data,
+                borderColor: '#3498db',
+                backgroundColor: '#3498db20',
+                borderWidth: 3,
+                fill: false,
+                tension: 0.3,
+                pointBackgroundColor: '#3498db',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                yAxisID: 'y'
+            },
+            {
+                label: '转发邮箱数',
+                data: data.forward_email_data,
+                borderColor: '#27ae60',
+                backgroundColor: '#27ae6020',
+                borderWidth: 3,
+                fill: false,
+                tension: 0.3,
+                pointBackgroundColor: '#27ae60',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                yAxisID: 'y'
+            }
+        ];
     } else if (currentChart === 'average') {
-        title = '过去24小时平均每设备账号增长趋势';
-        yAxisTitle = '平均账号数/设备';
-        datasets = [{
-            label: '平均每设备账号数',
-            data: data.avg_per_device_data,
-            borderColor: '#e74c3c',
-            backgroundColor: '#e74c3c20',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#e74c3c',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
-        }];
-    } else if (currentChart === 'forward_total') {
-        title = '过去24小时转发邮箱增长趋势';
-        yAxisTitle = '转发邮箱数量';
-        datasets = [{
-            label: '转发邮箱数',
-            data: data.forward_email_data,
-            borderColor: '#27ae60',
-            backgroundColor: '#27ae6020',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#27ae60',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
-        }];
-    } else if (currentChart === 'forward_average') {
-        title = '过去24小时平均每设备转发邮箱增长趋势';
-        yAxisTitle = '平均转发邮箱数/设备';
-        datasets = [{
-            label: '平均每设备转发邮箱数',
-            data: data.avg_forward_per_device_data,
-            borderColor: '#f39c12',
-            backgroundColor: '#f39c1220',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.3,
-            pointBackgroundColor: '#f39c12',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
-        }];
+        title = '过去24小时平均每设备账号和转发邮箱增长趋势';
+        yAxisTitle = '平均数量/设备';
+        datasets = [
+            {
+                label: '平均每设备账号数',
+                data: data.avg_per_device_data,
+                borderColor: '#e74c3c',
+                backgroundColor: '#e74c3c20',
+                borderWidth: 3,
+                fill: false,
+                tension: 0.3,
+                pointBackgroundColor: '#e74c3c',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                yAxisID: 'y'
+            },
+            {
+                label: '平均每设备转发邮箱数',
+                data: data.avg_forward_per_device_data,
+                borderColor: '#f39c12',
+                backgroundColor: '#f39c1220',
+                borderWidth: 3,
+                fill: false,
+                tension: 0.3,
+                pointBackgroundColor: '#f39c12',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                yAxisID: 'y'
+            }
+        ];
     }
 
     chartTitle.textContent = title;
@@ -225,7 +210,15 @@ function updateChart(data) {
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    display: false
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
                 },
                 tooltip: {
                     mode: 'index',
@@ -244,10 +237,6 @@ function updateChart(data) {
                                 suffix = ' 个';
                             } else if (currentChart === 'average') {
                                 suffix = ' 个/设备';
-                            } else if (currentChart === 'forward_total') {
-                                suffix = ' 个转发邮箱';
-                            } else if (currentChart === 'forward_average') {
-                                suffix = ' 个转发邮箱/设备';
                             }
                             return context.dataset.label + ': ' + context.parsed.y + suffix;
                         }
@@ -274,6 +263,9 @@ function updateChart(data) {
                     }
                 },
                 y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
                     title: {
                         display: true,
                         text: yAxisTitle,
@@ -284,7 +276,7 @@ function updateChart(data) {
                     },
                     beginAtZero: true,
                     ticks: {
-                        precision: (currentChart === 'total' || currentChart === 'forward_total') ? 0 : 2,
+                        precision: (currentChart === 'total') ? 0 : 2,
                         color: '#666'
                     },
                     grid: {

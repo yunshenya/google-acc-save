@@ -804,6 +804,7 @@ async def update_forward(forward: ForwardRequest) -> AccountResponse:
         account.for_password = forward.for_password
         account.image_base64 = forward.image_base64
         account.status = 0
+        account.is_forward_email = True
         await db.commit()
         await db.refresh(account)
         await update_cloud_status(pad_code=forward.pad_code, forward_num=1)
