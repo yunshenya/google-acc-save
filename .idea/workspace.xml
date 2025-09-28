@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加图片">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="修复新机bug">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,11 +18,11 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="HTML File" />
         <option value="Python Script" />
         <option value="TypeScript File" />
         <option value="CSS File" />
         <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -605,23 +607,7 @@
       <workItem from="1758936451676" duration="9634000" />
       <workItem from="1758949609644" duration="4826000" />
       <workItem from="1758957326496" duration="23075000" />
-      <workItem from="1759023042696" duration="18625000" />
-    </task>
-    <task id="LOCAL-00134" summary="添加统计页面">
-      <option name="closed" value="true" />
-      <created>1758706299380</created>
-      <option name="number" value="00134" />
-      <option name="presentableId" value="LOCAL-00134" />
-      <option name="project" value="LOCAL" />
-      <updated>1758706299381</updated>
-    </task>
-    <task id="LOCAL-00135" summary="添加统计页面">
-      <option name="closed" value="true" />
-      <created>1758712241681</created>
-      <option name="number" value="00135" />
-      <option name="presentableId" value="LOCAL-00135" />
-      <option name="project" value="LOCAL" />
-      <updated>1758712241681</updated>
+      <workItem from="1759023042696" duration="29034000" />
     </task>
     <task id="LOCAL-00136" summary="添加统计页面">
       <option name="closed" value="true" />
@@ -999,7 +985,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759041449194</updated>
     </task>
-    <option name="localTasksCounter" value="183" />
+    <task id="LOCAL-00183" summary="增加图片拖拽功能">
+      <option name="closed" value="true" />
+      <created>1759042624568</created>
+      <option name="number" value="00183" />
+      <option name="presentableId" value="LOCAL-00183" />
+      <option name="project" value="LOCAL" />
+      <updated>1759042624568</updated>
+    </task>
+    <task id="LOCAL-00184" summary="修复新机bug">
+      <option name="closed" value="true" />
+      <created>1759049007361</created>
+      <option name="number" value="00184" />
+      <option name="presentableId" value="LOCAL-00184" />
+      <option name="project" value="LOCAL" />
+      <updated>1759049007361</updated>
+    </task>
+    <option name="localTasksCounter" value="185" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1021,8 +1023,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="添加一个创建时间字段" />
-    <MESSAGE value="增加一个创建时间字段" />
     <MESSAGE value="增加一些判断" />
     <MESSAGE value="更改目录结构" />
     <MESSAGE value="解决跨域问题，以及增加前端页面" />
@@ -1046,6 +1046,8 @@
     <MESSAGE value="优化文件结构" />
     <MESSAGE value="增加字段" />
     <MESSAGE value="增加图片" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加图片" />
+    <MESSAGE value="增加图片拖拽功能" />
+    <MESSAGE value="修复新机bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="修复新机bug" />
   </component>
 </project>

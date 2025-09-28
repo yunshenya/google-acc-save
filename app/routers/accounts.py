@@ -510,6 +510,8 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                                     </div>
                                     <div class="field-value button-field">
                                          <button class="inline-btn btn-warning" onclick="getCaptcha('{account.for_email}', '{account.for_password}')">获取验证码</button>
+                                         <button class="inline-btn btn-warning" id="x-xx2200">刷新</button>
+                                         
                                                  <div class="field-value button-field" id="show_captcha">
                                                  </div>
                                     </div>
@@ -755,6 +757,13 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                         console.error('获取验证码出错：', error);
                         showCaptchaDiv.innerText = '获取验证码失败：网络错误';
                     }
+                }
+                
+                var x_refresh = document.querySelector('#x-xx2200');
+                console.log(x_refresh);
+                x_refresh.onclick = function() {
+                    var iframe = document.querySelector('iframe');
+                    iframe.src = iframe.src;
                 }
             </script>
         </body>
