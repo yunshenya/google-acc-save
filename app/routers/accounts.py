@@ -445,12 +445,11 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                                         <div class="field-label">创建时间</div>
                                         <div class="field-value">{created_time}</div>
                                     </div>
-                                    <div class="field-group">
-                                        <div class="field-value button-field">
-                                            <button class="inline-btn btn-warning" onclick="getCaptcha("{account.for_email}","{account.for_password}")">获取验证码</button>
-                                        </div>
-                                        <div class="field-value button-field" id="show_captcha">
-                                        </div>
+                                    <div class="field-value button-field">
+                                         <button class="inline-btn btn-warning" onclick="getCaptcha('{account.for_email}', '{account.for_password}')">获取验证码</button>
+                                                 <div class="field-value button-field" id="show_captcha">
+                                                 </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -546,11 +545,11 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                 });
                 async function getCaptcha(email,password) {
                     const timeDiv = document.querySelector('.field-value:not(.button-field)');
-                    const url = `http://foailbox.com:8888/api/email/code?email=email&password=password&service=6024`;
+                    const url = `http://foailbox.com:8888/api/email/code?email=${email}&password=${password}&service=6024`;
                     fetch(url)
                         .then(response => response.json())
                         .then(data => {
-                            document.querySelector('show_captcha').innerText = JSON.stringify(data['data']);
+                            document.querySelector('#show_captcha').innerText = JSON.stringify(data['data']);
                             console.log(data);
                         });
                 }

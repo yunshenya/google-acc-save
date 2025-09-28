@@ -132,15 +132,16 @@ class TaskManager:
             logger.warning(f"任务超时: {pad_code}")
 
             # 执行替换逻辑
-            temple_id = random.choice(self._temple_id_list)
-            await replace_pad([pad_code], template_id=temple_id)
-            await update_cloud_status(
-                pad_code=pad_code,
-                current_status="任务超时，正在一键新机中",
-                temple_id=temple_id,
-                number_of_run=1
-            )
-            logger.info(f"{pad_code}: 超时处理完成，模板: {temple_id}")
+            if pad_code in config.PAD_CODES:
+                temple_id = random.choice(self._temple_id_list)
+                await replace_pad([pad_code], template_id=temple_id)
+                await update_cloud_status(
+                    pad_code=pad_code,
+                    current_status="任务超时，正在一键新机中",
+                    temple_id=temple_id,
+                    number_of_run=1
+                )
+                logger.info(f"{pad_code}: 超时处理完成，模板: {temple_id}")
 
             # 超时后清理所有任务
             await self.remove_task(pad_code)
