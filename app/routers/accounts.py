@@ -34,6 +34,7 @@ async def create_account(account: AccountCreate) -> AccountResponse:
                 await update_proxies(pade_code=account.pad_code)
                 current_proxy: ProxyResponse = await get_proxy_status(account.pad_code)
                 db_account.code = current_proxy.code
+                db_account.proxy_platform = current_proxy.proxy_platform
                 await update_cloud_status(pad_code=account.pad_code, num_of_success=1)
             db.add(db_account)
             await db.commit()

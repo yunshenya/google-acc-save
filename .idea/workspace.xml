@@ -5,10 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加图片">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/proxy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/status.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,7 +142,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run">
+  <component name="RunManager" selected="Python.test">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
@@ -369,8 +370,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.run" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.run" />
         <item itemvalue="数据库脚本.data.sql" />
         <item itemvalue="Python.status" />
         <item itemvalue="数据库脚本.proxy.sql" />
@@ -607,15 +608,7 @@
       <workItem from="1758936451676" duration="9634000" />
       <workItem from="1758949609644" duration="4826000" />
       <workItem from="1758957326496" duration="23075000" />
-      <workItem from="1759023042696" duration="11165000" />
-    </task>
-    <task id="LOCAL-00130" summary="添加for_email和for_password">
-      <option name="closed" value="true" />
-      <created>1758696394591</created>
-      <option name="number" value="00130" />
-      <option name="presentableId" value="LOCAL-00130" />
-      <option name="project" value="LOCAL" />
-      <updated>1758696394591</updated>
+      <workItem from="1759023042696" duration="12338000" />
     </task>
     <task id="LOCAL-00131" summary="添加for_email和for_password">
       <option name="closed" value="true" />
@@ -1001,7 +994,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759029323949</updated>
     </task>
-    <option name="localTasksCounter" value="179" />
+    <task id="LOCAL-00179" summary="增加图片">
+      <option name="closed" value="true" />
+      <created>1759035183688</created>
+      <option name="number" value="00179" />
+      <option name="presentableId" value="LOCAL-00179" />
+      <option name="project" value="LOCAL" />
+      <updated>1759035183688</updated>
+    </task>
+    <option name="localTasksCounter" value="180" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
