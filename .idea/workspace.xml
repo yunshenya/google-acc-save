@@ -7,7 +7,6 @@
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加图片">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -606,23 +605,7 @@
       <workItem from="1758936451676" duration="9634000" />
       <workItem from="1758949609644" duration="4826000" />
       <workItem from="1758957326496" duration="23075000" />
-      <workItem from="1759023042696" duration="16118000" />
-    </task>
-    <task id="LOCAL-00132" summary="添加for_email和for_password">
-      <option name="closed" value="true" />
-      <created>1758701635209</created>
-      <option name="number" value="00132" />
-      <option name="presentableId" value="LOCAL-00132" />
-      <option name="project" value="LOCAL" />
-      <updated>1758701635210</updated>
-    </task>
-    <task id="LOCAL-00133" summary="添加统计页面">
-      <option name="closed" value="true" />
-      <created>1758702917418</created>
-      <option name="number" value="00133" />
-      <option name="presentableId" value="LOCAL-00133" />
-      <option name="project" value="LOCAL" />
-      <updated>1758702917419</updated>
+      <workItem from="1759023042696" duration="18625000" />
     </task>
     <task id="LOCAL-00134" summary="添加统计页面">
       <option name="closed" value="true" />
@@ -1000,7 +983,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759036297268</updated>
     </task>
-    <option name="localTasksCounter" value="181" />
+    <task id="LOCAL-00181" summary="增加图片">
+      <option name="closed" value="true" />
+      <created>1759040092003</created>
+      <option name="number" value="00181" />
+      <option name="presentableId" value="LOCAL-00181" />
+      <option name="project" value="LOCAL" />
+      <updated>1759040092003</updated>
+    </task>
+    <task id="LOCAL-00182" summary="增加图片">
+      <option name="closed" value="true" />
+      <created>1759041449194</created>
+      <option name="number" value="00182" />
+      <option name="presentableId" value="LOCAL-00182" />
+      <option name="project" value="LOCAL" />
+      <updated>1759041449194</updated>
+    </task>
+    <option name="localTasksCounter" value="183" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

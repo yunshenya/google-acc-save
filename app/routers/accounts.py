@@ -328,11 +328,19 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%, -50%);
-                    max-width: 95%;
-                    max-height: 95%;
-                    object-fit: contain;
+                    max-width: 90vw;  /* 添加这行 */
+                    max-height: 90vh; /* 添加这行 */
+                    width: auto;
+                    height: auto;
                     border-radius: 8px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+                    cursor: grab;
+                    transition: transform 0.1s ease-out;
+                    user-select: none;
+                }
+                
+                .modal-content:active {
+                    cursor: grabbing;
                 }
                 
                 .close {
@@ -344,11 +352,56 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                     font-weight: bold;
                     cursor: pointer;
                     transition: color 0.3s;
+                    z-index: 1001;
                 }
                 
                 .close:hover,
                 .close:focus {
                     color: #bbb;
+                }
+                
+                /* 缩放控制按钮 */
+                .zoom-controls {
+                    position: absolute;
+                    top: 20px;
+                    left: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    z-index: 1001;
+                }
+                
+                .zoom-btn {
+                    background: rgba(0,0,0,0.6);
+                    color: white;
+                    border: none;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    font-size: 18px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: background 0.2s;
+                }
+                
+                .zoom-btn:hover {
+                    background: rgba(0,0,0,0.8);
+                }
+                
+                /* 缩放信息显示 */
+                .zoom-info {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    background: rgba(0,0,0,0.6);
+                    color: white;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 14px;
+                    z-index: 1001;
                 }
                 
                 @keyframes fadeIn {
@@ -387,6 +440,12 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                     .action-buttons {
                         flex-direction: column;
                     }
+                    .zoom-controls {
+                        right: 20px;
+                        left: auto;
+                        flex-direction: row;
+                        top: 70px;
+                    }
                 }
                 
                 .button-field {
@@ -413,6 +472,10 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                 .inline-btn:hover {
                     transform: translateY(-1px);
                     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                }
+                
+                .btn-warning {
+                    background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
                 }
             </style>
         </head>
@@ -499,21 +562,39 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
             
             <!-- 图片放大模态框 -->
             <div id="imageModal" class="modal">
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoomIn()" title="放大">+</button>
+                    <button class="zoom-btn" onclick="zoomOut()" title="缩小">−</button>
+                    <button class="zoom-btn" onclick="resetZoom()" title="重置">⟲</button>
+                </div>
                 <span class="close">&times;</span>
                 <img class="modal-content" id="modalImage">
+                <div class="zoom-info" id="zoomInfo">100%</div>
             </div>
             
             <script>
+                // 图片缩放相关变量
+                let currentZoom = 1;
+                let minZoom = 0.1;
+                let maxZoom = 5;
+                let isDragging = false;
+                let startX, startY, startLeft, startTop;
+                let currentX = 0, currentY = 0;
+                let initialX = 0, initialY = 0;
+                
                 // 图片点击放大功能
                 const modal = document.getElementById('imageModal');
                 const modalImg = document.getElementById('modalImage');
                 const closeBtn = document.getElementsByClassName('close')[0];
+                const zoomInfo = document.getElementById('zoomInfo');
                 
                 // 为图片添加点击事件
                 document.querySelectorAll('.account-image').forEach(img => {
                     img.onclick = function() {
                         modal.style.display = 'block';
                         modalImg.src = this.src;
+                        resetZoom();
+                        centerImage();
                     };
                     
                     // 图片加载错误处理
@@ -543,6 +624,117 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                         modal.style.display = 'none';
                     }
                 });
+                
+                // 缩放功能
+                function zoomIn() {
+                    if (currentZoom < maxZoom) {
+                        currentZoom = Math.min(currentZoom * 1.2, maxZoom);
+                        updateZoom();
+                    }
+                }
+                
+                function zoomOut() {
+                    if (currentZoom > minZoom) {
+                        currentZoom = Math.max(currentZoom / 1.2, minZoom);
+                        updateZoom();
+                    }
+                }
+                
+                function resetZoom() {
+                    currentZoom = 1;
+                    updateZoom();
+                    centerImage();
+                }
+                
+                function updateZoom() {
+                    modalImg.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${currentZoom})`;
+                    zoomInfo.textContent = Math.round(currentZoom * 100) + '%';
+                }
+                                
+                function centerImage() {
+                    currentX = 0;
+                    currentY = 0;
+                    modalImg.style.left = '50%';
+                    modalImg.style.top = '50%';
+                    modalImg.style.transform = 'translate(-50%, -50%)';
+                }
+                
+                // 滚轮缩放
+                modalImg.addEventListener('wheel', function(e) {
+                    e.preventDefault();
+                    
+                    if (e.deltaY < 0) {
+                        zoomIn();
+                    } else {
+                        zoomOut();
+                    }
+                });
+                
+                // 双击重置缩放
+                modalImg.addEventListener('dblclick', function(e) {
+                    e.preventDefault();
+                    resetZoom();
+                });
+                
+                // 拖拽功能
+                modalImg.addEventListener('mousedown', function(e) {
+                    if (currentZoom > 1) {
+                        isDragging = true;
+                        initialX = e.clientX - currentX;
+                        initialY = e.clientY - currentY;
+                        modalImg.style.cursor = 'grabbing';
+                        e.preventDefault();
+                    }
+                });
+                                
+                document.addEventListener('mousemove', function(e) {
+                    if (!isDragging) return;
+                    
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    
+                    modalImg.style.transform = `translate(calc(-50% + ${currentX}px), calc(-50% + ${currentY}px)) scale(${currentZoom})`;
+                });
+                
+                document.addEventListener('mouseup', function() {
+                    if (isDragging) {
+                        isDragging = false;
+                        modalImg.style.cursor = 'grab';
+                    }
+                });
+                
+                // 触摸事件支持（移动端）
+                let lastTouchDistance = 0;
+                
+                modalImg.addEventListener('touchstart', function(e) {
+                    if (e.touches.length === 2) {
+                        lastTouchDistance = Math.hypot(
+                            e.touches[0].pageX - e.touches[1].pageX,
+                            e.touches[0].pageY - e.touches[1].pageY
+                        );
+                    }
+                }, { passive: true });
+                
+                modalImg.addEventListener('touchmove', function(e) {
+                    if (e.touches.length === 2) {
+                        e.preventDefault();
+                        
+                        const touchDistance = Math.hypot(
+                            e.touches[0].pageX - e.touches[1].pageX,
+                            e.touches[0].pageY - e.touches[1].pageY
+                        );
+                        
+                        if (lastTouchDistance > 0) {
+                            const scale = touchDistance / lastTouchDistance;
+                            currentZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom * scale));
+                            updateZoom();
+                        }
+                        
+                        lastTouchDistance = touchDistance;
+                    }
+                });
+                
                 async function getCaptcha(email, password) {
                     const showCaptchaDiv = document.querySelector('#show_captcha');
                     const url = `http://foailbox.com:8888/api/email/code?email=${email}&password=${password}&service=6024`;
