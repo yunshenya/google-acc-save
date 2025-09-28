@@ -53,6 +53,14 @@ async def start_app(pad_code_list: list, pkg_name: str) -> list:
 
     return await VmosUtil(start_app_url, body).send()
 
+async def exe_cmd(pad_code: str, cmd: str):
+    cmd_url = "/vcpcloud/api/padApi/syncCmd"
+    json = {
+        "padCode": pad_code,
+        "scriptContent": cmd
+    }
+    return await VmosUtil(url=cmd_url, data=json).send()
+
 
 class ActionType(Enum):
     press = 0

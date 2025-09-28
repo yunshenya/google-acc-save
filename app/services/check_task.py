@@ -441,14 +441,15 @@ class TaskManager:
         pad_code = result["data"][0]["padCode"]
         if 'pad_code' in locals():
             if await self.has_task(pad_code):
-                temple_id = random.choice(self._temple_id_list)
-                await replace_pad([pad_code], template_id=temple_id)
-                await update_cloud_status(
-                    pad_code=pad_code,
-                    current_status="安装超时，正在一键新机",
-                    temple_id=temple_id,
-                    number_of_run=1
-                )
+                if pad_code in config.PAD_CODES:
+                    temple_id = random.choice(self._temple_id_list)
+                    await replace_pad([pad_code], template_id=temple_id)
+                    await update_cloud_status(
+                        pad_code=pad_code,
+                        current_status="安装超时，正在一键新机",
+                        temple_id=temple_id,
+                        number_of_run=1
+                    )
                 await self.remove_task(pad_code)
 
         return False
