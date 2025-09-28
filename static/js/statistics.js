@@ -1,6 +1,6 @@
 let growthChart = null;
 let refreshInterval = null;
-let currentChart = 'total'; // 'total' 或 'average'
+let currentChart = 'total'; // 'total', 'average', 'forward_total', 'forward_average'
 let chartData = null;
 
 // 页面加载时初始化
@@ -78,6 +78,8 @@ function switchChart(type) {
     // 更新按钮状态
     document.getElementById('totalTab').classList.toggle('active', type === 'total');
     document.getElementById('avgTab').classList.toggle('active', type === 'average');
+    document.getElementById('forwardTotalTab').classList.toggle('active', type === 'forward_total');
+    document.getElementById('forwardAvgTab').classList.toggle('active', type === 'forward_average');
 
     // 更新图表
     if (chartData) {
@@ -100,19 +102,29 @@ function updateSummaryCards(chartSummary, overallSummary) {
                     <div class="subtitle">所有设备总计</div>
                 </div>
                 <div class="summary-card">
+                    <h3>${chartSummary.total_forward_emails_24h}</h3>
+                    <p>24小时新增转发邮箱</p>
+                    <div class="subtitle">转发邮箱总计 (${chartSummary.forward_email_rate_24h}%)</div>
+                </div>
+                <div class="summary-card">
                     <h3>${chartSummary.avg_per_device_24h}</h3>
                     <p>平均每设备24小时</p>
                     <div class="subtitle">账号增长数</div>
                 </div>
                 <div class="summary-card">
-                    <h3>${chartSummary.avg_per_device_per_hour}</h3>
-                    <p>平均每设备每小时</p>
-                    <div class="subtitle">账号增长率</div>
+                    <h3>${chartSummary.avg_forward_per_device_24h}</h3>
+                    <p>平均每设备24小时</p>
+                    <div class="subtitle">转发邮箱增长数</div>
                 </div>
                 <div class="summary-card">
                     <h3>${overallSummary.total_accounts}</h3>
                     <p>历史总账号数</p>
                     <div class="subtitle">所有时间累计</div>
+                </div>
+                <div class="summary-card">
+                    <h3>${overallSummary.total_forward_emails}</h3>
+                    <p>历史转发邮箱总数</p>
+                    <div class="subtitle">转发邮箱累计 (${overallSummary.forward_rate_total}%)</div>
                 </div>
             `;
 }
@@ -127,16 +139,77 @@ function updateChart(data) {
         growthChart.destroy();
     }
 
-    let chartDataset, title, yAxisTitle;
+    let datasets = [];
+    let title, yAxisTitle;
 
     if (currentChart === 'total') {
-        chartDataset = data.total_accounts_data;
         title = '过去24小时总账号增长趋势';
         yAxisTitle = '账号总数';
-    } else {
-        chartDataset = data.avg_per_device_data;
+        datasets = [{
+            label: '总账号数',
+            data: data.total_accounts_data,
+            borderColor: '#3498db',
+            backgroundColor: '#3498db20',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#3498db',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6
+        }];
+    } else if (currentChart === 'average') {
         title = '过去24小时平均每设备账号增长趋势';
         yAxisTitle = '平均账号数/设备';
+        datasets = [{
+            label: '平均每设备账号数',
+            data: data.avg_per_device_data,
+            borderColor: '#e74c3c',
+            backgroundColor: '#e74c3c20',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#e74c3c',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6
+        }];
+    } else if (currentChart === 'forward_total') {
+        title = '过去24小时转发邮箱增长趋势';
+        yAxisTitle = '转发邮箱数量';
+        datasets = [{
+            label: '转发邮箱数',
+            data: data.forward_email_data,
+            borderColor: '#27ae60',
+            backgroundColor: '#27ae6020',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#27ae60',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6
+        }];
+    } else if (currentChart === 'forward_average') {
+        title = '过去24小时平均每设备转发邮箱增长趋势';
+        yAxisTitle = '平均转发邮箱数/设备';
+        datasets = [{
+            label: '平均每设备转发邮箱数',
+            data: data.avg_forward_per_device_data,
+            borderColor: '#f39c12',
+            backgroundColor: '#f39c1220',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.3,
+            pointBackgroundColor: '#f39c12',
+            pointBorderColor: '#ffffff',
+            pointBorderWidth: 2,
+            pointRadius: 4,
+            pointHoverRadius: 6
+        }];
     }
 
     chartTitle.textContent = title;
@@ -145,20 +218,7 @@ function updateChart(data) {
         type: 'line',
         data: {
             labels: data.time_points,
-            datasets: [{
-                label: currentChart === 'total' ? '总账号数' : '平均每设备账号数',
-                data: chartDataset,
-                borderColor: currentChart === 'total' ? '#3498db' : '#e74c3c',
-                backgroundColor: (currentChart === 'total' ? '#3498db' : '#e74c3c') + '20',
-                borderWidth: 3,
-                fill: true,
-                tension: 0.3,
-                pointBackgroundColor: currentChart === 'total' ? '#3498db' : '#e74c3c',
-                pointBorderColor: '#ffffff',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
-            }]
+            datasets: datasets
         },
         options: {
             responsive: true,
@@ -179,7 +239,17 @@ function updateChart(data) {
                             return '时间: ' + context[0].label;
                         },
                         label: function(context) {
-                            return context.dataset.label + ': ' + context.parsed.y + (currentChart === 'total' ? ' 个' : ' 个/设备');
+                            let suffix = '';
+                            if (currentChart === 'total') {
+                                suffix = ' 个';
+                            } else if (currentChart === 'average') {
+                                suffix = ' 个/设备';
+                            } else if (currentChart === 'forward_total') {
+                                suffix = ' 个转发邮箱';
+                            } else if (currentChart === 'forward_average') {
+                                suffix = ' 个转发邮箱/设备';
+                            }
+                            return context.dataset.label + ': ' + context.parsed.y + suffix;
                         }
                     }
                 }
@@ -214,7 +284,7 @@ function updateChart(data) {
                     },
                     beginAtZero: true,
                     ticks: {
-                        precision: currentChart === 'total' ? 0 : 2,
+                        precision: (currentChart === 'total' || currentChart === 'forward_total') ? 0 : 2,
                         color: '#666'
                     },
                     grid: {
@@ -245,12 +315,24 @@ function updateMetrics(data) {
                     <span class="metric-value positive">${data.avg_total_per_device}</span>
                 </div>
                 <div class="metric-row">
+                    <span class="metric-label">平均每设备总转发邮箱</span>
+                    <span class="metric-value positive">${data.avg_forward_total_per_device}</span>
+                </div>
+                <div class="metric-row">
                     <span class="metric-label">平均每设备24小时</span>
                     <span class="metric-value positive">${data.avg_24h_per_device}</span>
                 </div>
                 <div class="metric-row">
+                    <span class="metric-label">平均每设备24小时转发邮箱</span>
+                    <span class="metric-value positive">${data.avg_forward_24h_per_device}</span>
+                </div>
+                <div class="metric-row">
                     <span class="metric-label">平均每设备每小时(24h)</span>
                     <span class="metric-value">${data.avg_per_device_per_hour_24h}</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">平均每设备每小时转发邮箱(24h)</span>
+                    <span class="metric-value">${data.avg_forward_per_device_per_hour_24h}</span>
                 </div>
             `;
 
@@ -258,20 +340,36 @@ function updateMetrics(data) {
     const timeMetrics = document.getElementById('timeMetrics');
     timeMetrics.innerHTML = `
                 <div class="metric-row">
-                    <span class="metric-label">1小时新增</span>
+                    <span class="metric-label">1小时新增账号</span>
                     <span class="metric-value positive">${data.accounts_1h} (${data.avg_1h_per_device}/设备)</span>
                 </div>
                 <div class="metric-row">
-                    <span class="metric-label">24小时新增</span>
+                    <span class="metric-label">1小时新增转发邮箱</span>
+                    <span class="metric-value positive">${data.forward_emails_1h} (${data.avg_forward_1h_per_device}/设备) - ${data.forward_rate_1h}%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">24小时新增账号</span>
                     <span class="metric-value positive">${data.accounts_24h} (${data.avg_24h_per_device}/设备)</span>
                 </div>
                 <div class="metric-row">
-                    <span class="metric-label">7天新增</span>
+                    <span class="metric-label">24小时新增转发邮箱</span>
+                    <span class="metric-value positive">${data.forward_emails_24h} (${data.avg_forward_24h_per_device}/设备) - ${data.forward_rate_24h}%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">7天新增账号</span>
                     <span class="metric-value positive">${data.accounts_7d} (${data.avg_7d_per_device}/设备)</span>
                 </div>
                 <div class="metric-row">
-                    <span class="metric-label">历史总计</span>
+                    <span class="metric-label">7天新增转发邮箱</span>
+                    <span class="metric-value positive">${data.forward_emails_7d} (${data.avg_forward_7d_per_device}/设备) - ${data.forward_rate_7d}%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">历史总计账号</span>
                     <span class="metric-value">${data.total_accounts} (${data.avg_total_per_device}/设备)</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">历史总计转发邮箱</span>
+                    <span class="metric-value">${data.total_forward_emails} (${data.avg_forward_total_per_device}/设备) - ${data.forward_rate_total}%</span>
                 </div>
             `;
 

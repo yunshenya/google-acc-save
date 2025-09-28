@@ -54,6 +54,20 @@
     font-style: italic;
 }
 
+/* 转发邮箱专用卡片样式 */
+.summary-card:nth-child(3),
+.summary-card:nth-child(5),
+.summary-card:nth-child(7) {
+    border-left: 4px solid #27ae60;
+    background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+}
+
+.summary-card:nth-child(3) h3,
+.summary-card:nth-child(5) h3,
+.summary-card:nth-child(7) h3 {
+    color: #27ae60;
+}
+
 .chart-container {
     background: white;
     padding: 20px;
@@ -75,20 +89,26 @@
 
 .chart-tabs {
     display: flex;
-    gap: 10px;
+    gap: 5px;
     margin-bottom: 20px;
     border-bottom: 2px solid #f1f3f4;
     padding-bottom: 10px;
+    flex-wrap: wrap;
 }
 
 .tab-btn {
-    padding: 8px 16px;
+    padding: 10px 16px;
     background: none;
     border: none;
     color: var(--dark-gray);
     cursor: pointer;
     border-radius: 4px;
     transition: all 0.2s ease;
+    white-space: nowrap;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .tab-btn.active {
@@ -98,6 +118,18 @@
 
 .tab-btn:hover:not(.active) {
     background-color: var(--light-gray);
+}
+
+/* 转发邮箱标签页特殊样式 */
+.tab-btn:nth-child(3).active,
+.tab-btn:nth-child(4).active {
+    background-color: #27ae60;
+}
+
+.tab-btn:nth-child(3):hover:not(.active),
+.tab-btn:nth-child(4):hover:not(.active) {
+    background-color: #e8f5e8;
+    color: #27ae60;
 }
 
 .metrics-grid {
@@ -118,6 +150,9 @@
     margin: 0 0 15px 0;
     color: var(--text-color);
     font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .metric-row {
@@ -144,6 +179,46 @@
 
 .metric-value.positive {
     color: var(--success-color);
+}
+
+/* 转发邮箱指标特殊样式 */
+.forward-email-highlight {
+    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.forward-rate-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    min-width: 50px;
+    justify-content: center;
+}
+
+.forward-rate-high {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.forward-rate-medium {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.forward-rate-low {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
 
 .refresh-btn {
@@ -182,9 +257,53 @@
     margin: 10px 0;
 }
 
+/* 转发邮箱专项分析区域样式 */
+.metrics-grid:last-child .metric-card {
+    border-left: 4px solid #27ae60;
+}
+
+.metrics-grid:last-child .metric-card h4 {
+    color: #27ae60;
+}
+
+/* 趋势图标样式 */
+.metric-value:contains("📈"),
+.metric-value:contains("📉"),
+.metric-value:contains("➡️") {
+    font-family: 'Segoe UI Emoji', system-ui, sans-serif;
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* 转发邮箱卡片动画 */
+.summary-card:nth-child(3):hover,
+.summary-card:nth-child(5):hover,
+.summary-card:nth-child(7):hover {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@media (max-width: 1200px) {
+    .stats-summary {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
 }
 
 @media (max-width: 768px) {
@@ -194,7 +313,16 @@
     }
 
     .stats-summary {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .summary-card {
+        padding: 15px;
+    }
+
+    .summary-card h3 {
+        font-size: 24px;
     }
 
     .chart-wrapper {
@@ -206,6 +334,39 @@
     }
 
     .chart-tabs {
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5px;
+    }
+
+    .tab-btn {
+        font-size: 11px;
+        padding: 8px 12px;
+        justify-content: center;
+    }
+
+    .metric-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .metric-value {
+        align-self: flex-end;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-tabs {
+        grid-template-columns: 1fr;
+    }
+
+    .tab-btn {
+        font-size: 12px;
+        padding: 10px;
     }
 }
