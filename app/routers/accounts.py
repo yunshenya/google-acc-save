@@ -771,7 +771,7 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
         """
         if delete:
             await db.delete(account)
-            logger.info(f"账号 {account.account} 已被删除")
+            logger.info(f"账号 {account.account} 已删除")
         else:
             account.status = 1
         await db.commit()

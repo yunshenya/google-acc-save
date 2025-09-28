@@ -25,10 +25,11 @@ async def start_app_state(package_name, pad_code, task_manager):
                     logger.warning(f"{pad_code}: 启动任务正在一键新机")
                     await update_cloud_status(pad_code=pad_code, current_status="启动任务正在一键新机")
                     await task_manager.cancel_timeout_task_only(pad_code)
-                    template_id = random.choice(config.TEMPLE_IDS)
-                    await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
-                                              current_status="正在一键新机中")
-                    await replace_pad([pad_code], template_id=template_id)
+                    if pad_code in config.PAD_CODES:
+                        template_id = random.choice(config.TEMPLE_IDS)
+                        await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
+                                                  current_status="正在一键新机中")
+                        await replace_pad([pad_code], template_id=template_id)
                     break
 
                 case 0:
@@ -116,7 +117,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                     await task_manager.cancel_timeout_task_only(pad_code)
                     template_id = random.choice(config.TEMPLE_IDS)
                     await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
-                                              current_status="正在一键新机中")
+                                                current_status="正在一键新机中")
                     await replace_pad([pad_code], template_id=template_id)
                     break
                 case 0:
@@ -214,7 +215,6 @@ async def install_app_task(pad_code_str, task_manager):
     """启动带超时的安装任务"""
     logger.success(f'{pad_code_str}: 准备启动安装任务')
 
-    # 使用新的带超时任务管理
     await task_manager.start_task_with_timeout(
         pad_code_str,
         install_app_main_logic(pad_code_str, task_manager),
