@@ -18,7 +18,8 @@ async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = 
                 pad_code=pad_code,
                 current_status=current_status,
                 temple_id=temple_id,
-                is_secondary_email = True
+                is_secondary_email = True,
+                proxy_platform = "ipmars"
             )
             db.add(db_account)
             await db.commit()

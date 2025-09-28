@@ -14,7 +14,7 @@ from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
 from app.services.logger import task_logger, get_logger
 from app.services.task_status import (
-    reboot_task_status, replace_pad_stak_status,
+    reboot_task_status, replace_pad_task_status,
     app_install_task_status, app_start_task_status,
     app_uninstall_task_status, adb_call_task_status,
     fileUpdate_task_status, app_reboot_task_status
@@ -178,10 +178,8 @@ async def callback(data: dict) -> str:
 
             case 1124:  # 一键新机任务
                 callback_logger.info(f"{pad_code}: 处理一键新机任务回调")
-                if (pad_code in config.PAD_CODES) and not config.DEBUG:
-                    await replace_pad_stak_status(data, task_manager=task_manager)
-                elif config.DEBUG:
-                    callback_logger.info(f"{pad_code}: 调试模式 - 跳过一键新机处理")
+                if pad_code in config.PAD_CODES:
+                    await replace_pad_task_status(data, task_manager=task_manager)
                 else:
                     callback_logger.warning(f"{pad_code}: 设备不在管理列表中")
                 return "ok"

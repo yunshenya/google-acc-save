@@ -205,7 +205,7 @@ def app_reboot_task_status(data):
         task_logger.error(f"{pad_code}: 应用重启无效状态值 - {task_status}")
 
 
-async def replace_pad_stak_status(data, task_manager):
+async def replace_pad_task_status(data, task_manager):
     """一键新机任务状态处理"""
     task_status = data.get("taskStatus")
     pad_code = data.get("padCode")
