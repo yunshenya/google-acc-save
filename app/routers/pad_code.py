@@ -45,7 +45,6 @@ class PadCodeSyncResponse(BaseModel):
 async def get_available_pad_codes(_: str = Depends(verify_token)) -> Dict[str, Any]:
     """获取云端可用的 pad_code 列表"""
     try:
-        logger.info("开始获取云端可用的 pad_code 列表")
 
         # 调用云端API获取pad_code列表
         response = await get_pad_code_list()

@@ -1,9 +1,10 @@
-from typing import cast
+from typing import cast, Any
 
 from fastapi import HTTPException
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
 
+from app.dependencies.utils import get_pad_info
 from app.models.proxy import ProxyResponse
 from app.models.status import StatusResponse
 from app.services.database import SessionLocal, Status
@@ -14,12 +15,16 @@ async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = 
     """添加云机状态"""
     async with SessionLocal() as db:
         try:
+            pad_info: Any = await get_pad_info(pad_code)
+            data = pad_info.get("data", None)
+            pad_name = data.get("padName", None)
             db_account = Status(
                 pad_code=pad_code,
                 current_status=current_status,
                 temple_id=temple_id,
                 is_secondary_email = True,
-                proxy_platform = "ipmars"
+                proxy_platform = "ipmars",
+                pad_name = pad_name,
             )
             db.add(db_account)
             await db.commit()

@@ -43,6 +43,14 @@ async def install_app(pad_code_list: list[str], app_url: str, md5: str) -> dict[
     return await VmosUtil(install_app_url, body).send()
 
 
+async def get_pad_info(pad_code):
+    pad_info_url = "/vcpcloud/api/padApi/padInfo"
+    pad_info_data = {
+        "padCode": pad_code
+    }
+
+    return await VmosUtil(url=pad_info_url, data=pad_info_data).send()
+
 async def start_app(pad_code_list: list, pkg_name: str) -> list:
     start_app_url = "/vcpcloud/api/padApi/startApp"
 

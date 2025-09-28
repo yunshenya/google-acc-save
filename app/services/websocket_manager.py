@@ -161,7 +161,7 @@ class WebSocketManager:
                 status_data = []
                 for status in statuses:
                     status_dict = {
-                        "pad_code": status.pad_code,
+                        "pad_code": status.pad_name,
                         "current_status": status.current_status,
                         "number_of_run": status.number_of_run,
                         "num_of_success": status.num_of_success,
