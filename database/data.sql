@@ -21,7 +21,9 @@ CREATE TABLE google_account (
                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                 for_email TEXT,
                                 for_password TEXT,
-                                is_boned_secondary_email BOOLEAN NOT NULL DEFAULT false
+                                is_boned_secondary_email BOOLEAN NOT NULL DEFAULT false,
+                                proxy_platform TEXT,
+                                image_base64 TEXT
 );
 
 -- Set table owner

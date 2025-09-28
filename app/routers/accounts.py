@@ -7,8 +7,9 @@ from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
 
 from app.curd.proxy import update_proxies
-from app.curd.status import update_cloud_status
+from app.curd.status import update_cloud_status, get_proxy_status
 from app.models.accounts import AccountResponse, AccountCreate, AccountUpdate, ForwardRequest, SecondaryEmail
+from app.models.proxy import ProxyResponse
 from app.services.database import SessionLocal, Account
 
 router = APIRouter()
@@ -23,19 +24,19 @@ async def create_account(account: AccountCreate) -> AccountResponse:
             db_account = Account(
                 account=account.account,
                 password=account.password,
-                type=account.type,
-                code=account.code,
                 for_email=account.for_email,
                 for_password=account.for_password,
                 created_at=datetime.datetime.now()
             )
-            db.add(db_account)
-            await db.commit()
-            await db.refresh(db_account)
             if account.pad_code is not None:
                 logger.success(f"{account.pad_code}: 账号上传成功")
                 await update_proxies(pade_code=account.pad_code)
+                current_proxy: ProxyResponse = await get_proxy_status(account.pad_code)
+                db_account.code = current_proxy.code
                 await update_cloud_status(pad_code=account.pad_code, num_of_success=1)
+            db.add(db_account)
+            await db.commit()
+            await db.refresh(db_account)
             return db_account
         except IntegrityError:
             await db.rollback()
@@ -74,7 +75,8 @@ async def get_unique_account(
             status=account.status,
             code=account.code,
             created_at=account.created_at,
-            is_boned_secondary_email=account.is_boned_secondary_email
+            is_boned_secondary_email=account.is_boned_secondary_email,
+            proxy_platform=account.proxy_platform
         )
 
         if delete:
@@ -84,6 +86,7 @@ async def get_unique_account(
             account.status = 1
         await db.commit()
         return account_data
+
 
 
 @router.get("/accounts/{account_id}", response_model=AccountResponse)
@@ -109,6 +112,7 @@ async def update_forward(forward: ForwardRequest) -> AccountResponse:
             raise HTTPException(status_code=404, detail="账号不存在")
         account.for_email = forward.for_email
         account.for_password = forward.for_password
+        account.image_base64 = forward.image_base64
         account.status = 0
         await db.commit()
         await db.refresh(account)
