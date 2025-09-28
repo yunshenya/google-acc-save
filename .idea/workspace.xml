@@ -4,11 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加字段">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加图片">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -607,15 +607,7 @@
       <workItem from="1758936451676" duration="9634000" />
       <workItem from="1758949609644" duration="4826000" />
       <workItem from="1758957326496" duration="23075000" />
-      <workItem from="1759023042696" duration="5958000" />
-    </task>
-    <task id="LOCAL-00129" summary="格式化代码">
-      <option name="closed" value="true" />
-      <created>1758692189294</created>
-      <option name="number" value="00129" />
-      <option name="presentableId" value="LOCAL-00129" />
-      <option name="project" value="LOCAL" />
-      <updated>1758692189294</updated>
+      <workItem from="1759023042696" duration="11165000" />
     </task>
     <task id="LOCAL-00130" summary="添加for_email和for_password">
       <option name="closed" value="true" />
@@ -1001,7 +993,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759025542387</updated>
     </task>
-    <option name="localTasksCounter" value="178" />
+    <task id="LOCAL-00178" summary="增加图片">
+      <option name="closed" value="true" />
+      <created>1759029323949</created>
+      <option name="number" value="00178" />
+      <option name="presentableId" value="LOCAL-00178" />
+      <option name="project" value="LOCAL" />
+      <updated>1759029323949</updated>
+    </task>
+    <option name="localTasksCounter" value="179" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1023,7 +1023,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="获取之后删除数据" />
     <MESSAGE value="添加一个创建时间字段" />
     <MESSAGE value="增加一个创建时间字段" />
     <MESSAGE value="增加一些判断" />
@@ -1048,6 +1047,7 @@
     <MESSAGE value="添加热更新" />
     <MESSAGE value="优化文件结构" />
     <MESSAGE value="增加字段" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加字段" />
+    <MESSAGE value="增加图片" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加图片" />
   </component>
 </project>

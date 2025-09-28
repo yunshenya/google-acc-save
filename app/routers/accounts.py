@@ -387,6 +387,32 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                         flex-direction: column;
                     }
                 }
+                
+                .button-field {
+                    display: flex;
+                    gap: 8px;
+                    padding: 8px;
+                    background: transparent;
+                    border: none;
+                }
+                
+                .inline-btn {
+                    border: none;
+                    border-radius: 20px;
+                    padding: 8px 16px;
+                    font-size: 0.8rem;
+                    cursor: pointer;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                    transition: all 0.2s ease;
+                    color: white;
+                    font-weight: 500;
+                    flex: 1;
+                }
+                
+                .inline-btn:hover {
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                }
             </style>
         </head>
         <body>
@@ -418,6 +444,13 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                                         <div class="field-label">创建时间</div>
                                         <div class="field-value">{created_time}</div>
                                     </div>
+                                    <div class="field-group">
+                                        <div class="field-value button-field">
+                                            <button class="inline-btn btn-warning" onclick="getCaptcha("{account.for_email}","{account.for_password}")">获取验证码</button>
+                                        </div>
+                                        <div class="field-value button-field" id="show_captcha">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -440,19 +473,21 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                             </div>
                             <!-- 账号截图 -->
                             <div class="info-section">
-                                <div class="image-container">
+                                <div class="image-container" style="display: flex;">
         """
 
         if account.image_base64:
             html_content += f"""
-                                    <img src="data:image/jpeg;base64,{account.image_base64}" 
-                                         alt="账号截图" class="account-image">
+            <img src="data:image/jpeg;base64,{account.image_base64}" alt="账号截图" class="account-image">
             """
         else:
             html_content += """
                                     <div class="no-image">📷 暂无截图</div>
             """
 
+        html_content += f"""
+        <iframe src="http://foailbox.com:8888/email/message?email={account.for_email}&password={account.for_password}" style="width: 100%"></iframe>
+"""
         html_content += """
                                 </div>
                             </div>
@@ -508,6 +543,16 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                         modal.style.display = 'none';
                     }
                 });
+                async function getCaptcha(email,password) {
+                    const timeDiv = document.querySelector('.field-value:not(.button-field)');
+                    const url = `http://foailbox.com:8888/api/email/code?email=email&password=password&service=6024`;
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.querySelector('show_captcha').innerText = JSON.stringify(data['data']);
+                            console.log(data);
+                        });
+                }
             </script>
         </body>
         </html>

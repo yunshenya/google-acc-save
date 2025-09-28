@@ -77,22 +77,18 @@ async def status(android_code: AndroidPadCodeRequest):
         case 1:
             await update_cloud_status(pad_code=pad_code, num_of_error=1)
     try:
+        await task_manager.cancel_timeout_task_only(pad_code)
         if pad_code in config.PAD_CODES:
-            # 取消超时任务
-            await task_manager.cancel_timeout_task_only(pad_code)
-
             # 选择模板和代理
             template_id = random.choice(config.TEMPLE_IDS)
             default_proxy: Any = manager.get_proxy_countries()
             selected_proxy = random.choice(default_proxy)
-
             await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
             await update_cloud_status(
                 pad_code,
                 temple_id=template_id,
                 current_status="一键新机中"
             )
-
             task_logger.success(f"{pad_code}: 模板: {template_id}, 代理: {selected_proxy.country}")
             # 执行一键新机
             if not config.DEBUG:
@@ -121,6 +117,7 @@ async def proxy_collection_page():
 @router.get("/ipinfo")
 async def get_client_ip(request: Request):
     # 获取客户端IP地址
+    print(config.PAD_CODES)
     client_ip = request.client.host
     return {"client_ip": client_ip}
 
