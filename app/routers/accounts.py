@@ -543,15 +543,26 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                         modal.style.display = 'none';
                     }
                 });
-                async function getCaptcha(email,password) {
-                    const timeDiv = document.querySelector('.field-value:not(.button-field)');
+                async function getCaptcha(email, password) {
+                    const showCaptchaDiv = document.querySelector('#show_captcha');
                     const url = `http://foailbox.com:8888/api/email/code?email=${email}&password=${password}&service=6024`;
-                    fetch(url)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.querySelector('#show_captcha').innerText = JSON.stringify(data['data']);
-                            console.log(data);
-                        });
+                    
+                    try {
+                        showCaptchaDiv.innerText = '正在获取验证码...';
+                        
+                        const response = await fetch(url);
+                        const data = await response.json();
+                        
+                        if (data && data.data) {
+                            showCaptchaDiv.innerText = JSON.stringify(data['data']);
+                        } else {
+                            showCaptchaDiv.innerText = JSON.stringify(data['msg']);
+                        }
+                        console.log('验证码数据：', data);
+                    } catch (error) {
+                        console.error('获取验证码出错：', error);
+                        showCaptchaDiv.innerText = '获取验证码失败：网络错误';
+                    }
                 }
             </script>
         </body>
@@ -610,7 +621,6 @@ async def update_secondary_mail(secondary_mail: SecondaryEmail) -> AccountRespon
         account.is_boned_secondary_email = secondary_mail.is_boned_secondary_email
         account.for_email = secondary_mail.for_email
         account.for_password = secondary_mail.for_password
-        account.status = 0
         await db.commit()
         await db.refresh(account)
         await update_cloud_status(pad_code=secondary_mail.pad_code, secondary_email_num=1)
