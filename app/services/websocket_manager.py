@@ -1,11 +1,16 @@
 import asyncio
 import json
-from datetime import datetime
+import random
+from datetime import datetime, timedelta
 from typing import Set, Dict, Optional
-
+from app.config import config
+from app.dependencies.utils import replace_pad
+from app.curd.status import update_cloud_status, set_proxy_status
+from app.dependencies.countries import manager
 from fastapi import WebSocket
 from sqlalchemy import select
 
+from app.routers.server import task_manager
 from app.services.database import SessionLocal, Status
 from app.services.logger import ws_logger
 
@@ -53,6 +58,7 @@ class WebSocketManager:
         self._lock = asyncio.Lock()
         self.heartbeat_interval = 30  # 心跳间隔（秒）
         self.heartbeat_task: Optional[asyncio.Task] = None
+        self.timeout_check_minutes = config.get_timeout("global") + 5  # 超时检测时间（分钟）
 
     async def connect(self, websocket: WebSocket):
         """建立WebSocket连接"""
@@ -149,6 +155,39 @@ class WebSocketManager:
 
         ws_logger.debug(f"广播消息成功发送给 {sent_count} 个客户端，消息类型: {message.get('type', 'unknown')}")
 
+    async def _handle_timeout_device(self, pad_code: str):
+        """处理超时设备 - 执行一键新机"""
+        try:
+            await task_manager.cancel_timeout_task_only(pad_code)
+            # 选择随机模板
+            temple_id = random.choice(config.TEMPLE_IDS)
+
+            # 选择随机代理
+            default_proxy = manager.get_proxy_countries()
+            selected_proxy = random.choice(default_proxy)
+
+            ws_logger.warning(f"{pad_code}: 检测到超时（超过{self.timeout_check_minutes}分钟未更新），开始执行一键新机")
+
+            # 设置代理
+            await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
+
+            # 更新状态
+            await update_cloud_status(
+                pad_code=pad_code,
+                current_status=f"超时检测触发一键新机（超过{self.timeout_check_minutes}分钟未更新）",
+                temple_id=temple_id
+            )
+
+            # 执行一键新机
+            if not config.DEBUG:
+                result = await replace_pad([pad_code], template_id=temple_id)
+                ws_logger.info(f"{pad_code}: 超时触发一键新机结果 - {result.get('msg', '未知结果')}")
+            else:
+                ws_logger.info(f"{pad_code}: 调试模式 - 模拟超时触发一键新机")
+
+        except Exception as e:
+            ws_logger.error(f"{pad_code}: 处理超时设备失败 - {e}")
+
     async def send_status_update(self, websocket: WebSocket = None):
         """发送状态更新"""
         try:
@@ -157,9 +196,26 @@ class WebSocketManager:
                 result = await db.execute(select(Status).order_by(Status.updated_at.desc()))
                 statuses = result.scalars().all()
 
-                # 转换为字典格式
+                # 当前时间
+                now = datetime.now()
+                timeout_threshold = now - timedelta(minutes=self.timeout_check_minutes)
+
+                # 转换为字典格式，并检测超时
                 status_data = []
+                timeout_devices = []
                 for status in statuses:
+                    if status.updated_at and status.updated_at < timeout_threshold:
+                        timeout_devices.append({
+                            'pad_code': status.pad_code,
+                            'pad_name': status.pad_name,
+                            'updated_at': status.updated_at
+                        })
+                        ws_logger.warning(
+                            f"设备超时检测: {status.pad_name} (pad_code: {status.pad_code}), "
+                            f"最后更新时间: {status.updated_at}, "
+                            f"当前状态: {status.current_status}"
+                        )
+
                     status_dict = {
                         "pad_code": status.pad_name,
                         "current_status": status.current_status,
@@ -183,10 +239,20 @@ class WebSocketManager:
                     }
                     status_data.append(status_dict)
 
+                if timeout_devices:
+                    ws_logger.warning(f"检测到 {len(timeout_devices)} 台设备超时，开始处理")
+                    for device in timeout_devices:
+                        asyncio.create_task(
+                            self._handle_timeout_device(
+                                device['pad_code']
+                            )
+                        )
+
             message = {
                 "type": "status_update",
                 "data": status_data,
-                "total_count": len(status_data)
+                "total_count": len(status_data),
+                "timeout_count": len(timeout_devices) if 'timeout_devices' in locals() else 0
             }
 
             if websocket:
@@ -280,6 +346,7 @@ class WebSocketManager:
         return {
             "active_connections": len(self.active_connections),
             "heartbeat_running": self.heartbeat_task and not self.heartbeat_task.done(),
+            "timeout_check_minutes": self.timeout_check_minutes,
             "connection_details": [
                 {
                     "client_ip": info.get("client_ip", "unknown"),

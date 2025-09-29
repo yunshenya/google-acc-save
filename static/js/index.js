@@ -105,7 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // WebSocket相关函数
     function initWebSocket() {
         if (isConnecting || (websocket && websocket.readyState === WebSocket.OPEN)) {
-            console.log('WebSocket已连接或正在连接中');
             return;
         }
 
@@ -115,13 +114,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const wsUrl = `${protocol}//${window.location.host}/ws`;
 
-        console.log(`尝试连接WebSocket: ${wsUrl}`);
-
         try {
             websocket = new WebSocket(wsUrl);
 
             websocket.onopen = function() {
-                console.log('✅ WebSocket连接已建立');
                 isConnecting = false;
                 reconnectAttempts = 0;
                 updateConnectionStatus('connected');
@@ -149,7 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             websocket.onclose = function(event) {
-                console.log(`🔌 WebSocket连接已关闭: ${event.code} - ${event.reason}`);
                 isConnecting = false;
                 websocket = null;
 
@@ -162,14 +157,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             };
 
-            websocket.onerror = function(error) {
-                console.error('❌ WebSocket错误:', error);
+            websocket.onerror = function(_error) {
                 isConnecting = false;
                 updateConnectionStatus('error');
             };
 
         } catch (error) {
-            console.error('❌ 创建WebSocket连接失败:', error);
             isConnecting = false;
             updateConnectionStatus('error');
             attemptReconnect();
@@ -179,20 +172,15 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleWebSocketMessage(message) {
         const messageType = message.type;
 
-        // 添加调试日志
-        console.log(`📨 收到WebSocket消息: ${messageType}`, message);
-
         switch (messageType) {
             case 'status_update':
                 if (currentView === 'status' && message.data) {
-                    console.log(`📊 状态更新: ${message.data.length} 条记录`);
                     renderStatusTable(message.data);
                 }
                 break;
 
             case 'single_status_update':
                 if (currentView === 'status' && message.data) {
-                    console.log(`📊 单个状态更新: ${message.data.pad_code} -> ${message.data.current_status}`);
                     updateSingleStatus(message.data);
                 }
                 break;
@@ -219,8 +207,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             case 'config_updated':
                 if (message.data) {
-                    console.log(`🔧 配置已更新: ${message.data.updated_fields.join(', ')}`);
-
                     // 显示配置更新通知
                     showConfigUpdateNotification(message.data.message, message.data.updated_fields);
 
@@ -240,13 +226,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function requestStatusUpdate() {
         if (websocket && websocket.readyState === WebSocket.OPEN) {
-            console.log('📡 请求状态更新');
             websocket.send(JSON.stringify({
                 type: 'subscribe_status',
                 timestamp: new Date().toISOString()
             }));
         } else {
-            console.log('📡 WebSocket未连接，使用HTTP请求状态更新');
             fetchCloudStatus().then(r => {});
         }
     }
@@ -293,8 +277,6 @@ document.addEventListener('DOMContentLoaded', function() {
             ${statusInfo.icon} ${statusInfo.text}
         </span>
     `;
-
-        console.log(`📊 连接状态更新: ${status} - ${statusInfo.text}`);
     }
 
     function closeWebSocket() {
@@ -312,7 +294,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function attemptReconnect() {
         if (reconnectAttempts >= maxReconnectAttempts) {
-            console.log('❌ 达到最大重连次数，停止重连');
             updateConnectionStatus('failed');
             return;
         }
@@ -322,7 +303,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000); // 指数退避，最大30秒
-        console.log(`🔄 ${delay}ms后尝试重连... (${reconnectAttempts + 1}/${maxReconnectAttempts})`);
 
         updateConnectionStatus('reconnecting');
 
@@ -333,10 +313,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }, delay);
     }
 
-// 更新单个状态行 - 优化版本
+// 更新单个状态行
     function updateSingleStatus(statusData) {
         if (!statusTableBody || !statusData.pad_code) {
-            console.warn('⚠️  无效的状态数据或表格元素');
             return;
         }
 
@@ -359,7 +338,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         statusCell.style.animation = '';
                     }, 2000);
 
-                    console.log(`📊 状态行更新: ${statusData.pad_code} ${oldStatus} -> ${statusData.current_status}`);
                     updated = true;
                 }
                 break;
@@ -367,7 +345,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (!updated) {
-            console.log(`⚠️  未找到设备行: ${statusData.pad_code}，请求完整更新`);
             // 如果找不到对应行，请求完整更新
             requestFullStatusUpdate();
         }
@@ -389,11 +366,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // 改进的状态表格渲染函数
     function renderStatusTable(statusData) {
         if (!statusTableBody) {
-            console.error('❌ 状态表格元素不存在');
             return;
         }
-
-        console.log(`📊 渲染状态表格: ${statusData ? statusData.length : 0} 条记录`);
 
         // 清空现有内容
         statusTableBody.innerHTML = '';
@@ -454,13 +428,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         statusTableBody.appendChild(fragment);
-        console.log('✅ 状态表格渲染完成');
     }
 
 // 视图切换函数 - 增强WebSocket管理
     function toggleView() {
-        console.log(`🔄 切换视图: ${currentView} -> ${currentView === 'accounts' ? 'status' : 'accounts'}`);
-
         if (currentView === 'accounts') {
             currentView = 'status';
             if (accountsSection) accountsSection.style.display = 'none';
@@ -468,13 +439,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (toggleViewBtn) toggleViewBtn.textContent = '切换到账户管理';
 
             // 启动WebSocket连接并开始状态监控
-            console.log('📡 启动状态监控模式');
             initWebSocket();
 
             // 如果WebSocket未能立即连接，使用HTTP作为备选
             setTimeout(() => {
                 if (!websocket || websocket.readyState !== WebSocket.OPEN) {
-                    console.log('📡 WebSocket未连接，使用HTTP获取状态');
                     fetchCloudStatus().then(r => {});
                 }
             }, 1000);
@@ -484,9 +453,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (accountsSection) accountsSection.style.display = 'block';
             if (statusSection) statusSection.style.display = 'none';
             if (toggleViewBtn) toggleViewBtn.textContent = '切换到状态监控';
-
-            // 关闭WebSocket连接
-            console.log('📡 关闭状态监控模式');
             closeWebSocket();
         }
     }
@@ -494,14 +460,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // 页面可见性变化处理 - 优化
     function handleVisibilityChange() {
         if (document.hidden) {
-            console.log('📱 页面隐藏，暂停WebSocket活动');
-            // 页面隐藏时可以选择保持连接但减少活动
         } else {
-            console.log('📱 页面显示，恢复WebSocket活动');
-            // 页面显示时恢复连接
             if (currentView === 'status') {
                 if (!websocket || websocket.readyState !== WebSocket.OPEN) {
-                    console.log('📡 重新建立WebSocket连接');
                     initWebSocket();
                 } else {
                     // 连接正常，请求最新状态
@@ -586,7 +547,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             }
         } catch (error) {
-            console.error('认证检查失败:', error);
             redirectToLogin();
 
         }
@@ -819,7 +779,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // 类型显示
             const typeClass = `type-${account.type}`;
 
-            // 代码显示（可能为null）
             const code = account.code ? account.code : '无';
 
             // 密码显示
@@ -882,7 +841,6 @@ document.addEventListener('DOMContentLoaded', function() {
             updateProgress(100);
         } catch (error) {
             showError(`获取全部账户失败: ${error.message}`);
-            console.error('获取全部账户失败:', error);
             fetchMode = 'none';
         } finally {
             hideLoading();
@@ -962,7 +920,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await authenticatedFetch(`/account/unique`);
 
             if (!response || !response.ok) {
-                throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
+                new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
             }
 
             const data = await response.json();
@@ -1066,7 +1024,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 100);
         } catch (error) {
             showError(`导出CSV失败: ${error.message}`);
-            console.error('导出CSV失败:', error);
         }
     }
 
@@ -1109,8 +1066,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (response && response.ok) {
-                // WebSocket优先，如果WebSocket连接正常，状态会自动更新
-                // 如果WebSocket未连接，则手动刷新
                 if (!websocket || websocket.readyState !== WebSocket.OPEN) {
                     await fetchCloudStatus();
                 }
@@ -1120,7 +1075,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // 将 refreshSingleStatus 函数暴露到全局，以便在 HTML 中使用
     window.refreshSingleStatus = refreshSingleStatus;
 });
 
