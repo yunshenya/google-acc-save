@@ -1286,6 +1286,260 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(div);
         setTimeout(() => div.remove(), 3000);
     }
+    // 在文件末尾添加以下函数
+
+// 打开编辑设备配置弹窗
+    function openEditDeviceModal(padCode) {
+        // 从当前状态数据中查找设备信息
+        const statusTableBody = document.getElementById('statusTableBody');
+        const rows = statusTableBody.querySelectorAll('tr');
+
+        let deviceData = null;
+        for (const row of rows) {
+            const padCodeCell = row.cells[0];
+            if (padCodeCell && padCodeCell.getAttribute('data-pad-code') === padCode) {
+                // 提取数据
+                deviceData = {
+                    padCode: padCode,
+                    padName: padCodeCell.textContent.trim(),
+                    templeId: row.getAttribute('data-temple-id'),
+                    country: row.getAttribute('data-country'),
+                    code: row.getAttribute('data-code'),
+                    proxy: row.getAttribute('data-proxy'),
+                    timeZone: row.getAttribute('data-time-zone'),
+                    language: row.getAttribute('data-language'),
+                    latitude: row.getAttribute('data-latitude'),
+                    longitude: row.getAttribute('data-longitude'),
+                    isSecondaryEmail: row.getAttribute('data-is-secondary-email') === 'true'
+                };
+                break;
+            }
+        }
+
+        if (!deviceData) {
+            showToast('未找到设备信息', 'error');
+            return;
+        }
+
+        // 填充表单
+        document.getElementById('editPadCode').value = deviceData.padCode;
+        document.getElementById('editPadCodeDisplay').value = deviceData.padCode;
+        document.getElementById('editPadName').value = deviceData.padName;
+        document.getElementById('editTempleId').value = deviceData.templeId || '';
+        document.getElementById('editCountry').value = deviceData.country || '';
+        document.getElementById('editCode').value = deviceData.code || '';
+        document.getElementById('editProxy').value = deviceData.proxy || '';
+        document.getElementById('editTimeZone').value = deviceData.timeZone || '';
+        document.getElementById('editLanguage').value = deviceData.language || '';
+        document.getElementById('editLatitude').value = deviceData.latitude || '';
+        document.getElementById('editLongitude').value = deviceData.longitude || '';
+        document.getElementById('editIsSecondaryEmail').checked = deviceData.isSecondaryEmail;
+
+        // 显示弹窗
+        document.getElementById('editDeviceModal').style.display = 'flex';
+    }
+
+// 关闭编辑弹窗
+    function closeEditDeviceModal() {
+        document.getElementById('editDeviceModal').style.display = 'none';
+        document.getElementById('editDeviceForm').reset();
+    }
+
+// 保存设备配置
+    async function saveDeviceConfig() {
+        const padCode = document.getElementById('editPadCode').value;
+        const form = document.getElementById('editDeviceForm');
+
+        // 表单验证
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const updateData = {
+            temple_id: parseInt(document.getElementById('editTempleId').value),
+            country: document.getElementById('editCountry').value.trim(),
+            code: document.getElementById('editCode').value.trim(),
+            proxy: document.getElementById('editProxy').value.trim(),
+            time_zone: document.getElementById('editTimeZone').value.trim(),
+            language: document.getElementById('editLanguage').value.trim(),
+            latitude: parseFloat(document.getElementById('editLatitude').value),
+            longitude: parseFloat(document.getElementById('editLongitude').value),
+            is_secondary_email: document.getElementById('editIsSecondaryEmail').checked
+        };
+
+        try {
+            showLoading(true);
+
+            const response = await authenticatedFetch(`/cloud_status/${padCode}`, {
+                method: 'PUT',
+                headers: getAuthHeaders(),
+                body: JSON.stringify(updateData)
+            });
+
+            if (!response || !response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '更新失败');
+            }
+
+            showToast(`设备 ${padCode} 配置更新成功`, 'success');
+            closeEditDeviceModal();
+
+            // 刷新状态列表
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                requestStatusUpdate();
+            } else {
+                await fetchCloudStatus();
+            }
+
+        } catch (error) {
+            console.error('保存设备配置失败:', error);
+            showToast('保存失败: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+// 修改 renderStatusTable 函数，添加数据属性和编辑按钮
+    function renderStatusTable(statusData) {
+        if (!statusTableBody) {
+            return;
+        }
+
+        statusTableBody.innerHTML = '';
+
+        if (!Array.isArray(statusData) || statusData.length === 0) {
+            if (statusEmptyState) statusEmptyState.style.display = 'block';
+            statusTableBody.innerHTML = '<tr><td colspan="13" style="text-align: center; padding: 20px; color: #666;">暂无状态数据</td></tr>';
+            return;
+        }
+
+        if (statusEmptyState) statusEmptyState.style.display = 'none';
+
+        const fragment = document.createDocumentFragment();
+
+        statusData.forEach((status, index) => {
+            const row = document.createElement('tr');
+            row.style.animationDelay = `${index * 50}ms`;
+
+            // 添加数据属性
+            row.setAttribute('data-temple-id', status.temple_id || '');
+            row.setAttribute('data-country', status.country || '');
+            row.setAttribute('data-code', status.code || '');
+            row.setAttribute('data-proxy', status.proxy || '');
+            row.setAttribute('data-time-zone', status.time_zone || '');
+            row.setAttribute('data-language', status.language || '');
+            row.setAttribute('data-latitude', status.latitude || '');
+            row.setAttribute('data-longitude', status.longitude || '');
+            row.setAttribute('data-is-secondary-email', status.is_secondary_email || false);
+
+            const statusClass = getStatusClass(status.current_status);
+            const totalRuns = status.number_of_run || 1;
+            const forwardRatio = Math.round(((status.forward_num || 0) / totalRuns) * 100);
+            const phoneRatio = Math.round(((status.phone_number_counts || 0) / totalRuns) * 100);
+            const secondaryEmailRatio = Math.round(((status.secondary_email_num || 0) / totalRuns) * 100);
+
+            const getRatioClass = (ratio) => {
+                if (ratio >= 80) return 'ratio-high';
+                if (ratio >= 50) return 'ratio-medium';
+                if (ratio >= 20) return 'ratio-low';
+                return 'ratio-none';
+            };
+
+            row.innerHTML = `
+            <td title="${status.pad_code}" data-pad-code="${status.pad_code}">${status.pad_name || "未知设备"}</td>
+            <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
+            <td title="运行次数">${status.number_of_run}</td>
+            <td title="成功次数">${status.num_of_success}</td>
+            <td title="error次数">${status.num_of_error}</td>
+            <td title="其他错误">${status.num_other_error}</td>
+            <td title="模板ID">${status.temple_id}</td>
+            <td class="${getRatioClass(forwardRatio)}" title="转发邮箱: ${status.forward_num || 0}/${totalRuns}">${forwardRatio}%</td>
+            <td class="${getRatioClass(phoneRatio)}" title="手机号: ${status.phone_number_counts || 0}/${totalRuns}">${phoneRatio}%</td>
+            <td class="${getRatioClass(secondaryEmailRatio)}" title="辅助邮箱: ${status.secondary_email_num || 0}/${totalRuns}">${secondaryEmailRatio}%</td>
+            <td title="国家">${status.country || '未设置'}</td>
+            <td title="更新时间">${formatDateTime(status.updated_at)}</td>
+            <td>
+                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                    <button class="status-btn" onclick="refreshSingleStatus('${status.pad_code}')" title="刷新该设备状态">
+                        🔄
+                    </button>
+                    <button class="status-btn" onclick="openEditDeviceModal('${status.pad_code}')" title="编辑设备配置" style="background-color: var(--warning-color);">
+                        ✏️
+                    </button>
+                </div>
+            </td>
+        `;
+
+            fragment.appendChild(row);
+        });
+
+        statusTableBody.appendChild(fragment);
+    }
+
+// 添加 showToast 函数（如果还没有）
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 6px;
+        color: white;
+        font-size: 14px;
+        z-index: 10002;
+        max-width: 300px;
+        word-wrap: break-word;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        animation: slideInFromRight 0.3s ease-out;
+    `;
+
+        switch (type) {
+            case 'success':
+                toast.style.backgroundColor = '#27ae60';
+                break;
+            case 'error':
+                toast.style.backgroundColor = '#e74c3c';
+                break;
+            case 'warning':
+                toast.style.backgroundColor = '#f39c12';
+                break;
+            default:
+                toast.style.backgroundColor = '#3498db';
+        }
+
+        toast.textContent = message;
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }
+        }, 3000);
+
+        toast.addEventListener('click', () => {
+            if (toast.parentNode) {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }
+        });
+    }
+
+// 确保全局可访问
+    window.openEditDeviceModal = openEditDeviceModal;
+    window.closeEditDeviceModal = closeEditDeviceModal;
+    window.saveDeviceConfig = saveDeviceConfig;
 
     window.refreshSingleStatus = refreshSingleStatus;
     window.showDeviceManager = showDeviceManager;

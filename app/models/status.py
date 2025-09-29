@@ -23,6 +23,18 @@ class StatusResponse(BaseModel):
     proxy_platform: str | None = None
 
 
+class StatusUpdateRequest(BaseModel):
+    temple_id: int | None = None
+    proxy: str | None = None
+    country: str | None = None
+    code: str | None = None
+    time_zone: str | None = None
+    language: str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    is_secondary_email: bool | None = None
+
+
 class StatusRequest(BaseModel):
     pad_code: str
     current_status: str | None = None

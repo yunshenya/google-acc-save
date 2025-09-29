@@ -582,3 +582,80 @@ tr:hover {
     gap: 10px;
     justify-content: flex-end;
 }
+
+/* 编辑弹窗样式 */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.form-group input:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
+.form-group small {
+    color: var(--dark-gray);
+    font-size: 12px;
+}
+
+.save-btn {
+    background-color: var(--success-color) !important;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.save-btn:hover {
+    background-color: #219a52 !important;
+}
+
+/* 弹窗内表单布局 */
+.modal-body h4 {
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* 状态按钮增强 */
+.status-btn {
+    min-width: 32px;
+    padding: 4px 8px;
+    font-size: 12px;
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.status-btn:hover {
+    transform: scale(1.05);
+}

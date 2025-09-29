@@ -152,7 +152,7 @@
                     <th width="80px">辅助占比</th>
                     <th width="100px">国家</th>
                     <th width="160px">更新时间</th>
-                    <th width="100px">操作</th>
+                    <th width="120px">操作</th>
                 </tr>
                 </thead>
                 <tbody id="statusTableBody">
@@ -165,6 +165,98 @@
                 </svg>
                 <h3>暂无状态数据</h3>
                 <p>系统正在获取云机状态信息...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑设备配置弹窗 -->
+    <div id="editDeviceModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>⚙️ 编辑设备配置</h3>
+                <button class="modal-close" onclick="closeEditDeviceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editDeviceForm">
+                    <input type="hidden" id="editPadCode">
+
+                    <!-- 基础信息 -->
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: var(--text-color);">基础信息</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>设备代码</label>
+                                <input type="text" id="editPadCodeDisplay" disabled style="background: #e9ecef;">
+                            </div>
+                            <div class="form-group">
+                                <label>设备名称</label>
+                                <input type="text" id="editPadName" disabled style="background: #e9ecef;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 模板配置 -->
+                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: #1976d2;">🎯 模板配置</h4>
+                        <div class="form-group">
+                            <label>模板ID <span style="color: red;">*</span></label>
+                            <input type="number" id="editTempleId" required placeholder="请输入模板ID">
+                        </div>
+                    </div>
+
+                    <!-- 代理配置 -->
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: #388e3c;">🌐 代理配置</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>国家 <span style="color: red;">*</span></label>
+                                <input type="text" id="editCountry" required placeholder="例如: 摩洛哥">
+                            </div>
+                            <div class="form-group">
+                                <label>国家代码 <span style="color: red;">*</span></label>
+                                <input type="text" id="editCode" required placeholder="例如: ma">
+                            </div>
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label>代理URL <span style="color: red;">*</span></label>
+                                <input type="url" id="editProxy" required placeholder="https://...">
+                            </div>
+                            <div class="form-group">
+                                <label>时区 <span style="color: red;">*</span></label>
+                                <input type="text" id="editTimeZone" required placeholder="例如: Africa/Casablanca">
+                            </div>
+                            <div class="form-group">
+                                <label>语言 <span style="color: red;">*</span></label>
+                                <input type="text" id="editLanguage" required placeholder="例如: English">
+                            </div>
+                            <div class="form-group">
+                                <label>纬度 <span style="color: red;">*</span></label>
+                                <input type="number" id="editLatitude" step="0.0001" required placeholder="例如: 35.7758">
+                            </div>
+                            <div class="form-group">
+                                <label>经度 <span style="color: red;">*</span></label>
+                                <input type="number" id="editLongitude" step="0.0001" required placeholder="例如: -5.7909">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 邮箱配置 -->
+                    <div style="background: #fff3e0; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: #f57c00;">📧 邮箱配置</h4>
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" id="editIsSecondaryEmail" style="width: auto;">
+                                是否已绑定辅助邮箱
+                            </label>
+                            <small style="color: var(--dark-gray); margin-top: 5px; display: block;">
+                                勾选表示该设备已完成辅助邮箱绑定
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeEditDeviceModal()" class="secondary">取消</button>
+                <button onclick="saveDeviceConfig()" class="save-btn">💾 保存配置</button>
             </div>
         </div>
     </div>
