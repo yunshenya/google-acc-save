@@ -39,7 +39,7 @@ async def start_app_state(package_name, pad_code, task_manager):
                     await asyncio.sleep(2)
 
                 case 1:
-                    await update_cloud_status(pad_code=pad_code, current_status="启动app成功")
+                    await update_cloud_status(pad_code=pad_code, current_status="开始点击脚本")
                     await sleep(5)
                     await click([pad_code], [
                         Position(
@@ -104,7 +104,8 @@ async def start_app_state(package_name, pad_code, task_manager):
                             action_type=ActionType.lift
                         ).to_dict()
                     ])
-                    logger.success(f"{pad_code}: 点击成功")
+                    logger.success(f"{pad_code}: 启动app成功")
+                    await update_cloud_status(pad_code=pad_code, current_status="app启动成功")
                     break
             total_try_count += 1
 

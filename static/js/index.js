@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             row.innerHTML = `
-            <td title="设备代码">${status.pad_code || "未知设备"}</td>
+            <td title="${status.pad_code}">${status.pad_name || "未知设备"}</td>
             <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
             <td title="运行次数">${status.number_of_run}</td>
             <td title="成功次数">${status.num_of_success}</td>
@@ -1140,7 +1140,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             return `
             <tr data-code="${device.padCode}" style="border-bottom: 1px solid #eee;">
-                <td style="padding: 10px;">${device.padCode}</td>
+                <td title="${device.padCode}" style="padding: 10px;">${device.padName}</td>
                 <td style="padding: 10px;">${statusBadge}</td>
                 <td style="padding: 10px; text-align: center;">${configBadge}</td>
                 <td style="padding: 10px; text-align: center;">
