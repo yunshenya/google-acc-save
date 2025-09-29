@@ -66,6 +66,8 @@ function populateForm(config) {
     }
     document.getElementById('primaryPackage').value = config.package_names.primary || '';
     document.getElementById('secondaryPackage').value = config.package_names.secondary || '';
+    document.getElementById('chromePackage').value = config.package_names.chrome || 'com.android.chrome';
+    document.getElementById('clashPackage').value = config.package_names.clash || 'com.github.kr328.clash';
     populateArrayInput('templeIdsContainer', config.temple_ids, 'temple_id');
 
     // 代理配置
@@ -170,8 +172,10 @@ async function savePadCodes() {
 async function savePackageNames() {
     const primaryPackage = document.getElementById('primaryPackage').value.trim();
     const secondaryPackage = document.getElementById('secondaryPackage').value.trim();
+    const chromePackage = document.getElementById('chromePackage').value.trim();
+    const clashPackage = document.getElementById('clashPackage').value.trim();
 
-    if (!primaryPackage && !secondaryPackage) {
+    if (!primaryPackage && !secondaryPackage && !chromePackage && !clashPackage) {
         showError('请至少填写一个包名');
         return;
     }
@@ -179,6 +183,8 @@ async function savePackageNames() {
     const packageNames = {};
     if (primaryPackage) packageNames.primary = primaryPackage;
     if (secondaryPackage) packageNames.secondary = secondaryPackage;
+    if (chromePackage) packageNames.chrome = chromePackage;
+    if (clashPackage) packageNames.clash = clashPackage;
 
     await saveConfigItem({ package_names: packageNames }, '包名配置');
 }

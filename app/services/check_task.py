@@ -49,8 +49,8 @@ class TaskManager:
         self._temple_id_list = config.TEMPLE_IDS
         self._pkg_name_of_script = config.get_package_name("primary")
         self._pkg_name_of_script2 = config.get_package_name("secondary")
-        self._pkg_name_of_chrome = "com.android.chrome"
-        self._pkg_name_of_clash = "com.github.kr328.clash"
+        self._pkg_name_of_chrome = config.get_package_name("chrome") or "com.android.chrome"
+        self._pkg_name_of_clash = config.get_package_name("clash") or "com.github.kr328.clash"
 
     async def add_task(self, pad_code: str, task: asyncio.Task) -> None:
         """添加主任务"""

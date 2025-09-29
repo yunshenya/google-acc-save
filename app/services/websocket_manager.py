@@ -58,7 +58,7 @@ class WebSocketManager:
         self._lock = asyncio.Lock()
         self.heartbeat_interval = 30  # 心跳间隔（秒）
         self.heartbeat_task: Optional[asyncio.Task] = None
-        self.timeout_check_minutes = config.get_timeout("global") - 5
+        self.timeout_check_minutes = config.get_timeout("global")
 
     async def connect(self, websocket: WebSocket):
         """建立WebSocket连接"""

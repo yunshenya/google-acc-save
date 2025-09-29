@@ -5,12 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加查看转发邮箱">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/comm.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/comm.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/websocket_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/websocket_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/static/js/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/config.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/config.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/pade_code.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -143,7 +144,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.run">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
@@ -371,8 +372,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test" />
         <item itemvalue="Python.run" />
+        <item itemvalue="Python.test" />
         <item itemvalue="数据库脚本.data.sql" />
         <item itemvalue="Python.status" />
         <item itemvalue="数据库脚本.proxy.sql" />
@@ -613,23 +614,7 @@
       <workItem from="1759066936395" duration="142000" />
       <workItem from="1759067089011" duration="325000" />
       <workItem from="1759067550350" duration="38000" />
-      <workItem from="1759109346636" duration="16120000" />
-    </task>
-    <task id="LOCAL-00146" summary="添加统计页面">
-      <option name="closed" value="true" />
-      <created>1758801064054</created>
-      <option name="number" value="00146" />
-      <option name="presentableId" value="LOCAL-00146" />
-      <option name="project" value="LOCAL" />
-      <updated>1758801064054</updated>
-    </task>
-    <task id="LOCAL-00147" summary="添加统计页面">
-      <option name="closed" value="true" />
-      <created>1758801079653</created>
-      <option name="number" value="00147" />
-      <option name="presentableId" value="LOCAL-00147" />
-      <option name="project" value="LOCAL" />
-      <updated>1758801079653</updated>
+      <workItem from="1759109346636" duration="20616000" />
     </task>
     <task id="LOCAL-00148" summary="添加统计页面">
       <option name="closed" value="true" />
@@ -1007,7 +992,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759118490945</updated>
     </task>
-    <option name="localTasksCounter" value="195" />
+    <task id="LOCAL-00195" summary="增加查看转发邮箱">
+      <option name="closed" value="true" />
+      <created>1759127335014</created>
+      <option name="number" value="00195" />
+      <option name="presentableId" value="LOCAL-00195" />
+      <option name="project" value="LOCAL" />
+      <updated>1759127335014</updated>
+    </task>
+    <task id="LOCAL-00196" summary="增加查看转发邮箱">
+      <option name="closed" value="true" />
+      <created>1759131179142</created>
+      <option name="number" value="00196" />
+      <option name="presentableId" value="LOCAL-00196" />
+      <option name="project" value="LOCAL" />
+      <updated>1759131179142</updated>
+    </task>
+    <option name="localTasksCounter" value="197" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

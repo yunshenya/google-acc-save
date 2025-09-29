@@ -49,13 +49,6 @@ async def statistics_page():
         content = f.read()
     return HTMLResponse(content=content)
 
-@router.get("/pad-code-management", response_class=HTMLResponse)
-async def pad_code_management_page():
-    """设备代码管理页面"""
-    with open("templates/pade_code.html", "r", encoding="utf-8") as f:
-        content = f.read()
-    return HTMLResponse(content=content)
-
 @router.get("/favicon.ico")
 async def favicon() -> FileResponse:
     return FileResponse("static/img/favicon.ico")
