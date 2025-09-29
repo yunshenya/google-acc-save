@@ -357,7 +357,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 type: 'request_full_update',
                 timestamp: new Date().toISOString()
             }));
-            console.log('📡 请求完整状态更新');
         } else {
             fetchCloudStatus().then(r => {});
         }

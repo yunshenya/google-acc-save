@@ -1,12 +1,15 @@
 import datetime
+import random
 from typing import List, Dict, Any
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 
-from app.config import Config
+from app.config import Config, config
+from app.curd.status import set_proxy_status, add_cloud_status
 from app.dependencies.auth_middleware import verify_token
-from app.dependencies.utils import get_pad_code_list
-from app.services.logger import get_logger
+from app.dependencies.countries import manager
+from app.dependencies.utils import get_pad_code_list, replace_pad
+from app.services.logger import get_logger, task_logger
 
 router = APIRouter()
 logger = get_logger("pad_code_router")
@@ -226,6 +229,17 @@ async def add_pad_codes(
                 "message": f"所有提供的代码都已存在于配置中: {', '.join(already_exists)}"
             }
 
+        for i, pad_code in enumerate(new_codes):
+            template_id = random.choice(config.TEMPLE_IDS)
+            await add_cloud_status(pad_code, template_id)
+            default_proxy: Any = manager.get_proxy_countries()
+            selected_proxy = random.choice(default_proxy)
+            await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
+            if not config.DEBUG:
+                result = await replace_pad([pad_code], template_id=template_id)
+                task_logger.info(f"云机启动完成: {pad_code}, 模板: {template_id}, 结果: {result.get('msg', '未知')}")
+            else:
+                task_logger.info(f"调试模式 - 云机模拟启动: {pad_code}, 模板: {template_id}")
         # 更新配置
         updated_codes = list(current_codes | codes_to_add)
         Config.update_config({

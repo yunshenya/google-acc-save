@@ -38,22 +38,23 @@ async def add_cloud_status(pad_code: str, temple_id: int, current_status: str = 
 
         except IntegrityError:
             await db.rollback()
-            await update_cloud_status(pad_code=pad_code, current_status="新机中")
-            task_logger.warning(f"云机已存在: {pad_code}")
 
 
 async def remove_cloud_status(pad_code: str):
     """删除云机状态"""
     async with SessionLocal() as db:
-        from sqlalchemy import select, delete
-        stmt = select(Status).filter(cast(ColumnElement[bool], Status.pad_code == pad_code))
-        result = await db.execute(stmt)
-        account = result.scalars().first()
-        if account is None:
-            raise HTTPException(status_code=404, detail="云机不存在")
-        await db.execute(delete(Status).filter(cast(ColumnElement[bool], Status.pad_code == pad_code)))
-        await db.commit()
-        task_logger.success(f"云机数据 {pad_code} : 删除成功")
+        try:
+            from sqlalchemy import select, delete
+            stmt = select(Status).filter(cast(ColumnElement[bool], Status.pad_code == pad_code))
+            result = await db.execute(stmt)
+            account = result.scalars().first()
+            if account is None:
+                raise HTTPException(status_code=404, detail="云机不存在")
+            await db.execute(delete(Status).filter(cast(ColumnElement[bool], Status.pad_code == pad_code)))
+            await db.commit()
+            task_logger.success(f"云机数据 {pad_code} : 删除成功")
+        except IntegrityError:
+            await db.rollback()
 
 
 async def update_cloud_status(pad_code: str,

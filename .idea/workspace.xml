@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加查看转发邮箱">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/pad_code.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/pad_code.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +52,7 @@
     <option name="directoryName" value="rmdDhQZ8" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="AISelfReview" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -610,23 +612,7 @@
       <workItem from="1759066936395" duration="142000" />
       <workItem from="1759067089011" duration="325000" />
       <workItem from="1759067550350" duration="38000" />
-      <workItem from="1759109346636" duration="25167000" />
-    </task>
-    <task id="LOCAL-00150" summary="增加日志系统">
-      <option name="closed" value="true" />
-      <created>1758880230396</created>
-      <option name="number" value="00150" />
-      <option name="presentableId" value="LOCAL-00150" />
-      <option name="project" value="LOCAL" />
-      <updated>1758880230396</updated>
-    </task>
-    <task id="LOCAL-00151" summary="增加日志系统">
-      <option name="closed" value="true" />
-      <created>1758880808714</created>
-      <option name="number" value="00151" />
-      <option name="presentableId" value="LOCAL-00151" />
-      <option name="project" value="LOCAL" />
-      <updated>1758880808714</updated>
+      <workItem from="1759109346636" duration="28441000" />
     </task>
     <task id="LOCAL-00152" summary="解决一些小bug">
       <option name="closed" value="true" />
@@ -1004,7 +990,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759136374999</updated>
     </task>
-    <option name="localTasksCounter" value="199" />
+    <task id="LOCAL-00199" summary="增加查看转发邮箱">
+      <option name="closed" value="true" />
+      <created>1759136782194</created>
+      <option name="number" value="00199" />
+      <option name="presentableId" value="LOCAL-00199" />
+      <option name="project" value="LOCAL" />
+      <updated>1759136782194</updated>
+    </task>
+    <task id="LOCAL-00200" summary="增加查看转发邮箱">
+      <option name="closed" value="true" />
+      <created>1759138104440</created>
+      <option name="number" value="00200" />
+      <option name="presentableId" value="LOCAL-00200" />
+      <option name="project" value="LOCAL" />
+      <updated>1759138104440</updated>
+    </task>
+    <option name="localTasksCounter" value="201" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
