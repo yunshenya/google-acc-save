@@ -60,7 +60,10 @@ async function loadConfig() {
 // 填充表单
 function populateForm(config) {
     // 基础配置
-    populateArrayInput('padCodesContainer', config.pad_codes, 'pad_code');
+    const padCodeCount = document.getElementById('padCodeCount');
+    if (padCodeCount) {
+        padCodeCount.textContent = (config.pad_codes || []).length.toLocaleString();
+    }
     document.getElementById('primaryPackage').value = config.package_names.primary || '';
     document.getElementById('secondaryPackage').value = config.package_names.secondary || '';
     populateArrayInput('templeIdsContainer', config.temple_ids, 'temple_id');

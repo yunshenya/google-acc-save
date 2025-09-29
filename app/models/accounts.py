@@ -7,8 +7,6 @@ class AccountCreate(BaseModel):
     account: str
     password: str
     pad_code: str | None = None
-    for_email: str | None = None
-    for_password: str | None = None
 
 
 class AndroidPadCodeRequest(BaseModel):

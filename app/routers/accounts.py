@@ -20,13 +20,11 @@ router = APIRouter()
 async def create_account(account: AccountCreate) -> AccountResponse:
     async with SessionLocal() as db:
         if account.account is None or account.password is None:
-            raise HTTPException(status_code=404, detail="Account or password is empty")
+            raise HTTPException(status_code=404, detail="帐户或密码为空")
         try:
             db_account = Account(
                 account=account.account,
                 password=account.password,
-                for_email=account.for_email,
-                for_password=account.for_password,
                 created_at=datetime.datetime.now()
             )
             if account.pad_code is not None:
@@ -787,7 +785,7 @@ async def get_account(account_id: int) -> AccountResponse:
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
-            raise HTTPException(status_code=404, detail="账号不存在")
+            raise HTTPException(status_code=404, detail=f"{account_id}: 账号不存在")
         return account
 
 
@@ -799,7 +797,7 @@ async def update_forward(forward: ForwardRequest) -> AccountResponse:
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
-            raise HTTPException(status_code=404, detail="账号不存在")
+            raise HTTPException(status_code=404, detail=f"{forward.account}: 账号不存在")
         account.for_email = forward.for_email
         account.for_password = forward.for_password
         account.image_base64 = forward.image_base64
@@ -819,7 +817,7 @@ async def update_secondary_mail(secondary_mail: SecondaryEmail) -> AccountRespon
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
-            raise HTTPException(status_code=404, detail="账号不存在")
+            raise HTTPException(status_code=404, detail=f"{secondary_mail.account}:账号不存在")
         account.is_boned_secondary_email = secondary_mail.is_boned_secondary_email
         account.for_email = secondary_mail.for_email
         account.for_password = secondary_mail.for_password
@@ -838,7 +836,7 @@ async def update_account(account_id: int, account_update: AccountUpdate) -> Acco
             result = await db.execute(stmt)
             db_account = result.scalars().first()
             if db_account is None:
-                raise HTTPException(status_code=404, detail="账号不存在")
+                raise HTTPException(status_code=404, detail=f"{account_id}: 账号不存在")
 
             # 仅更新提供的字段
             if account_update.account is not None:
@@ -868,7 +866,7 @@ async def delete_account(account_id: int) -> dict:
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
-            raise HTTPException(status_code=404, detail="账号不存在")
+            raise HTTPException(status_code=404, detail=f"{account_id}:账号不存在")
 
         await db.execute(delete(Account).filter(cast(ColumnElement[bool], Account.id == account_id)))
         await db.commit()

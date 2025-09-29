@@ -17,7 +17,6 @@
             <button class="secondary" id="toggleView">切换到状态监控</button>
             <button class="secondary" id="statisticsBtn" onclick="window.location.href='/statistics'">📊 统计分析</button>
             <button class="secondary" onclick="window.location.href='/proxy-collection-page'">🌐 代理集合</button>
-            <button class="secondary" onclick="window.location.href='/pad-code-management'">📱 设备代码管理</button>
             <button class="secondary" onclick="window.location.href='/config'">⚙️ 配置管理</button>
             <button class="logout-btn" id="logoutBtn">退出登录</button>
         </div>
@@ -132,6 +131,7 @@
                 <div class="connection-status" id="connectionStatus">
                     <span class="status-info">● 未连接</span>
                 </div>
+                <button onclick="showDeviceManager()" class="secondary">📱 设备管理</button>
                 <button id="refreshAllStatus">刷新所有状态</button>
             </div>
         </div>
@@ -156,17 +156,77 @@
                 </tr>
                 </thead>
                 <tbody id="statusTableBody">
-                <!-- 状态数据将通过JavaScript动态填充 -->
                 </tbody>
             </table>
 
             <div class="empty-state" id="statusEmptyState" style="display: none;">
                 <svg fill="none" height="48" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="48">
-                    <path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round"
-                          stroke-linejoin="round"/>
+                    <path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 <h3>暂无状态数据</h3>
                 <p>系统正在获取云机状态信息...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 设备管理弹窗 -->
+    <div id="deviceManagerModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px; max-height: 90vh;">
+            <div class="modal-header">
+                <h3>📱 设备代码管理</h3>
+                <button class="modal-close" onclick="closeDeviceManager()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- 统计信息 -->
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px;">
+                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #1976d2;" id="configuredCount">0</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px;">已配置设备</div>
+                    </div>
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #388e3c;" id="cloudTotalCount">0</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px;">云端可用</div>
+                    </div>
+                    <div style="background: #fff3e0; padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 24px; font-weight: bold; color: #f57c00;" id="notConfiguredCount">0</div>
+                        <div style="font-size: 12px; color: #666; margin-top: 5px;">未配置设备</div>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button onclick="syncAllDevices()" class="add-btn">🔄 导入所有云端设备</button>
+                    <button onclick="syncOnlineDevices()" class="add-btn">📡 仅导入在线设备</button>
+                    <button onclick="removeInvalidDevices()" class="remove-btn">🗑️ 移除无效设备</button>
+                </div>
+
+                <!-- 设备列表 -->
+                <div style="margin-bottom: 15px;">
+                    <input type="text"
+                           id="deviceSearchInput"
+                           placeholder="搜索设备代码或名称..."
+                           style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+                           oninput="filterDeviceList()">
+                </div>
+
+                <div style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead style="position: sticky; top: 0; background: #f8f9fa;">
+                        <tr>
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd;">设备代码</th>
+                            <th style="padding: 10px; text-align: left; border-bottom: 2px solid #ddd;">状态</th>
+                            <th style="padding: 10px; text-align: center; border-bottom: 2px solid #ddd;">配置</th>
+                            <th style="padding: 10px; text-align: center; border-bottom: 2px solid #ddd;">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody id="deviceListBody">
+                        <!-- 动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeDeviceManager()" class="secondary">关闭</button>
             </div>
         </div>
     </div>

@@ -1074,8 +1074,229 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('刷新单个状态失败:', error);
         }
     }
+    // ========== 设备管理功能 ==========
+    let allCloudDevices = [];
+    let currentConfiguredDevices = [];
+
+// 显示设备管理器
+    async function showDeviceManager() {
+        document.getElementById('deviceManagerModal').style.display = 'flex';
+        await loadDeviceManagerData();
+    }
+
+// 关闭设备管理器
+    function closeDeviceManager() {
+        document.getElementById('deviceManagerModal').style.display = 'none';
+    }
+
+// 加载设备管理数据
+    async function loadDeviceManagerData() {
+        try {
+            // 并行获取云端设备和当前配置
+            const [cloudResponse, configResponse] = await Promise.all([
+                authenticatedFetch('/api/pad-codes/available'),
+                authenticatedFetch('/api/pad-codes/current')
+            ]);
+
+            if (cloudResponse && cloudResponse.ok && configResponse && configResponse.ok) {
+                const cloudData = await cloudResponse.json();
+                const configData = await configResponse.json();
+
+                allCloudDevices = cloudData.data || [];
+                currentConfiguredDevices = configData.data || [];
+
+                updateDeviceStats();
+                renderDeviceList();
+            }
+        } catch (error) {
+            console.error('加载设备数据失败:', error);
+            showError('加载设备数据失败: ' + error.message);
+        }
+    }
+
+// 更新统计信息
+    function updateDeviceStats() {
+        const configuredSet = new Set(currentConfiguredDevices);
+        const notConfigured = allCloudDevices.filter(d => !configuredSet.has(d.padCode));
+
+        document.getElementById('configuredCount').textContent = currentConfiguredDevices.length;
+        document.getElementById('cloudTotalCount').textContent = allCloudDevices.length;
+        document.getElementById('notConfiguredCount').textContent = notConfigured.length;
+    }
+
+// 渲染设备列表
+    function renderDeviceList() {
+        const tbody = document.getElementById('deviceListBody');
+        const configuredSet = new Set(currentConfiguredDevices);
+
+        tbody.innerHTML = allCloudDevices.map(device => {
+            const isConfigured = configuredSet.has(device.padCode);
+            const statusBadge = device.status === 1
+                ? '<span style="color: #27ae60;">🟢 在线</span>'
+                : '<span style="color: #e74c3c;">🔴 离线</span>';
+            const configBadge = isConfigured
+                ? '<span style="color: #27ae60;">✓</span>'
+                : '<span style="color: #e74c3c;">✗</span>';
+
+            return `
+            <tr data-code="${device.padCode}" style="border-bottom: 1px solid #eee;">
+                <td style="padding: 10px;">${device.padCode}</td>
+                <td style="padding: 10px;">${statusBadge}</td>
+                <td style="padding: 10px; text-align: center;">${configBadge}</td>
+                <td style="padding: 10px; text-align: center;">
+                    ${isConfigured
+                ? `<button onclick="removeDevice('${device.padCode}')" class="remove-btn" style="padding: 4px 8px; font-size: 12px;">移除</button>`
+                : `<button onclick="addDevice('${device.padCode}')" class="add-btn" style="padding: 4px 8px; font-size: 12px;">添加</button>`
+            }
+                </td>
+            </tr>
+        `;
+        }).join('');
+    }
+
+// 筛选设备列表
+    function filterDeviceList() {
+        const searchTerm = document.getElementById('deviceSearchInput').value.toLowerCase();
+        const rows = document.querySelectorAll('#deviceListBody tr');
+
+        rows.forEach(row => {
+            const code = row.dataset.code.toLowerCase();
+            row.style.display = code.includes(searchTerm) ? '' : 'none';
+        });
+    }
+
+// 添加单个设备
+    async function addDevice(padCode) {
+        try {
+            const response = await authenticatedFetch('/api/pad-codes/add', {
+                method: 'POST',
+                body: JSON.stringify({ selected_codes: [padCode] })
+            });
+
+            if (response && response.ok) {
+                showSuccess('设备添加成功');
+                await loadDeviceManagerData();
+            }
+        } catch (error) {
+            showError('添加失败: ' + error.message);
+        }
+    }
+
+// 移除单个设备
+    async function removeDevice(padCode) {
+        if (!confirm(`确定移除设备 ${padCode}?`)) return;
+
+        try {
+            const response = await authenticatedFetch('/api/pad-codes/remove', {
+                method: 'DELETE',
+                body: JSON.stringify({ selected_codes: [padCode] })
+            });
+
+            if (response && response.ok) {
+                showSuccess('设备移除成功');
+                await loadDeviceManagerData();
+            }
+        } catch (error) {
+            showError('移除失败: ' + error.message);
+        }
+    }
+
+// 同步所有设备
+    async function syncAllDevices() {
+        if (!confirm('确定导入所有云端设备?')) return;
+
+        try {
+            const response = await authenticatedFetch('/api/pad-codes/sync', {
+                method: 'POST',
+                body: JSON.stringify({ selected_codes: [] })
+            });
+
+            if (response && response.ok) {
+                showSuccess('导入成功');
+                await loadDeviceManagerData();
+            }
+        } catch (error) {
+            showError('导入失败: ' + error.message);
+        }
+    }
+
+// 同步在线设备
+    async function syncOnlineDevices() {
+        const onlineCodes = allCloudDevices
+            .filter(d => d.status === 1)
+            .map(d => d.padCode);
+
+        if (onlineCodes.length === 0) {
+            showError('没有在线设备');
+            return;
+        }
+
+        if (!confirm(`确定导入 ${onlineCodes.length} 个在线设备?`)) return;
+
+        try {
+            const response = await authenticatedFetch('/api/pad-codes/add', {
+                method: 'POST',
+                body: JSON.stringify({ selected_codes: onlineCodes })
+            });
+
+            if (response && response.ok) {
+                showSuccess('在线设备导入成功');
+                await loadDeviceManagerData();
+            }
+        } catch (error) {
+            showError('导入失败: ' + error.message);
+        }
+    }
+
+// 移除无效设备
+    async function removeInvalidDevices() {
+        const cloudSet = new Set(allCloudDevices.map(d => d.padCode));
+        const invalidCodes = currentConfiguredDevices.filter(code => !cloudSet.has(code));
+
+        if (invalidCodes.length === 0) {
+            showError('没有无效设备');
+            return;
+        }
+
+        if (!confirm(`确定移除 ${invalidCodes.length} 个无效设备?\n\n${invalidCodes.join('\n')}`)) return;
+
+        try {
+            const response = await authenticatedFetch('/api/pad-codes/remove', {
+                method: 'DELETE',
+                body: JSON.stringify({ selected_codes: invalidCodes })
+            });
+
+            if (response && response.ok) {
+                showSuccess('无效设备移除成功');
+                await loadDeviceManagerData();
+            }
+        } catch (error) {
+            showError('移除失败: ' + error.message);
+        }
+    }
+
+// 显示成功消息
+    function showSuccess(message) {
+        const div = document.createElement('div');
+        div.style.cssText = `
+        position: fixed; top: 20px; right: 20px; z-index: 10000;
+        background: #27ae60; color: white; padding: 15px 20px;
+        border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    `;
+        div.textContent = message;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 3000);
+    }
 
     window.refreshSingleStatus = refreshSingleStatus;
+    window.showDeviceManager = showDeviceManager;
+    window.closeDeviceManager = closeDeviceManager;
+    window.syncAllDevices = syncAllDevices;
+    window.syncOnlineDevices = syncOnlineDevices;
+    window.removeInvalidDevices = removeInvalidDevices;
+    window.filterDeviceList = filterDeviceList;
+    window.addDevice = addDevice;
+    window.removeDevice = removeDevice
 });
 
 // 添加CSS动画
