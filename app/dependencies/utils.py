@@ -4,6 +4,7 @@ from typing import Optional
 
 from loguru import logger
 
+from app.curd.status import update_cloud_status
 from app.dependencies.auth import VmosUtil
 
 
@@ -207,36 +208,43 @@ async def check_padTaskDetail(tasks_list: list[str]) -> int:
             case -1:
                 if errorMsg:
                     logger.error(f"{task_status}: {padCode}：{errorMsg}")
+                    await update_cloud_status(pad_code=padCode, current_status=errorMsg)
                 return -1
 
             case -2:
                 if errorMsg:
                     logger.warning(f"{task_status}： {padCode}：{errorMsg}")
+                    await update_cloud_status(pad_code=padCode, current_status=errorMsg)
                 return -1
 
             case -3:
                 if errorMsg:
                     logger.warning(f"{task_status}: {padCode}：{errorMsg}")
+                    await update_cloud_status(pad_code=padCode, current_status=errorMsg)
                 return -1
 
             case -4:
                 if errorMsg:
                     logger.warning(f"{task_status}: {padCode}：{errorMsg}")
+                    await update_cloud_status(pad_code=padCode, current_status=errorMsg)
                 return -1
 
             case 1:
                 if errorMsg:
                     logger.info(f"{task_status}: {padCode}：{errorMsg}")
+                    await update_cloud_status(pad_code=padCode, current_status=errorMsg)
                 return 0
 
             case 2:
                 if errorMsg:
                     logger.info(f"{task_status}: {padCode}：{errorMsg}")
+                    await update_cloud_status(pad_code=padCode, current_status=errorMsg)
                 return 0
 
             case 3:
                 if errorMsg:
                     logger.success(f"{task_status}: {padCode}：{errorMsg}")
+                    await update_cloud_status(pad_code=padCode, current_status=errorMsg)
                 return 1
 
         return 0

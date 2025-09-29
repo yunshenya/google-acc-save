@@ -163,7 +163,7 @@ async def reboot_task_status(data, package_name, task_manager):
                 task_logger.success(f"{pad_code}: 重启成功，等待15秒后启动应用")
                 await update_cloud_status(pad_code=pad_code, current_status="重启成功，准备启动应用")
                 await asyncio.sleep(15)
-                await start_app_state(package_name, pad_code, task_manager)
+                await start_app_state(package_name=package_name, pad_code=pad_code, task_manager=task_manager)
 
             case _:
                 task_logger.error(f"{pad_code}: 重启未知任务状态: {task_status}")
@@ -269,8 +269,8 @@ async def adb_call_task_status(data):
     try:
         match TaskStatus(task_status):
             case TaskStatus.COMPLETED:
-                task_logger.success(f"{pad_code}: 获取root权限成功")
-                await update_cloud_status(pad_code=pad_code, current_status="获取root权限成功")
+                task_logger.success(f"{pad_code}: 执行adb指令成功")
+                await update_cloud_status(pad_code=pad_code, current_status="执行adb指令成功")
 
             case TaskStatus.RUNNING:
                 task_logger.info(f"{pad_code}: 调用adb中")

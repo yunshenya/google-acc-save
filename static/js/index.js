@@ -405,7 +405,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
 
             row.innerHTML = `
-            <td title="设备代码">${status.pad_code}</td>
+            <td title="设备代码">${status.pad_code || "未知设备"}</td>
             <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
             <td title="运行次数">${status.number_of_run}</td>
             <td title="成功次数">${status.num_of_success}</td>
