@@ -68,8 +68,8 @@ async def config_page():
         content = f.read()
     return HTMLResponse(content=content)
 
-@router.post("/status")
-async def status(android_code: AndroidPadCodeRequest):
+@router.post("/status", response_model=dict[str, str])
+async def status(android_code: AndroidPadCodeRequest) -> dict[str, str]:
     pad_code = android_code.pad_code
     match android_code.type:
         case 0:
@@ -95,7 +95,7 @@ async def status(android_code: AndroidPadCodeRequest):
                 result = await replace_pad([pad_code], template_id=template_id)
                 callback_logger.info(f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}")
             else:
-                callback_logger.info(f"{pad_code}: 调试模式 - 模拟一键新机完成")
+                callback_logger.info(f"{pad_code}: 调试模式未启用一键新机")
             return {"message": "一键新机启动成功", "template_id": template_id, "country": selected_proxy.country}
         else:
             await remove_cloud_status(pad_code=pad_code)
