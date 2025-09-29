@@ -16,7 +16,6 @@
             <button id="validateBtn" class="validate-btn">验证配置</button>
             <button id="backupBtn" class="secondary">💾 备份配置</button>
             <button id="resetBtn" class="reset-btn">重置默认</button>
-            <button id="saveBtn" class="save-btn">保存配置</button>
             <button class="secondary" onclick="window.location.href='/'">返回主页</button>
         </div>
     </div>
@@ -50,137 +49,154 @@
         <button class="tab-btn" onclick="switchTab('environment')">🌍 环境变量</button>
         <button class="tab-btn" onclick="switchTab('backup')">💾 备份管理</button>
     </div>
-
-    <!-- 基础配置标签页 -->
-    <div id="basicTab" class="tab-content active">
-        <!-- 设备代码配置 -->
-        <div class="config-section">
+    <!-- 设备代码配置 - 独立保存 -->
+    <div class="config-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3>📱 设备代码配置</h3>
-            <div class="form-group">
-                <label>设备代码列表</label>
-                <div class="array-input" id="padCodesContainer">
-                    <!-- 动态生成 -->
-                </div>
-                <button type="button" class="add-btn" onclick="addPadCode()">+ 添加设备代码</button>
-            </div>
+            <button onclick="savePadCodes()" class="save-btn">💾 保存设备代码</button>
         </div>
+        <div class="form-group">
+            <label>设备代码列表</label>
+            <div class="array-input" id="padCodesContainer"></div>
+            <button type="button" class="add-btn" onclick="addPadCode()">+ 添加设备代码</button>
+        </div>
+    </div>
 
-        <!-- 包名配置 -->
-        <div class="config-section">
+    <!-- 包名配置 - 独立保存 -->
+    <div class="config-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3>📦 应用包名配置</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>主要包名</label>
-                    <input type="text" id="primaryPackage" placeholder="com.example.primary">
-                </div>
-                <div class="form-group">
-                    <label>次要包名</label>
-                    <input type="text" id="secondaryPackage" placeholder="com.example.secondary">
-                </div>
+            <button onclick="savePackageNames()" class="save-btn">💾 保存包名</button>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>主要包名</label>
+                <input type="text" id="primaryPackage" placeholder="com.example.primary">
+            </div>
+            <div class="form-group">
+                <label>次要包名</label>
+                <input type="text" id="secondaryPackage" placeholder="com.example.secondary">
             </div>
         </div>
+    </div>
 
-        <!-- 模板ID配置 -->
-        <div class="config-section">
+    <!-- 模板ID配置 - 独立保存 -->
+    <div class="config-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3>🎯 模板ID配置</h3>
-            <div class="form-group">
-                <label>模板ID列表</label>
-                <div class="array-input" id="templeIdsContainer">
-                    <!-- 动态生成 -->
-                </div>
-                <button type="button" class="add-btn" onclick="addTempleId()">+ 添加模板ID</button>
-            </div>
+            <button onclick="saveTempleIds()" class="save-btn">💾 保存模板ID</button>
         </div>
+        <div class="form-group">
+            <label>模板ID列表</label>
+            <div class="array-input" id="templeIdsContainer"></div>
+            <button type="button" class="add-btn" onclick="addTempleId()">+ 添加模板ID</button>
+        </div>
+    </div>
 
-        <!-- 默认代理配置 -->
-        <div class="config-section">
+    <!-- 代理配置 - 独立保存 -->
+    <div class="config-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
             <h3>🌐 默认代理配置</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>国家</label>
-                    <input type="text" id="proxyCountry" placeholder="摩洛哥">
-                </div>
-                <div class="form-group">
-                    <label>国家代码</label>
-                    <input type="text" id="proxyCode" placeholder="ma">
-                </div>
-                <div class="form-group">
-                    <label>代理URL</label>
-                    <input type="url" id="proxyUrl" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label>时区</label>
-                    <input type="text" id="proxyTimezone" placeholder="Africa/Casablanca">
-                </div>
-                <div class="form-group">
-                    <label>语言</label>
-                    <input type="text" id="proxyLanguage" placeholder="English">
-                </div>
-                <div class="form-group">
-                    <label>纬度</label>
-                    <input type="number" id="proxyLatitude" step="0.0001" min="-90" max="90" placeholder="35.7758">
-                </div>
-                <div class="form-group">
-                    <label>经度</label>
-                    <input type="number" id="proxyLongitude" step="0.0001" min="-180" max="180" placeholder="-5.7909">
-                </div>
-            </div>
+            <button onclick="saveProxyConfig()" class="save-btn">💾 保存代理</button>
         </div>
-
-        <!-- 应用URL配置 -->
-        <div class="config-section">
-            <h3>🔗 应用下载链接配置</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>Clash 下载链接</label>
-                    <input type="url" id="clashUrl" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label>Script 下载链接</label>
-                    <input type="url" id="scriptUrl" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label>Script2 下载链接</label>
-                    <input type="url" id="script2Url" placeholder="https://...">
-                </div>
-                <div class="form-group">
-                    <label>Chrome 下载链接</label>
-                    <input type="url" id="chromeUrl" placeholder="https://...">
-                </div>
-            </div>
-        </div>
-
-        <!-- 超时配置 -->
-        <div class="config-section">
-            <h3>⏱️ 超时配置</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label>全局超时时间（分钟）</label>
-                    <input type="number" id="globalTimeout" min="1" max="120" placeholder="12">
-                </div>
-                <div class="form-group">
-                    <label>任务检查超时时间（分钟）</label>
-                    <input type="number" id="checkTaskTimeout" min="1" max="60" placeholder="5">
-                </div>
-            </div>
-        </div>
-
-        <!-- 调试配置 -->
-        <div class="config-section">
-            <h3>🐛 调试配置</h3>
+        <div class="form-grid">
             <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px;">
-                    <input type="checkbox" id="debugMode" style="width: auto;">
-                    启用调试模式
-                </label>
+                <label>国家</label>
+                <input type="text" id="proxyCountry" placeholder="摩洛哥">
             </div>
+            <div class="form-group">
+                <label>国家代码</label>
+                <input type="text" id="proxyCode" placeholder="ma">
+            </div>
+            <div class="form-group">
+                <label>代理URL</label>
+                <input type="url" id="proxyUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>时区</label>
+                <input type="text" id="proxyTimezone" placeholder="Africa/Casablanca">
+            </div>
+            <div class="form-group">
+                <label>语言</label>
+                <input type="text" id="proxyLanguage" placeholder="English">
+            </div>
+            <div class="form-group">
+                <label>纬度</label>
+                <input type="number" id="proxyLatitude" step="0.0001" placeholder="35.7758">
+            </div>
+            <div class="form-group">
+                <label>经度</label>
+                <input type="number" id="proxyLongitude" step="0.0001" placeholder="-5.7909">
+            </div>
+        </div>
+    </div>
+
+    <!-- 应用URL - 独立保存 -->
+    <div class="config-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>🔗 应用下载链接配置</h3>
+            <button onclick="saveAppUrls()" class="save-btn">💾 保存链接</button>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Clash 下载链接</label>
+                <input type="url" id="clashUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Script 下载链接</label>
+                <input type="url" id="scriptUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Script2 下载链接</label>
+                <input type="url" id="script2Url" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>Chrome 下载链接</label>
+                <input type="url" id="chromeUrl" placeholder="https://...">
+            </div>
+        </div>
+    </div>
+
+    <!-- 超时配置 - 独立保存 -->
+    <div class="config-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>⏱️ 超时配置</h3>
+            <button onclick="saveTimeouts()" class="save-btn">💾 保存超时</button>
+        </div>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>全局超时时间（分钟）</label>
+                <input type="number" id="globalTimeout" min="1" placeholder="12">
+            </div>
+            <div class="form-group">
+                <label>任务检查超时时间（分钟）</label>
+                <input type="number" id="checkTaskTimeout" min="1" placeholder="5">
+            </div>
+        </div>
+    </div>
+
+    <!-- 调试配置 - 独立保存 -->
+    <div class="config-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3>🐛 调试配置</h3>
+            <button onclick="saveDebugMode()" class="save-btn">💾 保存调试</button>
+        </div>
+        <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="debugMode" style="width: auto;">
+                启用调试模式
+            </label>
         </div>
     </div>
 
     <!-- 安全配置标签页 -->
     <div id="securityTab" class="tab-content">
+        <!-- JWT配置 -->
         <div class="config-section">
-            <h3>🔐 JWT 配置</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3>🔐 JWT 配置</h3>
+                <button onclick="saveJwtConfig()" class="save-btn">💾 保存JWT</button>
+            </div>
             <div class="form-group">
                 <label>JWT 密钥</label>
                 <input type="password" id="jwtSecretKey" placeholder="请输入JWT密钥">
@@ -188,8 +204,12 @@
             </div>
         </div>
 
+        <!-- 管理员账户 -->
         <div class="config-section">
-            <h3>👤 管理员账户</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3>👤 管理员账户</h3>
+                <button onclick="saveAdminCredentials()" class="save-btn">💾 保存管理员</button>
+            </div>
             <div class="form-grid">
                 <div class="form-group">
                     <label>管理员用户名</label>
@@ -203,11 +223,15 @@
             </div>
         </div>
 
+        <!-- 数据库配置 -->
         <div class="config-section">
-            <h3>🗄️ 数据库配置</h3>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3>🗄️ 数据库配置</h3>
+                <button onclick="saveDatabaseUrl()" class="save-btn">💾 保存数据库</button>
+            </div>
             <div class="form-group">
                 <label>数据库连接URL</label>
-                <input type="text" id="databaseUrl" placeholder="postgresql+asyncpg://user:password@host:port/database">
+                <input type="text" id="databaseUrl" placeholder="postgresql+asyncpg://...">
             </div>
         </div>
     </div>

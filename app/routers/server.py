@@ -72,9 +72,9 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
     pad_code = android_code.pad_code
     match android_code.type:
         case 0:
-            await update_cloud_status(pad_code, num_other_error=1)
+            await update_cloud_status(pad_code, num_other_error=1, number_of_run=1)
         case 1:
-            await update_cloud_status(pad_code=pad_code, num_of_error=1)
+            await update_cloud_status(pad_code=pad_code, num_of_error=1, number_of_run=1)
     try:
         await task_manager.cancel_timeout_task_only(pad_code)
         if pad_code in config.PAD_CODES:
@@ -82,7 +82,7 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
             template_id = random.choice(config.TEMPLE_IDS)
             default_proxy: Any = manager.get_proxy_countries()
             selected_proxy = random.choice(default_proxy)
-            await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
+            await set_proxy_status(pad_code, selected_proxy)
             await update_cloud_status(
                 pad_code,
                 temple_id=template_id,

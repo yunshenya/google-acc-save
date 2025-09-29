@@ -12,6 +12,7 @@ from app.dependencies.utils import get_cloud_file_task_info, open_root, install_
 from app.entity.install_app_enum import InstallAppEnum
 from app.models.proxy import ProxyResponse
 from app.services.every_task import start_app_state
+from app.services.logger import get_logger
 
 
 class InstallTaskStatus(IntEnum):
@@ -29,6 +30,7 @@ def _cancel_task_simple(task: asyncio.Task) -> None:
     if not task.done():
         task.cancel()
 
+install_logger = get_logger("callback")
 
 class TaskManager:
     def __init__(self):
@@ -47,8 +49,8 @@ class TaskManager:
         self._temple_id_list = config.TEMPLE_IDS
         self._pkg_name_of_script = config.get_package_name("primary")
         self._pkg_name_of_script2 = config.get_package_name("secondary")
-        self._pkg_name_of_chrome = config.get_package_name("chrome")
-        self._pkg_name_of_clash = config.get_package_name("clash")
+        self._pkg_name_of_chrome = "com.android.chrome"
+        self._pkg_name_of_clash = "com.github.kr328.clash"
 
     async def add_task(self, pad_code: str, task: asyncio.Task) -> None:
         """添加主任务"""
@@ -191,10 +193,9 @@ class TaskManager:
         if not await self.has_task(pad_code):
             logger.warning(f"{pad_code}: 任务已不存在")
             return False
-
+        cmd_result: Any = await exe_cmd(pad_code=pad_code, cmd="pm list packages")
         try:
-            result: Any = await exe_cmd(pad_code=pad_code, cmd="pm list packages")
-            system_app_str = result["data"][0]["errorMsg"]
+            system_app_str = cmd_result["data"][0]["errorMsg"]
             packages = [item.replace('package:', '') for item in system_app_str.split() if item.startswith('package:')]
             if task_type.lower() == "script":
                 if self._pkg_name_of_script in packages:
@@ -213,9 +214,11 @@ class TaskManager:
                             await update_cloud_status(pad_code=pad_code, current_status=status_msg)
 
                             # 设置语言
-                            await update_language("en", country=current_proxy.code, pad_code_list=[pad_code])
+                            result_update_language = await update_language("en", country=current_proxy.code, pad_code_list=[pad_code])
+                            install_logger.info(f"{pad_code}: {result_update_language}")
                             # 设置时区
-                            await update_time_zone(pad_code_list=[pad_code], time_zone=current_proxy.time_zone)
+                            result_update_time_zone = await update_time_zone(pad_code_list=[pad_code], time_zone=current_proxy.time_zone)
+                            install_logger.info(f"{pad_code}: {result_update_time_zone}")
                             # 设置GPS
                             await gps_in_ject_info(pad_code_list=[pad_code],
                                                    latitude=current_proxy.latitude,
@@ -248,7 +251,7 @@ class TaskManager:
                     await install_app(pad_code_list=[pad_code], app_url=self._script2_install_url,md5=InstallAppEnum.script2_md5)
 
         except Exception as e:
-            logger.error(f"处理安装结果时出错 {pad_code}: {e}")
+            logger.error(f"处理安装结果时出错 {pad_code}: 错误为{e} ,返回为{cmd_result}")
             return False
 
         return False

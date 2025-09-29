@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 设置事件监听器
 function setupEventListeners() {
-    document.getElementById('saveBtn').addEventListener('click', saveConfig);
     document.getElementById('resetBtn').addEventListener('click', resetConfig);
     document.getElementById('validateBtn').addEventListener('click', validateConfig);
     document.getElementById('backupBtn').addEventListener('click', createBackup);
@@ -150,36 +149,53 @@ function removeArrayItem(button) {
     }
 }
 
-// 收集表单数据
-function collectFormData() {
-    const formData = {};
-
-    // 设备代码
+// 独立保存函数 - 设备代码
+async function savePadCodes() {
     const padCodes = Array.from(document.querySelectorAll('input[name="pad_code"]'))
         .map(input => input.value.trim())
         .filter(value => value !== '');
-    if (padCodes.length > 0) {
-        formData.pad_codes = padCodes;
+
+    if (padCodes.length === 0) {
+        showError('请至少添加一个设备代码');
+        return;
     }
 
-    // 包名
+    await saveConfigItem({ pad_codes: padCodes }, '设备代码');
+}
+
+// 独立保存函数 - 包名
+async function savePackageNames() {
     const primaryPackage = document.getElementById('primaryPackage').value.trim();
     const secondaryPackage = document.getElementById('secondaryPackage').value.trim();
-    if (primaryPackage || secondaryPackage) {
-        formData.package_names = {};
-        if (primaryPackage) formData.package_names.primary = primaryPackage;
-        if (secondaryPackage) formData.package_names.secondary = secondaryPackage;
+
+    if (!primaryPackage && !secondaryPackage) {
+        showError('请至少填写一个包名');
+        return;
     }
 
-    // 模板ID
+    const packageNames = {};
+    if (primaryPackage) packageNames.primary = primaryPackage;
+    if (secondaryPackage) packageNames.secondary = secondaryPackage;
+
+    await saveConfigItem({ package_names: packageNames }, '包名配置');
+}
+
+// 独立保存函数 - 模板ID
+async function saveTempleIds() {
     const templeIds = Array.from(document.querySelectorAll('input[name="temple_id"]'))
         .map(input => parseInt(input.value.trim()))
         .filter(value => !isNaN(value));
-    if (templeIds.length > 0) {
-        formData.temple_ids = templeIds;
+
+    if (templeIds.length === 0) {
+        showError('请至少添加一个模板ID');
+        return;
     }
 
-    // 默认代理
+    await saveConfigItem({ temple_ids: templeIds }, '模板ID');
+}
+
+// 独立保存函数 - 代理配置
+async function saveProxyConfig() {
     const proxyData = {
         country: document.getElementById('proxyCountry').value.trim(),
         code: document.getElementById('proxyCode').value.trim(),
@@ -189,69 +205,64 @@ function collectFormData() {
         latitude: parseFloat(document.getElementById('proxyLatitude').value) || 0,
         longitude: parseFloat(document.getElementById('proxyLongitude').value) || 0
     };
-    if (Object.values(proxyData).some(v => v !== '' && v !== 0)) {
-        formData.default_proxy = proxyData;
+
+    if (!proxyData.country || !proxyData.code) {
+        showError('国家和国家代码是必填项');
+        return;
     }
 
-    // 应用URL
+    await saveConfigItem({ default_proxy: proxyData }, '代理配置');
+}
+
+// 独立保存函数 - 应用URL
+async function saveAppUrls() {
     const urlData = {
         clash: document.getElementById('clashUrl').value.trim(),
         script: document.getElementById('scriptUrl').value.trim(),
         script2: document.getElementById('script2Url').value.trim(),
         chrome: document.getElementById('chromeUrl').value.trim()
     };
-    if (Object.values(urlData).some(v => v !== '')) {
-        formData.app_urls = urlData;
-    }
 
-    // 超时配置
-    const timeoutData = {
-        global_timeout: parseInt(document.getElementById('globalTimeout').value) || undefined,
-        check_task_timeout: parseInt(document.getElementById('checkTaskTimeout').value) || undefined
-    };
-    if (timeoutData.global_timeout || timeoutData.check_task_timeout) {
-        formData.timeouts = timeoutData;
-    }
-
-    // 调试模式
-    formData.debug = document.getElementById('debugMode').checked;
-
-    // 安全配置
-    const jwtKey = document.getElementById('jwtSecretKey').value.trim();
-    if (jwtKey) {
-        formData.jwt_secret_key = jwtKey;
-    }
-
-    const adminUsername = document.getElementById('adminUsername').value.trim();
-    const adminPassword = document.getElementById('adminPassword').value.trim();
-    if (adminUsername || adminPassword) {
-        formData.admin_credentials = {};
-        if (adminUsername) formData.admin_credentials.username = adminUsername;
-        if (adminPassword) formData.admin_credentials.password = adminPassword;
-    }
-
-    const dbUrl = document.getElementById('databaseUrl').value.trim();
-    if (dbUrl) {
-        formData.database_url = dbUrl;
-    }
-
-    return formData;
-}
-
-// 保存配置
-async function saveConfig() {
-    if (!confirm('确定要保存这些配置更改吗？\n\n更改将立即生效并持久化到.env文件，可能影响系统运行。')) {
+    if (!urlData.clash && !urlData.script && !urlData.script2 && !urlData.chrome) {
+        showError('请至少填写一个应用链接');
         return;
     }
 
+    await saveConfigItem({ app_urls: urlData }, '应用链接');
+}
+
+// 独立保存函数 - 超时配置
+async function saveTimeouts() {
+    const globalTimeout = parseInt(document.getElementById('globalTimeout').value);
+    const checkTaskTimeout = parseInt(document.getElementById('checkTaskTimeout').value);
+
+    if (isNaN(globalTimeout) || isNaN(checkTaskTimeout)) {
+        showError('请填写有效的超时时间');
+        return;
+    }
+
+    const timeoutData = {
+        global_timeout: globalTimeout,
+        check_task_timeout: checkTaskTimeout
+    };
+
+    await saveConfigItem({ timeouts: timeoutData }, '超时配置');
+}
+
+// 独立保存函数 - 调试模式
+async function saveDebugMode() {
+    const debug = document.getElementById('debugMode').checked;
+    await saveConfigItem({ debug: debug }, '调试模式');
+}
+
+// 通用保存函数
+async function saveConfigItem(configData, itemName) {
     showLoading(true);
     try {
-        const formData = collectFormData();
-
         const response = await fetch('/api/config', {
             method: 'POST',
             headers: getAuthHeaders(),
-            body: JSON.stringify(formData)
+            body: JSON.stringify(configData)
         });
 
         if (!response.ok) {
@@ -260,19 +271,67 @@ async function saveConfig() {
         }
 
         const result = await response.json();
-        showSuccess(result.message);
+        showSuccess(`${itemName}保存成功！`);
 
-        // 重新加载配置
+        // 1秒后重新加载配置
         setTimeout(() => {
             loadConfig();
         }, 1000);
 
     } catch (error) {
-        console.error('保存配置失败:', error);
-        showError('保存配置失败: ' + error.message);
+        console.error(`保存${itemName}失败:`, error);
+        showError(`保存${itemName}失败: ` + error.message);
     } finally {
         showLoading(false);
     }
+}
+
+// JWT配置
+async function saveJwtConfig() {
+    const jwtKey = document.getElementById('jwtSecretKey').value.trim();
+
+    if (!jwtKey) {
+        showError('请输入JWT密钥');
+        return;
+    }
+
+    if (jwtKey.length < 32) {
+        if (!confirm('JWT密钥长度少于32个字符，建议使用更长的密钥。确定继续吗？')) {
+            return;
+        }
+    }
+
+    await saveConfigItem({ jwt_secret_key: jwtKey }, 'JWT配置');
+}
+
+// 管理员凭据
+async function saveAdminCredentials() {
+    const username = document.getElementById('adminUsername').value.trim();
+    const password = document.getElementById('adminPassword').value.trim();
+
+    if (!username || !password) {
+        showError('用户名和密码都是必填项');
+        return;
+    }
+
+    const adminData = { username, password };
+    await saveConfigItem({ admin_credentials: adminData }, '管理员凭据');
+}
+
+// 数据库URL
+async function saveDatabaseUrl() {
+    const dbUrl = document.getElementById('databaseUrl').value.trim();
+
+    if (!dbUrl) {
+        showError('请输入数据库连接URL');
+        return;
+    }
+
+    if (!confirm('修改数据库连接可能影响系统运行，确定继续吗？')) {
+        return;
+    }
+
+    await saveConfigItem({ database_url: dbUrl }, '数据库配置');
 }
 
 // 重置配置

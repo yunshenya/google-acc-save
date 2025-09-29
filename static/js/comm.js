@@ -33,7 +33,7 @@ function getAuthHeaders() {
 
 
 function hideTableContent(tabName) {
-
+    // 隐藏所有标签内容
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
     });
@@ -44,10 +44,15 @@ function hideTableContent(tabName) {
     });
 
     // 显示选中的标签内容
-    document.getElementById(tabName + 'Tab').classList.add('active');
+    const targetTab = document.getElementById(tabName + 'Tab');
+    if (targetTab) {
+        targetTab.classList.add('active');
+    }
 
-    // 激活对应按钮
-    event.target.classList.add('active');
+    // 激活对应按钮 - 需要从事件中获取
+    // 这里不处理按钮激活，由调用方处理
 
-    currentTab = tabName;
+    if (typeof currentTab !== 'undefined') {
+        currentTab = tabName;
+    }
 }

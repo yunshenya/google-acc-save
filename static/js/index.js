@@ -410,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td title="运行次数">${status.number_of_run}</td>
             <td title="成功次数">${status.num_of_success}</td>
             <td title="error次数">${status.num_of_error}</td>
-            <td title=其他错误"">${status.num_other_error}</td>
+            <td title="其他错误">${status.num_other_error}</td>
             <td title="模板ID">${status.temple_id}</td>
             <td class="${getRatioClass(forwardRatio)}" title="转发邮箱: ${status.forward_num || 0}/${totalRuns}">${forwardRatio}%</td>
             <td class="${getRatioClass(phoneRatio)}" title="手机号: ${status.phone_number_counts || 0}/${totalRuns}">${phoneRatio}%</td>
