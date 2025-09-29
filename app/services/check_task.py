@@ -162,7 +162,7 @@ class TaskManager:
                 del self._timeout_tasks[pad_code]
                 logger.info(f"已取消超时任务: {pad_code}")
             else:
-                logger.warning(f"未找到超时任务: {pad_code}")
+                logger.info(f"还未启动超时任务: {pad_code}")
 
     async def complete_main_task(self, pad_code: str) -> None:
         """标记主任务完成，但保留超时任务"""

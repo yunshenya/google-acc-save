@@ -176,6 +176,7 @@ async def callback(data: dict) -> str:
             case 1124:  # 一键新机任务
                 callback_logger.info(f"{pad_code}: 处理一键新机任务回调")
                 if pad_code in config.PAD_CODES:
+                    await task_manager.cancel_timeout_task_only(pad_code)
                     await replace_pad_task_status(data, task_manager=task_manager)
                 else:
                     callback_logger.warning(f"{pad_code}: 设备不在管理列表中")
