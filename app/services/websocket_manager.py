@@ -58,7 +58,7 @@ class WebSocketManager:
         self._lock = asyncio.Lock()
         self.heartbeat_interval = 30  # 心跳间隔（秒）
         self.heartbeat_task: Optional[asyncio.Task] = None
-        self.timeout_check_minutes = config.get_timeout("global") + 5  # 超时检测时间（分钟）
+        self.timeout_check_minutes = config.get_timeout("global") - 5
 
     async def connect(self, websocket: WebSocket):
         """建立WebSocket连接"""
@@ -179,11 +179,22 @@ class WebSocketManager:
             )
 
             # 执行一键新机
-            if not config.DEBUG:
+            if not config.DEBUG and pad_code in config.PAD_CODES:
                 result = await replace_pad([pad_code], template_id=temple_id)
+                await update_cloud_status(
+                    pad_code=pad_code,
+                    current_status=f"开始新机",
+                    temple_id=temple_id,
+                    num_other_error=1
+                )
                 ws_logger.info(f"{pad_code}: 超时触发一键新机结果 - {result.get('msg', '未知结果')}")
             else:
                 ws_logger.info(f"{pad_code}: 调试模式 - 模拟超时触发一键新机")
+                await update_cloud_status(
+                    pad_code=pad_code,
+                    current_status=f"{pad_code}: 调试模式 - 模拟超时触发一键新机",
+                    temple_id=temple_id
+                )
 
         except Exception as e:
             ws_logger.error(f"{pad_code}: 处理超时设备失败 - {e}")

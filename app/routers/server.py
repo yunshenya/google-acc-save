@@ -67,8 +67,8 @@ async def config_page():
         content = f.read()
     return HTMLResponse(content=content)
 
-@router.post("/status", response_model=dict[str, str])
-async def status(android_code: AndroidPadCodeRequest) -> dict[str, str]:
+@router.post("/status", response_model=dict[str, Any])
+async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
     pad_code = android_code.pad_code
     match android_code.type:
         case 0:

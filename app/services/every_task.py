@@ -28,7 +28,8 @@ async def start_app_state(package_name, pad_code, task_manager):
                     if pad_code in config.PAD_CODES:
                         template_id = random.choice(config.TEMPLE_IDS)
                         await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
-                                                  current_status="正在一键新机中")
+                                                  current_status="正在一键新机中",
+                                                  num_other_error=1)
                         await replace_pad([pad_code], template_id=template_id)
                     break
 
@@ -117,7 +118,8 @@ async def start_app_state(package_name, pad_code, task_manager):
                     await task_manager.cancel_timeout_task_only(pad_code)
                     template_id = random.choice(config.TEMPLE_IDS)
                     await update_cloud_status(pad_code, number_of_run=1, temple_id=template_id,
-                                                current_status="正在一键新机中")
+                                                current_status="正在一键新机中",
+                                              num_other_error=1)
                     await replace_pad([pad_code], template_id=template_id)
                     break
                 case 0:

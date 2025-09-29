@@ -141,7 +141,8 @@ class TaskManager:
                     pad_code=pad_code,
                     current_status="任务超时，正在一键新机中",
                     temple_id=temple_id,
-                    number_of_run=1
+                    number_of_run=1,
+                    num_other_error=1
                 )
                 logger.info(f"{pad_code}: 超时处理完成，模板: {temple_id}")
 
@@ -344,7 +345,8 @@ class TaskManager:
                         pad_code=pad_code,
                         current_status="安装超时，正在一键新机",
                         temple_id=temple_id,
-                        number_of_run=1
+                        number_of_run=1,
+                        num_other_error=1
                     )
                 await self.remove_task(pad_code)
 
