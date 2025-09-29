@@ -4,7 +4,6 @@ from typing import Optional
 
 from loguru import logger
 
-from app.curd.status import update_cloud_status
 from app.dependencies.auth import VmosUtil
 
 
@@ -199,6 +198,7 @@ async def get_pad_code_list() -> dict[str, str]:
     return await VmosUtil(list_url).send()
 
 async def check_padTaskDetail(tasks_list: list[str]) -> int:
+    from app.curd.status import update_cloud_status
     try:
         result = await get_cloud_file_task_info(tasks_list)
         task_status = result["data"][0]["taskStatus"]

@@ -6,12 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加查看转发邮箱">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/websocket_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/websocket_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/config.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/config.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/pade_code.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +50,7 @@
     <option name="directoryName" value="rmdDhQZ8" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
+    <option name="selectedTabId" value="AISelfReview" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
@@ -614,23 +610,7 @@
       <workItem from="1759066936395" duration="142000" />
       <workItem from="1759067089011" duration="325000" />
       <workItem from="1759067550350" duration="38000" />
-      <workItem from="1759109346636" duration="20616000" />
-    </task>
-    <task id="LOCAL-00148" summary="添加统计页面">
-      <option name="closed" value="true" />
-      <created>1758802219874</created>
-      <option name="number" value="00148" />
-      <option name="presentableId" value="LOCAL-00148" />
-      <option name="project" value="LOCAL" />
-      <updated>1758802219874</updated>
-    </task>
-    <task id="LOCAL-00149" summary="增加日志系统">
-      <option name="closed" value="true" />
-      <created>1758878631243</created>
-      <option name="number" value="00149" />
-      <option name="presentableId" value="LOCAL-00149" />
-      <option name="project" value="LOCAL" />
-      <updated>1758878631243</updated>
+      <workItem from="1759109346636" duration="25167000" />
     </task>
     <task id="LOCAL-00150" summary="增加日志系统">
       <option name="closed" value="true" />
@@ -1008,7 +988,23 @@
       <option name="project" value="LOCAL" />
       <updated>1759131179142</updated>
     </task>
-    <option name="localTasksCounter" value="197" />
+    <task id="LOCAL-00197" summary="增加查看转发邮箱">
+      <option name="closed" value="true" />
+      <created>1759131871337</created>
+      <option name="number" value="00197" />
+      <option name="presentableId" value="LOCAL-00197" />
+      <option name="project" value="LOCAL" />
+      <updated>1759131871337</updated>
+    </task>
+    <task id="LOCAL-00198" summary="增加查看转发邮箱">
+      <option name="closed" value="true" />
+      <created>1759136374999</created>
+      <option name="number" value="00198" />
+      <option name="presentableId" value="LOCAL-00198" />
+      <option name="project" value="LOCAL" />
+      <updated>1759136374999</updated>
+    </task>
+    <option name="localTasksCounter" value="199" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
