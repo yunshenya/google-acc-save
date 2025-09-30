@@ -87,8 +87,8 @@ async def websocket_endpoint(websocket: WebSocket):
                                     "message": "消息格式无效"
                                 })
                             )
-                        except Exception:
-                            ws_logger.debug(f"无法发送错误消息，连接可能已断开: {client_ip}")
+                        except Exception as e:
+                            ws_logger.debug(f"无法发送错误消息，连接可能已断开: {client_ip}， 错误为{e}")
                             break
 
             except asyncio.TimeoutError:
@@ -96,8 +96,8 @@ async def websocket_endpoint(websocket: WebSocket):
                 # 检查连接是否仍然有效
                 try:
                     await websocket.send_text(json.dumps({"type": "ping"}))
-                except Exception:
-                    ws_logger.info(f"连接已断开 ({client_ip})，退出接收循环")
+                except Exception as e:
+                    ws_logger.info(f"连接已断开 ({client_ip})，退出接收循环, 错误为{e}")
                     break
                 continue
 

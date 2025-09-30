@@ -5,11 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加连接池">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/websocket.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/websocket.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/websocket_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/websocket_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -617,15 +613,7 @@
       <workItem from="1759141987804" duration="1408000" />
       <workItem from="1759199557292" duration="132000" />
       <workItem from="1759199697294" duration="1383000" />
-      <workItem from="1759201314792" duration="13858000" />
-    </task>
-    <task id="LOCAL-00159" summary="添加热更新">
-      <option name="closed" value="true" />
-      <created>1758942012394</created>
-      <option name="number" value="00159" />
-      <option name="presentableId" value="LOCAL-00159" />
-      <option name="project" value="LOCAL" />
-      <updated>1758942012394</updated>
+      <workItem from="1759201314792" duration="14178000" />
     </task>
     <task id="LOCAL-00160" summary="添加热更新">
       <option name="closed" value="true" />
@@ -1011,7 +999,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759215680748</updated>
     </task>
-    <option name="localTasksCounter" value="208" />
+    <task id="LOCAL-00208" summary="增加连接池">
+      <option name="closed" value="true" />
+      <created>1759216430117</created>
+      <option name="number" value="00208" />
+      <option name="presentableId" value="LOCAL-00208" />
+      <option name="project" value="LOCAL" />
+      <updated>1759216430117</updated>
+    </task>
+    <option name="localTasksCounter" value="209" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
