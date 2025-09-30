@@ -47,7 +47,7 @@
 捷克共和国,cz,https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/cz.yaml,Europe/Prague,English,50.0766,14.4464,是,40%
 挪威,no,https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/no.yaml,Europe/Oslo,English,63.4306,10.4037,是,30%
 希腊,gr,https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/gr.yaml,Europe/Athens,English,37.9842,23.7353,是,24%
-美国,us,https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/us.yaml,America/New_York,English,36.0958,-79.2743,,
+美国,us,https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/us.yaml,America/New_York,English,36.0958,-79.2743,是,30%
 塞尔维亚,rs,https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/rs.yaml,Europe/Belgrade,English,45.29,19.7403,是,30%
 罗马尼亚,ro,https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/ro.yaml,Europe/Bucharest,English,46.3463,25.7977,是,35%
 加拿大,ca,https://raw.githubusercontent.com/heisiyyds999/clash-conf/refs/heads/master/proxys/ca.yaml,America/Toronto,English,43.4269,-80.5436,是,30%
