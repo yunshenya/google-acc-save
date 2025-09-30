@@ -4,7 +4,6 @@ from typing import Any
 from sqlalchemy import Column, Integer, String, DateTime, Float, Text, Boolean
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
-from sqlalchemy.pool import QueuePool
 
 from app.config import config
 
@@ -12,21 +11,27 @@ Base = declarative_base()
 
 engine: Any = create_async_engine(
     config.DATABASE_URL,
-    poolclass=QueuePool,
-    pool_size=10,
-    max_overflow=20,
-    pool_timeout=30,
-    pool_recycle=3600,
-    pool_pre_ping=True,
-    echo=False,
+    pool_size=10,  # 连接池大小
+    max_overflow=20,  # 超出pool_size后最多创建的连接数
+    pool_timeout=30,  # 获取连接的超时时间（秒）
+    pool_recycle=3600,  # 1小时后回收连接
+    pool_pre_ping=True,  # 使用连接前先测试
+    echo=False,  # 生产环境关闭SQL日志
+    connect_args={
+        "server_settings": {
+            "application_name": "google-manager",
+            "jit": "off",  # 禁用JIT可以提高稳定性
+        },
+        "command_timeout": 60,  # 命令超时60秒
+        "prepared_statement_cache_size": 0,  # 禁用预编译语句缓存
+    } if "postgresql" in config.DATABASE_URL else {},
 )
 
 SessionLocal = sessionmaker(
     class_=AsyncSession,
     bind=engine,
-    autoflush=False,
-    autocommit=False,
-    expire_on_commit=False,
+    autocommit=False,  # 关闭自动提交
+    expire_on_commit=False  # 提交后不过期对象
 )
 
 

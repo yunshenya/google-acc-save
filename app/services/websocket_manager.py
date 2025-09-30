@@ -154,6 +154,10 @@ class WebSocketManager:
                 continue
 
             try:
+                # 再次检查连接是否仍在活跃列表中
+                if connection not in self.active_connections:
+                    continue
+
                 await connection.send_text(message_str)
                 sent_count += 1
             except Exception as e:
@@ -282,23 +286,25 @@ class WebSocketManager:
                     ws_logger.warning(
                         f"检测到 {len(timeout_devices)} 台设备超时，开始处理"
                     )
-                    for device in timeout_devices:
-                        asyncio.create_task(
-                            self._handle_timeout_devices_batch(timeout_devices)
-                        )
+                    asyncio.create_task(
+                        self._handle_timeout_devices_batch(timeout_devices)
+                    )
 
             message = {
                 "type": "status_update",
                 "data": status_data,
                 "total_count": len(status_data),
-                "timeout_count": len(timeout_devices)
-                if "timeout_devices" in locals()
-                else 0,
+                "timeout_count": len(timeout_devices) if timeout_devices else 0,
             }
 
             if websocket:
                 # 发送给特定客户端
                 try:
+                    # 检查连接是否在活跃连接列表中
+                    if websocket not in self.active_connections:
+                        ws_logger.warning("尝试向未连接的WebSocket发送消息")
+                        return
+
                     await websocket.send_text(json.dumps(message, ensure_ascii=False))
                     client_ip = self.connection_info.get(websocket, {}).get(
                         "client_ip", "unknown"
@@ -311,6 +317,8 @@ class WebSocketManager:
                         "client_ip", "unknown"
                     )
                     ws_logger.error(f"发送状态更新给特定客户端失败 ({client_ip}): {e}")
+                    # 从活跃连接中移除
+                    self.disconnect(websocket)
             else:
                 # 广播给所有客户端
                 await self.broadcast(message)

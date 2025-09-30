@@ -4,17 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="单次提交">
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加连接池">
       <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/websocket.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/websocket.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/status.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/status.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/pade_code.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/websocket_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/websocket_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -622,15 +617,7 @@
       <workItem from="1759141987804" duration="1408000" />
       <workItem from="1759199557292" duration="132000" />
       <workItem from="1759199697294" duration="1383000" />
-      <workItem from="1759201314792" duration="13209000" />
-    </task>
-    <task id="LOCAL-00158" summary="添加热更新">
-      <option name="closed" value="true" />
-      <created>1758940898797</created>
-      <option name="number" value="00158" />
-      <option name="presentableId" value="LOCAL-00158" />
-      <option name="project" value="LOCAL" />
-      <updated>1758940898797</updated>
+      <workItem from="1759201314792" duration="13858000" />
     </task>
     <task id="LOCAL-00159" summary="添加热更新">
       <option name="closed" value="true" />
@@ -1016,7 +1003,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759204520709</updated>
     </task>
-    <option name="localTasksCounter" value="207" />
+    <task id="LOCAL-00207" summary="增加连接池">
+      <option name="closed" value="true" />
+      <created>1759215680748</created>
+      <option name="number" value="00207" />
+      <option name="presentableId" value="LOCAL-00207" />
+      <option name="project" value="LOCAL" />
+      <updated>1759215680748</updated>
+    </task>
+    <option name="localTasksCounter" value="208" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1038,7 +1033,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="增加云机状态" />
     <MESSAGE value="完善了获取云机的api" />
     <MESSAGE value="提高控制的精细度" />
     <MESSAGE value="修复多次设置新机的bug" />
@@ -1063,6 +1057,7 @@
     <MESSAGE value="优化安装逻辑" />
     <MESSAGE value="增加查看转发邮箱" />
     <MESSAGE value="单次提交" />
-    <option name="LAST_COMMIT_MESSAGE" value="单次提交" />
+    <MESSAGE value="增加连接池" />
+    <option name="LAST_COMMIT_MESSAGE" value="增加连接池" />
   </component>
 </project>

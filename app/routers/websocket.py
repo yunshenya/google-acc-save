@@ -1,7 +1,7 @@
 import asyncio
 import json
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, WebSocketException
 
 from app.services.websocket_manager import ws_manager
 from app.services.logger import ws_logger
@@ -19,8 +19,8 @@ def get_client_ip(websocket: WebSocket) -> str:
                 return websocket.client.host
             # 如果是元组形式
             elif (
-                isinstance(websocket.client, (tuple, list))
-                and len(websocket.client) > 0
+                    isinstance(websocket.client, (tuple, list))
+                    and len(websocket.client) > 0
             ):
                 return str(websocket.client[0])
 
@@ -51,53 +51,91 @@ def get_client_ip(websocket: WebSocket) -> str:
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket端点"""
-    client_ip = get_client_ip(websocket)
+    client_ip = None
+    connection_accepted = False
 
     try:
+        # 先获取客户端IP（在accept之前）
+        client_ip = get_client_ip(websocket)
+
         # 建立连接
         await ws_manager.connect(websocket)
+        connection_accepted = True
         ws_logger.info(f"WebSocket连接建立成功，客户端: {client_ip}")
 
+        # 消息循环
         while True:
             try:
-                # 监听客户端消息
-                data = await websocket.receive_text()
-                ws_logger.debug(f"收到客户端消息: {data[:100]}...")  # 只记录前100个字符
+                # 设置接收超时，避免长时间阻塞
+                data = await asyncio.wait_for(
+                    websocket.receive_text(),
+                    timeout=300.0  # 5分钟超时
+                )
+                ws_logger.debug(f"收到客户端消息 ({client_ip}): {data[:100]}...")
 
                 try:
                     message = json.loads(data)
                     await ws_manager.handle_client_message(websocket, message)
                 except json.JSONDecodeError as e:
-                    ws_logger.warning(f"客户端发送的消息格式无效: {e}")
-                    await websocket.send_text(
-                        json.dumps({"type": "error", "message": "消息格式无效"})
-                    )
+                    ws_logger.warning(f"客户端发送的消息格式无效 ({client_ip}): {e}")
+                    # 只有在连接有效时才发送错误消息
+                    if connection_accepted:
+                        try:
+                            await websocket.send_text(
+                                json.dumps({
+                                    "type": "error",
+                                    "message": "消息格式无效"
+                                })
+                            )
+                        except Exception:
+                            ws_logger.debug(f"无法发送错误消息，连接可能已断开: {client_ip}")
+                            break
+
+            except asyncio.TimeoutError:
+                ws_logger.debug(f"WebSocket接收超时 ({client_ip})，继续等待...")
+                # 检查连接是否仍然有效
+                try:
+                    await websocket.send_text(json.dumps({"type": "ping"}))
+                except Exception:
+                    ws_logger.info(f"连接已断开 ({client_ip})，退出接收循环")
+                    break
+                continue
 
             except WebSocketDisconnect:
                 ws_logger.info(f"客户端主动断开连接: {client_ip}")
                 break
+
             except Exception as e:
-                ws_logger.error(f"处理WebSocket消息时出错: {e}")
-                # 发送错误消息给客户端
-                try:
-                    await websocket.send_text(
-                        json.dumps({"type": "error", "message": "服务器处理消息时出错"})
-                    )
-                except Exception as e:
-                    # 如果发送失败，说明连接已经断开
-                    ws_logger.warning(
-                        f"向客户端发送错误消息失败，连接可能已断开: {client_ip}: {e}"
-                    )
+                ws_logger.error(f"处理WebSocket消息时出错 ({client_ip}): {e}")
+                # 尝试发送错误消息，但如果失败就断开连接
+                if connection_accepted:
+                    try:
+                        await websocket.send_text(
+                            json.dumps({
+                                "type": "error",
+                                "message": "服务器处理消息时出错"
+                            })
+                        )
+                    except Exception as send_error:
+                        ws_logger.warning(
+                            f"向客户端发送错误消息失败，连接可能已断开 ({client_ip}): {send_error}"
+                        )
+                        break
+                else:
+                    # 如果连接还没接受就出错，直接断开
                     break
 
     except WebSocketDisconnect:
-        ws_logger.info(f"WebSocket连接断开: {client_ip}")
+        ws_logger.info(f"WebSocket连接断开: {client_ip or 'unknown'}")
+    except WebSocketException as e:
+        ws_logger.warning(f"WebSocket协议错误 ({client_ip or 'unknown'}): {e}")
     except Exception as e:
-        ws_logger.error(f"WebSocket连接异常: {e}")
+        ws_logger.error(f"WebSocket连接异常 ({client_ip or 'unknown'}): {e}")
     finally:
         # 清理连接
-        ws_manager.disconnect(websocket)
-        ws_logger.debug(f"WebSocket连接清理完成: {client_ip}")
+        if connection_accepted:
+            ws_manager.disconnect(websocket)
+            ws_logger.debug(f"WebSocket连接清理完成: {client_ip or 'unknown'}")
 
 
 @router.get("/ws/stats")
