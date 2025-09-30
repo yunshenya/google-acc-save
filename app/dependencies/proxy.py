@@ -10,7 +10,7 @@ class ProxyManager:
     _lock = threading.Lock()
 
     def __init__(self):
-        default_proxy  = config.DEFAULT_PROXY.to_dict()
+        default_proxy = config.DEFAULT_PROXY.to_dict()
         self._proxy_countries: List[ProxyResponse] = []
         self._current_proxy: ProxyResponse = ProxyResponse(
             proxy=default_proxy["proxy"],
@@ -19,7 +19,7 @@ class ProxyManager:
             time_zone=default_proxy["time_zone"],
             language=default_proxy["language"],
             latitude=default_proxy["latitude"],
-            longitude=default_proxy["longitude"]
+            longitude=default_proxy["longitude"],
         )
 
     def __new__(cls):

@@ -9,7 +9,9 @@ from app.config import config
 
 Base = declarative_base()
 engine: Any = create_async_engine(config.DATABASE_URL)
-SessionLocal = sessionmaker(class_=AsyncSession, bind=engine, autoflush=False, autocommit=False)
+SessionLocal = sessionmaker(
+    class_=AsyncSession, bind=engine, autoflush=False, autocommit=False
+)
 
 
 class Account(Base):
@@ -61,11 +63,11 @@ class ProxyCollection(Base):
     id = Column(Integer, primary_key=True, index=True)
     country = Column(Text, nullable=True)
     android_version = Column(Text, nullable=True)
-    temple_id  = Column(Integer, nullable=True)
-    code  = Column(Text, nullable=True)
+    temple_id = Column(Integer, nullable=True)
+    code = Column(Text, nullable=True)
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
-    proxy  = Column(Text, nullable=True)
-    language  = Column(Text, nullable=True)
-    time_zone  = Column(Text, nullable=True)
+    proxy = Column(Text, nullable=True)
+    language = Column(Text, nullable=True)
+    time_zone = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.now(), nullable=False)

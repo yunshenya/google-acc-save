@@ -13,10 +13,14 @@ from app.models.accounts import AndroidPadCodeRequest
 from app.services.check_task import TaskManager
 from app.services.logger import task_logger, get_logger
 from app.services.task_status import (
-    reboot_task_status, replace_pad_task_status,
-    app_install_task_status, app_start_task_status,
-    app_uninstall_task_status, adb_call_task_status,
-    fileUpdate_task_status, app_reboot_task_status
+    reboot_task_status,
+    replace_pad_task_status,
+    app_install_task_status,
+    app_start_task_status,
+    app_uninstall_task_status,
+    adb_call_task_status,
+    fileUpdate_task_status,
+    app_reboot_task_status,
 )
 
 router = APIRouter()
@@ -49,9 +53,11 @@ async def statistics_page():
         content = f.read()
     return HTMLResponse(content=content)
 
+
 @router.get("/favicon.ico")
 async def favicon() -> FileResponse:
     return FileResponse("static/img/favicon.ico")
+
 
 @router.get("/config", response_class=HTMLResponse)
 async def config_page():
@@ -60,6 +66,7 @@ async def config_page():
         content = f.read()
     return HTMLResponse(content=content)
 
+
 @router.post("/status", response_model=dict[str, Any])
 async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
     pad_code = android_code.pad_code
@@ -67,9 +74,13 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
         case 0:
             await update_cloud_status(pad_code, num_other_error=1, number_of_run=1)
         case 1:
-            await update_cloud_status(pad_code=pad_code, num_of_error=1, number_of_run=1)
+            await update_cloud_status(
+                pad_code=pad_code, num_of_error=1, number_of_run=1
+            )
         case _:
-            await update_cloud_status(pad_code=pad_code, num_of_error=0, number_of_run=1)
+            await update_cloud_status(
+                pad_code=pad_code, num_of_error=0, number_of_run=1
+            )
     try:
         await task_manager.cancel_timeout_task_only(pad_code)
         if pad_code in config.PAD_CODES:
@@ -79,18 +90,24 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
             selected_proxy = random.choice(default_proxy)
             await set_proxy_status(pad_code, selected_proxy)
             await update_cloud_status(
-                pad_code,
-                temple_id=template_id,
-                current_status="一键新机中"
+                pad_code, temple_id=template_id, current_status="一键新机中"
             )
-            task_logger.success(f"{pad_code}: 模板: {template_id}, 代理: {selected_proxy.country}")
+            task_logger.success(
+                f"{pad_code}: 模板: {template_id}, 代理: {selected_proxy.country}"
+            )
             # 执行一键新机
             if not config.DEBUG:
                 result = await replace_pad([pad_code], template_id=template_id)
-                callback_logger.info(f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}")
+                callback_logger.info(
+                    f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}"
+                )
             else:
                 callback_logger.info(f"{pad_code}: 调试模式未启用一键新机")
-            return {"message": "一键新机启动成功", "template_id": template_id, "country": selected_proxy.country}
+            return {
+                "message": "一键新机启动成功",
+                "template_id": template_id,
+                "country": selected_proxy.country,
+            }
         else:
             await remove_cloud_status(pad_code=pad_code)
             return {"message": "其他机器成功"}
@@ -115,13 +132,17 @@ async def callback(data: dict) -> str:
     pad_code = data.get("padCode", "未知设备")
     task_id = data.get("taskId", "未知任务")
 
-    callback_logger.info(f"收到回调: 设备={pad_code}, 类型={task_business_type}, 任务ID={task_id}")
+    callback_logger.info(
+        f"收到回调: 设备={pad_code}, 类型={task_business_type}, 任务ID={task_id}"
+    )
 
     try:
         match int(task_business_type):
             case 1000:  # 重启任务
                 callback_logger.info(f"{pad_code}: 处理重启任务回调")
-                await reboot_task_status(data, config.get_package_name("primary"), task_manager)
+                await reboot_task_status(
+                    data, config.get_package_name("primary"), task_manager
+                )
                 return "ok"
 
             case 1001:  # 未知类型1001
@@ -170,7 +191,9 @@ async def callback(data: dict) -> str:
                 return "ok"
 
             case _:  # 其他未知类型
-                callback_logger.info(f"{pad_code}: 其他类型回调 (类型: {task_business_type}): {data}")
+                callback_logger.info(
+                    f"{pad_code}: 其他类型回调 (类型: {task_business_type}): {data}"
+                )
                 return "ok"
 
     except ValueError as e:

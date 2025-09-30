@@ -75,7 +75,7 @@ def app_install_task_status(data):
     try:
         match TaskStatus(task_status):
             case TaskStatus.COMPLETED:
-                task_logger.success(f'{pad_code}: 应用 {app_name} 安装成功')
+                task_logger.success(f"{pad_code}: 应用 {app_name} 安装成功")
 
             case TaskStatus.RUNNING:
                 task_logger.info(f"{pad_code}: 应用 {app_name} 安装中")
@@ -93,7 +93,9 @@ def app_install_task_status(data):
                 task_logger.warning(f"{pad_code}: 应用 {app_name} 安装任务取消")
 
             case _:
-                task_logger.warning(f"{pad_code}: 应用 {app_name} 安装未知状态 - {task_status}")
+                task_logger.warning(
+                    f"{pad_code}: 应用 {app_name} 安装未知状态 - {task_status}"
+                )
     except ValueError:
         task_logger.error(f"{pad_code}: 应用 {app_name} 安装无效状态值 - {task_status}")
 
@@ -125,7 +127,9 @@ def app_uninstall_task_status(data):
                 task_logger.warning(f"{pad_code}: 应用 {app_name} 卸载任务取消")
 
             case _:
-                task_logger.warning(f"{pad_code}: 应用 {app_name} 卸载未知状态 - {task_status}")
+                task_logger.warning(
+                    f"{pad_code}: 应用 {app_name} 卸载未知状态 - {task_status}"
+                )
     except ValueError:
         task_logger.error(f"{pad_code}: 应用 {app_name} 卸载无效状态值 - {task_status}")
 
@@ -141,29 +145,45 @@ async def reboot_task_status(data, package_name, task_manager):
         match TaskStatus(task_status):
             case TaskStatus.ALL_FAILED:
                 task_logger.error(f"{pad_code}: 重启任务全失败")
-                await update_cloud_status(pad_code=pad_code, current_status="重启任务全失败")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="重启任务全失败"
+                )
 
             case TaskStatus.CANCELLED:
                 task_logger.warning(f"{pad_code}: 重启任务取消")
-                await update_cloud_status(pad_code=pad_code, current_status="重启任务取消")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="重启任务取消"
+                )
 
             case TaskStatus.TIMEOUT:
                 task_logger.warning(f"{pad_code}: 重启任务超时")
-                await update_cloud_status(pad_code=pad_code, current_status="重启任务超时")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="重启任务超时"
+                )
 
             case TaskStatus.PENDING:
                 task_logger.info(f"{pad_code}: 重启任务待执行")
-                await update_cloud_status(pad_code=pad_code, current_status="重启任务待执行")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="重启任务待执行"
+                )
 
             case TaskStatus.RUNNING:
                 task_logger.info(f"{pad_code}: 重启任务执行中")
-                await update_cloud_status(pad_code=pad_code, current_status="重启任务执行中")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="重启任务执行中"
+                )
 
             case TaskStatus.COMPLETED:
                 task_logger.success(f"{pad_code}: 重启成功，等待15秒后启动应用")
-                await update_cloud_status(pad_code=pad_code, current_status="重启成功，准备启动应用")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="重启成功，准备启动应用"
+                )
                 await asyncio.sleep(15)
-                await start_app_state(package_name=package_name, pad_code=pad_code, task_manager=task_manager)
+                await start_app_state(
+                    package_name=package_name,
+                    pad_code=pad_code,
+                    task_manager=task_manager,
+                )
 
             case _:
                 task_logger.error(f"{pad_code}: 重启未知任务状态: {task_status}")
@@ -216,38 +236,57 @@ async def replace_pad_task_status(data, task_manager):
         match TaskStatus(task_status):
             case TaskStatus.COMPLETED:
                 task_logger.success(f"{pad_code}: 一键新机完成，开始安装应用")
-                await update_cloud_status(pad_code=pad_code, current_status="一键新机完成，正在安装app")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="一键新机完成，正在安装app"
+                )
                 try:
-                    await install_app_task(pad_code_str=pad_code, task_manager=task_manager)
+                    await install_app_task(
+                        pad_code_str=pad_code, task_manager=task_manager
+                    )
                 except Exception as e:
                     task_logger.error(f"{pad_code}: 启动安装任务失败: {e}")
 
             case TaskStatus.RUNNING:
                 task_logger.info(f"{pad_code}: 一键新机执行中")
-                await update_cloud_status(pad_code=pad_code, current_status="一键新机执行中")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="一键新机执行中"
+                )
 
             case TaskStatus.PENDING:
                 task_logger.info(f"{pad_code}: 一键新机等待中")
-                await update_cloud_status(pad_code=pad_code, current_status="一键新机等待中")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="一键新机等待中"
+                )
 
             case TaskStatus.CANCELLED:
                 task_logger.warning(f"{pad_code}: 一键新机任务取消")
-                await update_cloud_status(pad_code=pad_code, current_status="一键新机任务取消")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="一键新机任务取消"
+                )
 
             case TaskStatus.TIMEOUT:
                 task_logger.warning(f"{pad_code}: 一键新机任务超时")
-                await update_cloud_status(pad_code=pad_code, current_status="一键新机任务超时")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="一键新机任务超时"
+                )
 
             case TaskStatus.ALL_FAILED:
                 task_logger.error(f"{pad_code}: 一键新机任务失败，准备重新一键新机")
-                await update_cloud_status(pad_code=pad_code, current_status="一键新机任务失败，准备重试")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="一键新机任务失败，准备重试"
+                )
 
                 # 一键新机失败时的处理逻辑
                 template_id = random.choice(config.TEMPLE_IDS)
                 default_proxy: Any = manager.get_proxy_countries()
-                await set_proxy_status(pad_code, random.choice(default_proxy), number_of_run=1)
-                await update_cloud_status(pad_code, temple_id=template_id,
-                                          current_status="一键新机失败后重试中")
+                await set_proxy_status(
+                    pad_code, random.choice(default_proxy), number_of_run=1
+                )
+                await update_cloud_status(
+                    pad_code,
+                    temple_id=template_id,
+                    current_status="一键新机失败后重试中",
+                )
                 await replace_pad([pad_code], template_id=template_id)
 
             case _:
@@ -270,7 +309,9 @@ async def adb_call_task_status(data):
         match TaskStatus(task_status):
             case TaskStatus.COMPLETED:
                 task_logger.success(f"{pad_code}: 执行adb指令成功")
-                await update_cloud_status(pad_code=pad_code, current_status="执行adb指令成功")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="执行adb指令成功"
+                )
 
             case TaskStatus.RUNNING:
                 task_logger.info(f"{pad_code}: 调用adb中")
@@ -278,19 +319,27 @@ async def adb_call_task_status(data):
 
             case TaskStatus.PENDING:
                 task_logger.info(f"{pad_code}: 准备调用adb")
-                await update_cloud_status(pad_code=pad_code, current_status="准备调用adb")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="准备调用adb"
+                )
 
             case TaskStatus.CANCELLED:
                 task_logger.warning(f"{pad_code}: adb调用任务取消")
-                await update_cloud_status(pad_code=pad_code, current_status="adb调用任务取消")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="adb调用任务取消"
+                )
 
             case TaskStatus.TIMEOUT:
                 task_logger.warning(f"{pad_code}: adb调用超时")
-                await update_cloud_status(pad_code=pad_code, current_status="adb调用超时")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="adb调用超时"
+                )
 
             case TaskStatus.ALL_FAILED:
                 task_logger.error(f"{pad_code}: adb调用失败")
-                await update_cloud_status(pad_code=pad_code, current_status="adb调用失败")
+                await update_cloud_status(
+                    pad_code=pad_code, current_status="adb调用失败"
+                )
 
             case _:
                 task_logger.warning(f"{pad_code}: ADB调用未知状态 - {task_status}")

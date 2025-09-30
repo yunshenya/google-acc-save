@@ -16,15 +16,15 @@ async def update_proxies(pade_code: str):
             cloud_phone_info: Any = await get_cloud_phone_info(pad_code=pade_code)
             phon_data = cloud_phone_info["data"]
             proxy = ProxyCollection(
-                country = current_proxy.country,
-                android_version = phon_data["androidVersion"],
-                temple_id = current_proxy.temple_id,
-                code = current_proxy.code,
-                latitude = current_proxy.latitude,
-                longitude = current_proxy.longitude,
-                time_zone = current_proxy.time_zone,
-                proxy = current_proxy.proxy,
-                language = current_proxy.language
+                country=current_proxy.country,
+                android_version=phon_data["androidVersion"],
+                temple_id=current_proxy.temple_id,
+                code=current_proxy.code,
+                latitude=current_proxy.latitude,
+                longitude=current_proxy.longitude,
+                time_zone=current_proxy.time_zone,
+                proxy=current_proxy.proxy,
+                language=current_proxy.language,
             )
             db.add(proxy)
             await db.commit()
@@ -33,11 +33,14 @@ async def update_proxies(pade_code: str):
             await db.rollback()
 
 
-
 async def get_proxies():
     async with SessionLocal() as db:
         from sqlalchemy import select
-        result = await db.execute(select(ProxyCollection).order_by(cast(ColumnElement[bool], ProxyCollection.id)))
+
+        result = await db.execute(
+            select(ProxyCollection).order_by(
+                cast(ColumnElement[bool], ProxyCollection.id)
+            )
+        )
         status = result.scalars().all()
         return status
-

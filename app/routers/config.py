@@ -5,8 +5,10 @@ from fastapi import APIRouter, HTTPException, Depends
 from app.config import Config
 from app.dependencies.auth_middleware import verify_token
 from app.models.config import (
-    ConfigUpdateRequest, ConfigResponse, EnvVarUpdateRequest,
-    EnvVarDeleteRequest
+    ConfigUpdateRequest,
+    ConfigResponse,
+    EnvVarUpdateRequest,
+    EnvVarDeleteRequest,
 )
 from app.services.logger import get_logger
 from app.services.websocket_manager import ws_manager
@@ -25,23 +27,36 @@ async def get_config(_: str = Depends(verify_token)) -> ConfigResponse:
         custom_env_vars = []
         # 读取 .env 文件中的所有变量
         from pathlib import Path
+
         env_file = Path(".env")
         if env_file.exists():
-            with open(env_file, 'r', encoding='utf-8') as f:
+            with open(env_file, "r", encoding="utf-8") as f:
                 for line in f:
                     line = line.strip()
-                    if line and not line.startswith('#') and '=' in line:
-                        key, value = line.split(sep='=')
+                    if line and not line.startswith("#") and "=" in line:
+                        key, value = line.split(sep="=")
                         # 跳过系统配置的变量
-                        if key not in ['DEBUG', 'DATABASE_URL', 'JWT_SECRET_KEY', 'ADMIN_USERNAME',
-                                       'ADMIN_PASSWORD', 'PADE_CODE_LIST', 'PACKAGE_NAMES',
-                                       'PROXY_CONFIG', 'APP_URLS', 'GLOBAL_TIMEOUT_MINUTES',
-                                       'CHECK_TASK_TIMEOUT_MINUTES', 'TEMPLE_IDS']:
-                            custom_env_vars.append({
-                                'key': key,
-                                'value': value.strip('"\''),
-                                'description': f'自定义环境变量: {key}'
-                            })
+                        if key not in [
+                            "DEBUG",
+                            "DATABASE_URL",
+                            "JWT_SECRET_KEY",
+                            "ADMIN_USERNAME",
+                            "ADMIN_PASSWORD",
+                            "PADE_CODE_LIST",
+                            "PACKAGE_NAMES",
+                            "PROXY_CONFIG",
+                            "APP_URLS",
+                            "GLOBAL_TIMEOUT_MINUTES",
+                            "CHECK_TASK_TIMEOUT_MINUTES",
+                            "TEMPLE_IDS",
+                        ]:
+                            custom_env_vars.append(
+                                {
+                                    "key": key,
+                                    "value": value.strip("\"'"),
+                                    "description": f"自定义环境变量: {key}",
+                                }
+                            )
 
         return ConfigResponse(
             pad_codes=current_config["pad_codes"],
@@ -54,7 +69,7 @@ async def get_config(_: str = Depends(verify_token)) -> ConfigResponse:
             jwt_secret_key=current_config["jwt_secret_key"],
             admin_credentials=current_config["admin_credentials"],
             database_url=current_config["database_url"],
-            custom_env_vars=custom_env_vars
+            custom_env_vars=custom_env_vars,
         )
     except Exception as e:
         logger.error(f"获取配置失败: {e}")
@@ -63,8 +78,7 @@ async def get_config(_: str = Depends(verify_token)) -> ConfigResponse:
 
 @router.post("/config", response_model=Dict[str, str])
 async def update_config(
-        config_update: ConfigUpdateRequest,
-        _: str = Depends(verify_token)
+    config_update: ConfigUpdateRequest, _: str = Depends(verify_token)
 ) -> Dict[str, str]:
     """更新配置"""
     try:
@@ -114,15 +128,23 @@ async def update_config(
             Config.update_config(updates)
 
         try:
-            await ws_manager.broadcast({
-                "type": "config_updated",
-                "data": {
-                    "updated_fields": list(updates.keys()) +
-                                      ([f"custom_env_var_{var.key}" for var in config_update.custom_env_vars]
-                                       if config_update.custom_env_vars else []),
-                    "message": f"系统配置已更新并持久化：{', '.join(list(updates.keys()) + ([f'环境变量_{var.key}' for var in config_update.custom_env_vars] if config_update.custom_env_vars else []))}"
+            await ws_manager.broadcast(
+                {
+                    "type": "config_updated",
+                    "data": {
+                        "updated_fields": list(updates.keys())
+                        + (
+                            [
+                                f"custom_env_var_{var.key}"
+                                for var in config_update.custom_env_vars
+                            ]
+                            if config_update.custom_env_vars
+                            else []
+                        ),
+                        "message": f"系统配置已更新并持久化：{', '.join(list(updates.keys()) + ([f'环境变量_{var.key}' for var in config_update.custom_env_vars] if config_update.custom_env_vars else []))}",
+                    },
                 }
-            })
+            )
         except Exception as e:
             logger.warning(f"发送配置更新通知失败: {e}")
 
@@ -142,13 +164,15 @@ async def reset_config(_: str = Depends(verify_token)) -> Dict[str, str]:
         logger.info("配置已重置为默认值并持久化")
 
         try:
-            await ws_manager.broadcast({
-                "type": "config_updated",
-                "data": {
-                    "updated_fields": ["ALL"],
-                    "message": "系统配置已重置为默认值"
+            await ws_manager.broadcast(
+                {
+                    "type": "config_updated",
+                    "data": {
+                        "updated_fields": ["ALL"],
+                        "message": "系统配置已重置为默认值",
+                    },
                 }
-            })
+            )
         except Exception as e:
             logger.warning(f"发送配置重置通知失败: {e}")
 
@@ -165,11 +189,7 @@ async def validate_config(_: str = Depends(verify_token)) -> Dict[str, Any]:
     try:
         current_config = Config.get_current_config()
 
-        validation_results = {
-            "valid": True,
-            "warnings": [],
-            "errors": []
-        }
+        validation_results = {"valid": True, "warnings": [], "errors": []}
 
         # 验证 PAD_CODES
         if not current_config["pad_codes"]:
@@ -246,8 +266,7 @@ async def validate_config(_: str = Depends(verify_token)) -> Dict[str, Any]:
 
 @router.post("/config/env-var", response_model=Dict[str, str])
 async def add_env_var(
-        env_var: EnvVarUpdateRequest,
-        _: str = Depends(verify_token)
+    env_var: EnvVarUpdateRequest, _: str = Depends(verify_token)
 ) -> Dict[str, str]:
     """添加或更新自定义环境变量"""
     try:
@@ -256,13 +275,15 @@ async def add_env_var(
         logger.info(f"环境变量 {env_var.key} 已添加/更新")
 
         try:
-            await ws_manager.broadcast({
-                "type": "config_updated",
-                "data": {
-                    "updated_fields": [f"env_var_{env_var.key}"],
-                    "message": f"环境变量 {env_var.key} 已更新"
+            await ws_manager.broadcast(
+                {
+                    "type": "config_updated",
+                    "data": {
+                        "updated_fields": [f"env_var_{env_var.key}"],
+                        "message": f"环境变量 {env_var.key} 已更新",
+                    },
                 }
-            })
+            )
         except Exception as e:
             logger.warning(f"发送环境变量更新通知失败: {e}")
 
@@ -275,30 +296,35 @@ async def add_env_var(
 
 @router.delete("/config/env-var", response_model=Dict[str, str])
 async def delete_env_var(
-        env_var: EnvVarDeleteRequest,
-        _: str = Depends(verify_token)
+    env_var: EnvVarDeleteRequest, _: str = Depends(verify_token)
 ) -> Dict[str, str]:
     """删除自定义环境变量"""
     try:
         # 防止删除系统核心变量
         protected_vars = [
-            'DEBUG', 'DATABASE_URL', 'JWT_SECRET_KEY', 'ADMIN_USERNAME',
-            'ADMIN_PASSWORD', 'PADE_CODE_LIST', 'PACKAGE_NAMES',
-            'PROXY_CONFIG', 'APP_URLS', 'GLOBAL_TIMEOUT_MINUTES',
-            'CHECK_TASK_TIMEOUT_MINUTES', 'TEMPLE_IDS'
+            "DEBUG",
+            "DATABASE_URL",
+            "JWT_SECRET_KEY",
+            "ADMIN_USERNAME",
+            "ADMIN_PASSWORD",
+            "PADE_CODE_LIST",
+            "PACKAGE_NAMES",
+            "PROXY_CONFIG",
+            "APP_URLS",
+            "GLOBAL_TIMEOUT_MINUTES",
+            "CHECK_TASK_TIMEOUT_MINUTES",
+            "TEMPLE_IDS",
         ]
 
         if env_var.key in protected_vars:
             raise HTTPException(
-                status_code=400,
-                detail=f"不能删除系统核心变量: {env_var.key}"
+                status_code=400, detail=f"不能删除系统核心变量: {env_var.key}"
             )
 
         # 检查变量是否存在
         if not Config.get_custom_env_var(env_var.key):
             raise HTTPException(
-                status_code=404,
-                detail=f"环境变量 {env_var.key} 不存在"
+                status_code=404, detail=f"环境变量 {env_var.key} 不存在"
             )
 
         Config.remove_env_var(env_var.key)
@@ -306,13 +332,15 @@ async def delete_env_var(
         logger.info(f"环境变量 {env_var.key} 已删除")
 
         try:
-            await ws_manager.broadcast({
-                "type": "config_updated",
-                "data": {
-                    "updated_fields": [f"deleted_env_var_{env_var.key}"],
-                    "message": f"环境变量 {env_var.key} 已删除"
+            await ws_manager.broadcast(
+                {
+                    "type": "config_updated",
+                    "data": {
+                        "updated_fields": [f"deleted_env_var_{env_var.key}"],
+                        "message": f"环境变量 {env_var.key} 已删除",
+                    },
                 }
-            })
+            )
         except Exception as e:
             logger.warning(f"发送环境变量删除通知失败: {e}")
 
@@ -333,29 +361,42 @@ async def get_all_env_vars(_: str = Depends(verify_token)) -> List[Dict[str, Any
 
         # 读取 .env 文件
         from pathlib import Path
+
         env_file = Path(".env")
         if env_file.exists():
-            with open(env_file, 'r', encoding='utf-8') as f:
+            with open(env_file, "r", encoding="utf-8") as f:
                 for line_num, line in enumerate(f, 1):
                     line = line.strip()
-                    if line and not line.startswith('#') and '=' in line:
-                        key, value = line.split('=', 1)
+                    if line and not line.startswith("#") and "=" in line:
+                        key, value = line.split("=", 1)
 
                         # 标记系统变量和自定义变量
                         is_system = key in [
-                            'DEBUG', 'DATABASE_URL', 'JWT_SECRET_KEY', 'ADMIN_USERNAME',
-                            'ADMIN_PASSWORD', 'PADE_CODE_LIST', 'PACKAGE_NAMES',
-                            'PROXY_CONFIG', 'APP_URLS', 'GLOBAL_TIMEOUT_MINUTES',
-                            'CHECK_TASK_TIMEOUT_MINUTES', 'TEMPLE_IDS'
+                            "DEBUG",
+                            "DATABASE_URL",
+                            "JWT_SECRET_KEY",
+                            "ADMIN_USERNAME",
+                            "ADMIN_PASSWORD",
+                            "PADE_CODE_LIST",
+                            "PACKAGE_NAMES",
+                            "PROXY_CONFIG",
+                            "APP_URLS",
+                            "GLOBAL_TIMEOUT_MINUTES",
+                            "CHECK_TASK_TIMEOUT_MINUTES",
+                            "TEMPLE_IDS",
                         ]
 
-                        env_vars.append({
-                            'key': key,
-                            'value': value.strip('"\'') if not is_system else '***',  # 隐藏系统变量值
-                            'is_system': is_system,
-                            'description': f'{"系统变量" if is_system else "自定义变量"}: {key}',
-                            'line_number': line_num
-                        })
+                        env_vars.append(
+                            {
+                                "key": key,
+                                "value": value.strip("\"'")
+                                if not is_system
+                                else "***",  # 隐藏系统变量值
+                                "is_system": is_system,
+                                "description": f"{'系统变量' if is_system else '自定义变量'}: {key}",
+                                "line_number": line_num,
+                            }
+                        )
 
         return env_vars
 
@@ -383,7 +424,8 @@ async def backup_config(_: str = Depends(verify_token)) -> Dict[str, Any]:
 
         # 保存配置到备份文件
         import json
-        with open(backup_file, 'w', encoding='utf-8') as f:
+
+        with open(backup_file, "w", encoding="utf-8") as f:
             json.dump(current_config, f, ensure_ascii=False, indent=2)
 
         # 同时备份 .env 文件
@@ -391,6 +433,7 @@ async def backup_config(_: str = Depends(verify_token)) -> Dict[str, Any]:
         env_file = Path(".env")
         if env_file.exists():
             import shutil
+
             shutil.copy2(env_file, env_backup_file)
 
         logger.info(f"配置备份完成: {backup_file}")
@@ -399,7 +442,7 @@ async def backup_config(_: str = Depends(verify_token)) -> Dict[str, Any]:
             "message": "配置备份成功",
             "backup_file": str(backup_file),
             "env_backup_file": str(env_backup_file) if env_file.exists() else None,
-            "timestamp": timestamp
+            "timestamp": timestamp,
         }
 
     except Exception as e:
@@ -412,7 +455,6 @@ async def list_config_backups(_: str = Depends(verify_token)) -> List[Dict[str, 
     """列出所有配置备份"""
     try:
         from pathlib import Path
-        import os
 
         backup_dir = Path("config_backups")
         if not backup_dir.exists():
@@ -421,13 +463,15 @@ async def list_config_backups(_: str = Depends(verify_token)) -> List[Dict[str, 
         backups = []
         for backup_file in backup_dir.glob("config_backup_*.json"):
             stat = backup_file.stat()
-            backups.append({
-                "filename": backup_file.name,
-                "timestamp": backup_file.stem.replace("config_backup_", ""),
-                "size": stat.st_size,
-                "created_at": stat.st_ctime,
-                "path": str(backup_file)
-            })
+            backups.append(
+                {
+                    "filename": backup_file.name,
+                    "timestamp": backup_file.stem.replace("config_backup_", ""),
+                    "size": stat.st_size,
+                    "created_at": stat.st_ctime,
+                    "path": str(backup_file),
+                }
+            )
 
         # 按创建时间倒序排列
         backups.sort(key=lambda x: x["created_at"], reverse=True)
@@ -441,8 +485,7 @@ async def list_config_backups(_: str = Depends(verify_token)) -> List[Dict[str, 
 
 @router.post("/config/restore/{backup_filename}", response_model=Dict[str, str])
 async def restore_config(
-        backup_filename: str,
-        _: str = Depends(verify_token)
+    backup_filename: str, _: str = Depends(verify_token)
 ) -> Dict[str, str]:
     """从备份恢复配置"""
     try:
@@ -454,7 +497,7 @@ async def restore_config(
             raise HTTPException(status_code=404, detail="备份文件不存在")
 
         # 读取备份配置
-        with open(backup_file, 'r', encoding='utf-8') as f:
+        with open(backup_file, "r", encoding="utf-8") as f:
             backup_config_json = json.load(f)
 
         # 恢复配置
@@ -463,13 +506,15 @@ async def restore_config(
         logger.info(f"配置已从备份恢复: {backup_filename}")
 
         try:
-            await ws_manager.broadcast({
-                "type": "config_updated",
-                "data": {
-                    "updated_fields": ["ALL"],
-                    "message": f"配置已从备份 {backup_filename} 恢复"
+            await ws_manager.broadcast(
+                {
+                    "type": "config_updated",
+                    "data": {
+                        "updated_fields": ["ALL"],
+                        "message": f"配置已从备份 {backup_filename} 恢复",
+                    },
                 }
-            })
+            )
         except Exception as e:
             logger.warning(f"发送配置恢复通知失败: {e}")
 
@@ -484,8 +529,7 @@ async def restore_config(
 
 @router.delete("/config/backup/{backup_filename}", response_model=Dict[str, str])
 async def delete_backup(
-        backup_filename: str,
-        _: str = Depends(verify_token)
+    backup_filename: str, _: str = Depends(verify_token)
 ) -> Dict[str, str]:
     """删除指定的备份文件"""
     try:
@@ -493,7 +537,7 @@ async def delete_backup(
         import os
 
         # 验证文件名安全性，防止路径遍历攻击
-        if '..' in backup_filename or '/' in backup_filename or '\\' in backup_filename:
+        if ".." in backup_filename or "/" in backup_filename or "\\" in backup_filename:
             raise HTTPException(status_code=400, detail="非法的文件名")
 
         backup_file = Path("config_backups") / backup_filename
@@ -502,27 +546,33 @@ async def delete_backup(
             raise HTTPException(status_code=404, detail="备份文件不存在")
 
         # 检查文件是否是配置备份文件
-        if not backup_filename.startswith('config_backup_') or not backup_filename.endswith('.json'):
+        if not backup_filename.startswith(
+            "config_backup_"
+        ) or not backup_filename.endswith(".json"):
             raise HTTPException(status_code=400, detail="只能删除配置备份文件")
 
         # 删除主备份文件
         os.remove(backup_file)
 
         # 尝试删除对应的环境变量备份文件
-        env_backup_file = Path("config_backups") / backup_filename.replace('config_backup_', 'env_backup_').replace('.json', '.env')
+        env_backup_file = Path("config_backups") / backup_filename.replace(
+            "config_backup_", "env_backup_"
+        ).replace(".json", ".env")
         if env_backup_file.exists():
             os.remove(env_backup_file)
 
         logger.info(f"备份文件删除成功: {backup_filename}")
 
         try:
-            await ws_manager.broadcast({
-                "type": "config_updated",
-                "data": {
-                    "updated_fields": ["backup_deleted"],
-                    "message": f"备份文件 {backup_filename} 已删除"
+            await ws_manager.broadcast(
+                {
+                    "type": "config_updated",
+                    "data": {
+                        "updated_fields": ["backup_deleted"],
+                        "message": f"备份文件 {backup_filename} 已删除",
+                    },
                 }
-            })
+            )
         except Exception as e:
             logger.warning(f"发送备份删除通知失败: {e}")
 

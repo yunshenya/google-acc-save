@@ -32,7 +32,9 @@ async def get_proxy_collection():
                     "proxy": proxy.proxy,
                     "language": proxy.language,
                     "time_zone": proxy.time_zone,
-                    "created_at": proxy.created_at.isoformat() if proxy.created_at else None
+                    "created_at": proxy.created_at.isoformat()
+                    if proxy.created_at
+                    else None,
                 }
                 proxy_data.append(proxy_dict)
 
@@ -48,7 +50,8 @@ async def delete_proxy_collection(proxy_id: int):
     async with SessionLocal() as db:
         try:
             result = await db.execute(
-                select(ProxyCollection).filter(proxy_id == ProxyCollection.id))
+                select(ProxyCollection).filter(proxy_id == ProxyCollection.id)
+            )
             proxy = result.scalars().first()
 
             if not proxy:

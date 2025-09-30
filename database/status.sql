@@ -1,6 +1,6 @@
 
 
-CREATE TABLE cloud_status (
+CREATE TABLE "google-manager".public.cloud_status (
                               id SERIAL PRIMARY KEY,
                               pad_code VARCHAR(100) NOT NULL UNIQUE,
                               current_status VARCHAR(200),
@@ -32,27 +32,6 @@ $$ language 'plpgsql';
 
 -- 创建触发器
 CREATE TRIGGER update_cloud_status_updated_at
-    BEFORE UPDATE ON cloud_status
+    BEFORE UPDATE ON "google-manager".public.cloud_status
     FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
-
-
-
-
-alter table public.cloud_status
-    add code varchar(100);
-
-alter table public.cloud_status
-    add latitude float;
-
-alter table public.cloud_status
-    add longitude float;
-
-alter table public.cloud_status
-    add language varchar(100);
-
-alter table public.cloud_status
-    add  proxy varchar(100);
-
-alter table public.cloud_status
-    add  time_zone varchar(100);

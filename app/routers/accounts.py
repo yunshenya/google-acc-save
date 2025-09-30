@@ -9,7 +9,13 @@ from starlette.responses import HTMLResponse
 
 from app.curd.proxy import update_proxies
 from app.curd.status import update_cloud_status, get_proxy_status
-from app.models.accounts import AccountResponse, AccountCreate, AccountUpdate, ForwardRequest, SecondaryEmail
+from app.models.accounts import (
+    AccountResponse,
+    AccountCreate,
+    AccountUpdate,
+    ForwardRequest,
+    SecondaryEmail,
+)
 from app.models.proxy import ProxyResponse
 from app.services.database import SessionLocal, Account
 
@@ -25,7 +31,7 @@ async def create_account(account: AccountCreate) -> AccountResponse:
             db_account = Account(
                 account=account.account,
                 password=account.password,
-                created_at=datetime.datetime.now()
+                created_at=datetime.datetime.now(),
             )
             if account.pad_code is not None:
                 current_proxy: ProxyResponse = await get_proxy_status(account.pad_code)
@@ -47,7 +53,10 @@ async def create_account(account: AccountCreate) -> AccountResponse:
 async def get_accounts() -> list[AccountResponse]:
     async with SessionLocal() as db:
         from sqlalchemy import select
-        result = await db.execute(select(Account).order_by(cast(ColumnElement[bool], Account.id)))
+
+        result = await db.execute(
+            select(Account).order_by(cast(ColumnElement[bool], Account.id))
+        )
         accounts = result.scalars().all()
         return accounts
 
@@ -55,11 +64,18 @@ async def get_accounts() -> list[AccountResponse]:
 ## 获取之后就会删除之前那条数据
 @router.get("/account/unique", response_model=AccountResponse)
 async def get_unique_account(
-        delete: bool = Query(default=False, description="是否删除账号，False则将status改为1")
+    delete: bool = Query(
+        default=False, description="是否删除账号，False则将status改为1"
+    ),
 ) -> AccountResponse:
     async with SessionLocal() as db:
         from sqlalchemy import select
-        stmt = select(Account).filter(cast(ColumnElement[bool], Account.status == 0)).with_for_update()
+
+        stmt = (
+            select(Account)
+            .filter(cast(ColumnElement[bool], Account.status == 0))
+            .with_for_update()
+        )
         result = await db.execute(stmt)
         account = result.scalars().first()
 
@@ -76,7 +92,7 @@ async def get_unique_account(
             code=account.code,
             created_at=account.created_at,
             is_boned_secondary_email=account.is_boned_secondary_email,
-            proxy_platform=account.proxy_platform
+            proxy_platform=account.proxy_platform,
         )
 
         if delete:
@@ -87,17 +103,27 @@ async def get_unique_account(
         await db.commit()
         return account_data
 
+
 @router.get("/accounts/details", response_class=HTMLResponse)
-async def get_single_account_details(delete: bool = Query(default=False, description="是否删除账号，False则将status改为1")):
+async def get_single_account_details(
+    delete: bool = Query(
+        default=False, description="是否删除账号，False则将status改为1"
+    ),
+):
     async with SessionLocal() as db:
         from sqlalchemy import select
-        stmt = select(Account).filter(cast(ColumnElement[bool], Account.status == 0)).with_for_update()
+
+        stmt = (
+            select(Account)
+            .filter(cast(ColumnElement[bool], Account.status == 0))
+            .with_for_update()
+        )
         result = await db.execute(stmt)
         account = result.scalars().first()
         if not account:
             # 如果账号不存在，返回404页面
             return HTMLResponse(
-                content=f"""
+                content="""
                 <!DOCTYPE html>
                 <html lang="zh-CN">
                 <head>
@@ -105,7 +131,7 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                     <meta name="viewport" content="width=device-width, initial-scale=1.0">
                     <title>账号不存在</title>
                     <style>
-                        body {{
+                        body {
                             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
                             margin: 0;
                             padding: 20px;
@@ -114,20 +140,20 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                             justify-content: center;
                             align-items: center;
                             min-height: 100vh;
-                        }}
-                        .error-container {{
+                        }
+                        .error-container {
                             background: white;
                             border-radius: 10px;
                             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
                             padding: 40px;
                             text-align: center;
                             max-width: 500px;
-                        }}
-                        .error-icon {{
+                        }
+                        .error-icon {
                             font-size: 4rem;
                             margin-bottom: 20px;
-                        }}
-                        .back-btn {{
+                        }
+                        .back-btn {
                             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                             color: white;
                             border: none;
@@ -136,7 +162,7 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                             font-size: 1rem;
                             cursor: pointer;
                             margin-top: 20px;
-                        }}
+                        }
                     </style>
                 </head>
                 <body>
@@ -147,7 +173,7 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                 </body>
                 </html>
                 """,
-                status_code=404
+                status_code=404,
             )
 
         # 构建HTML内容 - 单个账号展示
@@ -480,11 +506,17 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
         <body>
         """
         # 辅助邮箱状态
-        secondary_class = "has-secondary" if account.is_boned_secondary_email else "no-secondary"
+        secondary_class = (
+            "has-secondary" if account.is_boned_secondary_email else "no-secondary"
+        )
         secondary_text = "是" if account.is_boned_secondary_email else "否"
 
         # 格式化创建时间
-        created_time = account.created_at.strftime("%Y-%m-%d %H:%M:%S") if account.created_at else "未知"
+        created_time = (
+            account.created_at.strftime("%Y-%m-%d %H:%M:%S")
+            if account.created_at
+            else "未知"
+        )
 
         html_content += f"""
                 <div class="account-container">
@@ -496,11 +528,11 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                                 <div class="info-grid">
                                     <div class="field-group">
                                         <div class="field-label">邮箱账号</div>
-                                        <div class="field-value">{account.account or '未设置'}</div>
+                                        <div class="field-value">{account.account or "未设置"}</div>
                                     </div>
                                     <div class="field-group">
                                         <div class="field-label">密码</div>
-                                        <div class="field-value">{account.password or '未设置'}</div>
+                                        <div class="field-value">{account.password or "未设置"}</div>
                                     </div>
                                     <div class="field-group">
                                         <div class="field-label">创建时间</div>
@@ -522,11 +554,11 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
                                 <div class="info-grid">
                                     <div class="field-group">
                                         <div class="field-label">转发邮箱</div>
-                                        <div class="field-value">{account.for_email or '未设置'}</div>
+                                        <div class="field-value">{account.for_email or "未设置"}</div>
                                     </div>
                                     <div class="field-group">
                                         <div class="field-label">转发密码</div>
-                                        <div class="field-value">{account.for_password or '未设置'}</div>
+                                        <div class="field-value">{account.for_password or "未设置"}</div>
                                     </div>
                                     <div class="field-group">
                                         <div class="field-label">是否有辅助邮箱</div>
@@ -776,12 +808,14 @@ async def get_single_account_details(delete: bool = Query(default=False, descrip
         return HTMLResponse(content=html_content)
 
 
-
 @router.get("/accounts/{account_id}", response_model=AccountResponse)
 async def get_account(account_id: int) -> AccountResponse:
     async with SessionLocal() as db:
         from sqlalchemy import select
-        stmt = select(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
+
+        stmt = select(Account).filter(
+            cast(ColumnElement[bool], Account.id == account_id)
+        )
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
@@ -793,11 +827,16 @@ async def get_account(account_id: int) -> AccountResponse:
 async def update_forward(forward: ForwardRequest) -> AccountResponse:
     async with SessionLocal() as db:
         from sqlalchemy import select
-        stmt = select(Account).filter(cast(ColumnElement[bool], Account.account == forward.account))
+
+        stmt = select(Account).filter(
+            cast(ColumnElement[bool], Account.account == forward.account)
+        )
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
-            raise HTTPException(status_code=404, detail=f"{forward.account}: 账号不存在")
+            raise HTTPException(
+                status_code=404, detail=f"{forward.account}: 账号不存在"
+            )
         account.for_email = forward.for_email
         account.for_password = forward.for_password
         account.image_base64 = forward.image_base64
@@ -813,26 +852,38 @@ async def update_forward(forward: ForwardRequest) -> AccountResponse:
 async def update_secondary_mail(secondary_mail: SecondaryEmail) -> AccountResponse:
     async with SessionLocal() as db:
         from sqlalchemy import select
-        stmt = select(Account).filter(cast(ColumnElement[bool], Account.account == secondary_mail.account))
+
+        stmt = select(Account).filter(
+            cast(ColumnElement[bool], Account.account == secondary_mail.account)
+        )
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
-            raise HTTPException(status_code=404, detail=f"{secondary_mail.account}:账号不存在")
+            raise HTTPException(
+                status_code=404, detail=f"{secondary_mail.account}:账号不存在"
+            )
         account.is_boned_secondary_email = secondary_mail.is_boned_secondary_email
         account.for_email = secondary_mail.for_email
         account.for_password = secondary_mail.for_password
         await db.commit()
         await db.refresh(account)
-        await update_cloud_status(pad_code=secondary_mail.pad_code, secondary_email_num=1)
+        await update_cloud_status(
+            pad_code=secondary_mail.pad_code, secondary_email_num=1
+        )
         return account
 
 
 @router.put("/accounts/{account_id}", response_model=AccountResponse)
-async def update_account(account_id: int, account_update: AccountUpdate) -> AccountResponse:
+async def update_account(
+    account_id: int, account_update: AccountUpdate
+) -> AccountResponse:
     async with SessionLocal() as db:
         try:
             from sqlalchemy import select
-            stmt = select(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
+
+            stmt = select(Account).filter(
+                cast(ColumnElement[bool], Account.id == account_id)
+            )
             result = await db.execute(stmt)
             db_account = result.scalars().first()
             if db_account is None:
@@ -862,13 +913,18 @@ async def update_account(account_id: int, account_update: AccountUpdate) -> Acco
 async def delete_account(account_id: int) -> dict:
     async with SessionLocal() as db:
         from sqlalchemy import select, delete
-        stmt = select(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
+
+        stmt = select(Account).filter(
+            cast(ColumnElement[bool], Account.id == account_id)
+        )
         result = await db.execute(stmt)
         account = result.scalars().first()
         if account is None:
             raise HTTPException(status_code=404, detail=f"{account_id}:账号不存在")
 
-        await db.execute(delete(Account).filter(cast(ColumnElement[bool], Account.id == account_id)))
+        await db.execute(
+            delete(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
+        )
         await db.commit()
         logger.success(f"账号 {account_id} 删除成功")
         return {"detail": "账号删除成功"}

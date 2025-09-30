@@ -6,19 +6,28 @@ from sqlalchemy.exc import IntegrityError
 
 from app.curd.status import update_cloud_status
 from app.dependencies.countries import manager, load_proxy_countries
-from app.models.status import StatusResponse, StatusRequest, GetOneCloudStatus, AddStatusRequest
+from app.models.status import (
+    StatusResponse,
+    StatusRequest,
+    GetOneCloudStatus,
+    AddStatusRequest,
+)
 from app.services.database import SessionLocal, Status
 from app.services.logger import task_logger
 from app.models.status import StatusUpdateRequest
+
 router = APIRouter()
 
 
 @router.post("/status_update", response_model=StatusResponse)
 async def update_status_server(status_request: StatusRequest) -> StatusResponse:
-    status_response = await update_cloud_status(status_request.pad_code, status_request.current_status,
-                                                phone_number_counts=status_request.phone_number_counts,
-                                                forward_num=status_request.forward_num,
-                                                secondary_email_num=status_request.secondary_email_num)
+    status_response = await update_cloud_status(
+        status_request.pad_code,
+        status_request.current_status,
+        phone_number_counts=status_request.phone_number_counts,
+        forward_num=status_request.forward_num,
+        secondary_email_num=status_request.secondary_email_num,
+    )
     return status_response
 
 
@@ -26,29 +35,47 @@ async def update_status_server(status_request: StatusRequest) -> StatusResponse:
 async def get_status_server() -> List[StatusResponse]:
     async with SessionLocal() as db:
         from sqlalchemy import select
-        result = await db.execute(select(Status).order_by(cast(ColumnElement[bool], Status.id)))
+
+        result = await db.execute(
+            select(Status).order_by(cast(ColumnElement[bool], Status.id))
+        )
         status = result.scalars().all()
         return status
 
 
 @router.post("/cloud_status", response_model=StatusResponse)
-async def get_one_cloud_status(one_cloud_status_request: GetOneCloudStatus) -> StatusRequest:
+async def get_one_cloud_status(
+    one_cloud_status_request: GetOneCloudStatus,
+) -> StatusRequest:
     async with SessionLocal() as db:
         from sqlalchemy import select
+
         result = await db.execute(
-            select(Status).filter(cast(ColumnElement[bool], Status.pad_code == one_cloud_status_request.pad_code)))
+            select(Status).filter(
+                cast(
+                    ColumnElement[bool],
+                    Status.pad_code == one_cloud_status_request.pad_code,
+                )
+            )
+        )
         status = result.scalars().first()
         if status is None:
             raise HTTPException(status_code=404, detail="云机不存在")
         return status
 
+
 @router.put("/cloud_status/{pad_code}", response_model=StatusResponse)
-async def update_single_cloud_status(pad_code: str, status_update: StatusUpdateRequest) -> StatusResponse:
+async def update_single_cloud_status(
+    pad_code: str, status_update: StatusUpdateRequest
+) -> StatusResponse:
     """更新单个云机的配置信息"""
     async with SessionLocal() as db:
         try:
             from sqlalchemy import select
-            stmt = select(Status).filter(cast(ColumnElement[bool], Status.pad_code == pad_code))
+
+            stmt = select(Status).filter(
+                cast(ColumnElement[bool], Status.pad_code == pad_code)
+            )
             result = await db.execute(stmt)
             db_status = result.scalars().first()
 
@@ -84,6 +111,7 @@ async def update_single_cloud_status(pad_code: str, status_update: StatusUpdateR
 
             # 通知WebSocket客户端
             from app.services.websocket_manager import ws_manager
+
             await ws_manager.send_status_update()
 
             task_logger.success(f"{pad_code}: 配置更新成功")
@@ -109,14 +137,14 @@ async def add_cloud_status(status: AddStatusRequest) -> dict[str, str]:
                 if country.code.lower() == status.country_code.lower():
                     db_account = Status(
                         pad_code=status.pad_code,
-                        country = country.country,
-                        current_status = "调试用机",
-                        proxy = country.proxy,
-                        code = country.code,
-                        time_zone = country.time_zone,
-                        language = country.language,
-                        latitude = country.latitude,
-                        longitude = country.longitude,
+                        country=country.country,
+                        current_status="调试用机",
+                        proxy=country.proxy,
+                        code=country.code,
+                        time_zone=country.time_zone,
+                        language=country.language,
+                        latitude=country.latitude,
+                        longitude=country.longitude,
                     )
                     db.add(db_account)
                     await db.commit()
@@ -128,4 +156,3 @@ async def add_cloud_status(status: AddStatusRequest) -> dict[str, str]:
         except IntegrityError:
             await db.rollback()
             return {"msg": f"云机已存在: {status.pad_code}"}
-

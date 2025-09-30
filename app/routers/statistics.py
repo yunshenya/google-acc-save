@@ -47,25 +47,31 @@ async def get_hourly_account_growth():
         hourly_data = {}
         for row in rows:
             hourly_data[row.hour] = {
-                'account_count': row.account_count,
-                'forward_email_count': row.forward_email_count
+                "account_count": row.account_count,
+                "forward_email_count": row.forward_email_count,
             }
 
         # 构建时间序列数据
         total_accounts_data = []  # 每小时总账号数
-        forward_email_data = []   # 每小时转发邮箱数
+        forward_email_data = []  # 每小时转发邮箱数
         avg_per_device_data = []  # 每小时平均每台设备账号数
         avg_forward_per_device_data = []  # 每小时平均每台设备转发邮箱数
         total_24h = 0
         total_forward_24h = 0
 
         for time_point in time_points:
-            hour_data = hourly_data.get(time_point, {'account_count': 0, 'forward_email_count': 0})
-            hour_count = hour_data['account_count']
-            hour_forward_count = hour_data['forward_email_count']
+            hour_data = hourly_data.get(
+                time_point, {"account_count": 0, "forward_email_count": 0}
+            )
+            hour_count = hour_data["account_count"]
+            hour_forward_count = hour_data["forward_email_count"]
 
-            avg_per_device = round(hour_count / total_devices, 2) if total_devices > 0 else 0
-            avg_forward_per_device = round(hour_forward_count / total_devices, 2) if total_devices > 0 else 0
+            avg_per_device = (
+                round(hour_count / total_devices, 2) if total_devices > 0 else 0
+            )
+            avg_forward_per_device = (
+                round(hour_forward_count / total_devices, 2) if total_devices > 0 else 0
+            )
 
             total_accounts_data.append(hour_count)
             forward_email_data.append(hour_forward_count)
@@ -75,7 +81,9 @@ async def get_hourly_account_growth():
             total_forward_24h += hour_forward_count
 
         # 计算转发邮箱占比
-        forward_email_rate_24h = round((total_forward_24h / total_24h) * 100, 2) if total_24h > 0 else 0
+        forward_email_rate_24h = (
+            round((total_forward_24h / total_24h) * 100, 2) if total_24h > 0 else 0
+        )
 
         # 构建返回数据
         chart_data = {
@@ -90,11 +98,23 @@ async def get_hourly_account_growth():
                 "total_accounts_24h": total_24h,
                 "total_forward_emails_24h": total_forward_24h,
                 "forward_email_rate_24h": forward_email_rate_24h,
-                "avg_per_device_24h": round(total_24h / total_devices, 2) if total_devices > 0 else 0,
-                "avg_forward_per_device_24h": round(total_forward_24h / total_devices, 2) if total_devices > 0 else 0,
-                "avg_per_device_per_hour": round((total_24h / 24) / total_devices, 2) if total_devices > 0 else 0,
-                "avg_forward_per_device_per_hour": round((total_forward_24h / 24) / total_devices, 2) if total_devices > 0 else 0
-            }
+                "avg_per_device_24h": round(total_24h / total_devices, 2)
+                if total_devices > 0
+                else 0,
+                "avg_forward_per_device_24h": round(
+                    total_forward_24h / total_devices, 2
+                )
+                if total_devices > 0
+                else 0,
+                "avg_per_device_per_hour": round((total_24h / 24) / total_devices, 2)
+                if total_devices > 0
+                else 0,
+                "avg_forward_per_device_per_hour": round(
+                    (total_forward_24h / 24) / total_devices, 2
+                )
+                if total_devices > 0
+                else 0,
+            },
         }
 
         return chart_data
@@ -129,10 +149,26 @@ async def get_overall_summary():
 
         if row and total_devices > 0:
             # 计算转发邮箱占比
-            forward_rate_total = round((row.total_forward_emails / row.total_accounts) * 100, 2) if row.total_accounts > 0 else 0
-            forward_rate_24h = round((row.forward_emails_24h / row.accounts_24h) * 100, 2) if row.accounts_24h > 0 else 0
-            forward_rate_1h = round((row.forward_emails_1h / row.accounts_1h) * 100, 2) if row.accounts_1h > 0 else 0
-            forward_rate_7d = round((row.forward_emails_7d / row.accounts_7d) * 100, 2) if row.accounts_7d > 0 else 0
+            forward_rate_total = (
+                round((row.total_forward_emails / row.total_accounts) * 100, 2)
+                if row.total_accounts > 0
+                else 0
+            )
+            forward_rate_24h = (
+                round((row.forward_emails_24h / row.accounts_24h) * 100, 2)
+                if row.accounts_24h > 0
+                else 0
+            )
+            forward_rate_1h = (
+                round((row.forward_emails_1h / row.accounts_1h) * 100, 2)
+                if row.accounts_1h > 0
+                else 0
+            )
+            forward_rate_7d = (
+                round((row.forward_emails_7d / row.accounts_7d) * 100, 2)
+                if row.accounts_7d > 0
+                else 0
+            )
 
             summary = {
                 "total_devices": total_devices,
@@ -148,19 +184,35 @@ async def get_overall_summary():
                 "accounts_7d": row.accounts_7d,
                 "forward_emails_7d": row.forward_emails_7d,
                 "forward_rate_7d": forward_rate_7d,
-                "first_account_time": row.first_account_time.isoformat() if row.first_account_time else None,
-                "last_account_time": row.last_account_time.isoformat() if row.last_account_time else None,
+                "first_account_time": row.first_account_time.isoformat()
+                if row.first_account_time
+                else None,
+                "last_account_time": row.last_account_time.isoformat()
+                if row.last_account_time
+                else None,
                 # 平均数计算
                 "avg_total_per_device": round(row.total_accounts / total_devices, 2),
-                "avg_forward_total_per_device": round(row.total_forward_emails / total_devices, 2),
+                "avg_forward_total_per_device": round(
+                    row.total_forward_emails / total_devices, 2
+                ),
                 "avg_24h_per_device": round(row.accounts_24h / total_devices, 2),
-                "avg_forward_24h_per_device": round(row.forward_emails_24h / total_devices, 2),
+                "avg_forward_24h_per_device": round(
+                    row.forward_emails_24h / total_devices, 2
+                ),
                 "avg_1h_per_device": round(row.accounts_1h / total_devices, 2),
-                "avg_forward_1h_per_device": round(row.forward_emails_1h / total_devices, 2),
+                "avg_forward_1h_per_device": round(
+                    row.forward_emails_1h / total_devices, 2
+                ),
                 "avg_7d_per_device": round(row.accounts_7d / total_devices, 2),
-                "avg_forward_7d_per_device": round(row.forward_emails_7d / total_devices, 2),
-                "avg_per_device_per_hour_24h": round((row.accounts_24h / 24) / total_devices, 2),
-                "avg_forward_per_device_per_hour_24h": round((row.forward_emails_24h / 24) / total_devices, 2),
+                "avg_forward_7d_per_device": round(
+                    row.forward_emails_7d / total_devices, 2
+                ),
+                "avg_per_device_per_hour_24h": round(
+                    (row.accounts_24h / 24) / total_devices, 2
+                ),
+                "avg_forward_per_device_per_hour_24h": round(
+                    (row.forward_emails_24h / 24) / total_devices, 2
+                ),
             }
         else:
             summary = {

@@ -12,11 +12,20 @@ from app.curd.status import add_cloud_status, remove_cloud_status, set_proxy_sta
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
-from app.routers import accounts, proxy, server, status, auth, statistics, proxy_collection
+from app.routers import (
+    accounts,
+    proxy,
+    server,
+    status,
+    auth,
+    statistics,
+    proxy_collection,
+)
 from app.routers import pad_code as pad_code_router
 from app.routers import config as config_router
 from app.routers import websocket as websocket_router
 from app.services.database import engine, Base
+
 # 导入日志配置
 from app.services.logger import get_logger, task_logger
 
@@ -39,7 +48,9 @@ class InterceptHandler(logging.Handler):
             frame = frame.f_back
             depth += 1
 
-        logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+        logger.opt(depth=depth, exception=record.exc_info).log(
+            level, record.getMessage()
+        )
 
 
 # noinspection PyShadowingNames
@@ -96,11 +107,17 @@ async def startup_event(app: FastAPI):
 
                 if not config.DEBUG:
                     result = await replace_pad([pad_code], template_id=template_id)
-                    task_logger.info(f"云机启动完成: {pad_code}, 模板: {template_id}, 结果: {result.get('msg', '未知')}")
+                    task_logger.info(
+                        f"云机启动完成: {pad_code}, 模板: {template_id}, 结果: {result.get('msg', '未知')}"
+                    )
                 else:
-                    task_logger.info(f"调试模式 - 云机模拟启动: {pad_code}, 模板: {template_id}")
+                    task_logger.info(
+                        f"调试模式 - 云机模拟启动: {pad_code}, 模板: {template_id}"
+                    )
 
-                logger.info(f"云机初始化进度: {i+1}/{len(config.PAD_CODES)} ({pad_code})")
+                logger.info(
+                    f"云机初始化进度: {i + 1}/{len(config.PAD_CODES)} ({pad_code})"
+                )
 
             except Exception as e:
                 logger.error(f"初始化云机 {pad_code} 失败: {e}")
@@ -137,7 +154,7 @@ app = FastAPI(
     title="Google账号管理系统",
     lifespan=startup_event,
     description="云机管理和账号自动化系统",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 # 配置CORS

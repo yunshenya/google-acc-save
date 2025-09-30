@@ -12,7 +12,9 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 # JWT配置
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", '+H~I52e."@bM5BC"?-5mpKUnr\}{+nh,>>SrV4Sx@qfthW/_D9')
+SECRET_KEY = os.getenv(
+    "JWT_SECRET_KEY", '+H~I52e."@bM5BC"?-5mpKUnr\}{+nh,>>SrV4Sx@qfthW/_D9'
+)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -39,7 +41,9 @@ def create_access_token(data: dict):
 
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
-        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(
+            credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM]
+        )
         username: str = payload.get("sub")
         if username is None:
             raise HTTPException(

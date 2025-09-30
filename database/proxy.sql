@@ -1,4 +1,4 @@
-CREATE TABLE proxy_collection (
+CREATE TABLE "google-manager".public.proxy_collection (
                                 id SERIAL PRIMARY KEY,
                                 country TEXT,
                                 android_version TEXT,
@@ -12,4 +12,4 @@ CREATE TABLE proxy_collection (
                                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-ALTER TABLE proxy_collection OWNER TO postgres;
+ALTER TABLE "google-manager".public.proxy_collection OWNER TO postgres;

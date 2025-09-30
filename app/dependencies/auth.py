@@ -22,7 +22,9 @@ class VmosUtil(object):
         self._host = "api.vmoscloud.com"
 
     def _get_signature(self):
-        json_string: Any = json.dumps(self._data, separators=(',', ':'), ensure_ascii=False)
+        json_string: Any = json.dumps(
+            self._data, separators=(",", ":"), ensure_ascii=False
+        )
         # 计算SHA-256哈希值
         hash_object = hashlib.sha256(json_string.encode())
         x_content_sha256 = hash_object.hexdigest()
@@ -50,10 +52,13 @@ class VmosUtil(object):
         hash_sha256 = hashlib.sha256(canonical_string_builder.encode()).hexdigest()
         # 构建StringToSign
         string_to_sign = (
-                algorithm + '\n' +
-                self._x_date + '\n' +
-                credential_scope + '\n' +
-                hash_sha256
+            algorithm
+            + "\n"
+            + self._x_date
+            + "\n"
+            + credential_scope
+            + "\n"
+            + hash_sha256
         )
 
         # 假设这些变量已经被赋值
@@ -70,10 +75,14 @@ class VmosUtil(object):
         second_hmac_result = second_hmac.digest()
 
         # 第三次hmacSHA256
-        signing_key = hmac.new(second_hmac_result, b'request', digestmod=hashlib.sha256).digest()
+        signing_key = hmac.new(
+            second_hmac_result, b"request", digestmod=hashlib.sha256
+        ).digest()
 
         # 使用signing_key和string_to_sign计算HMAC-SHA256
-        signature_bytes: Any = hmac.new(signing_key, string_to_sign.encode(), hashlib.sha256).digest()
+        signature_bytes: Any = hmac.new(
+            signing_key, string_to_sign.encode(), hashlib.sha256
+        ).digest()
 
         # 将HMAC-SHA256的结果转换为十六进制编码的字符串
         signature = binascii.hexlify(signature_bytes).decode()
@@ -85,10 +94,10 @@ class VmosUtil(object):
         url = f"https://api.vmoscloud.com{self._url}"
         payload = json.dumps(self._data, ensure_ascii=False)
         headers = {
-            'content-type': "application/json;charset=UTF-8",
-            'x-date': self._x_date,
-            'x-host': "api.vmoscloud.com",
-            'authorization': f"HMAC-SHA256 Credential={self._ak}, SignedHeaders=content-type;host;x-content-sha256;x-date, Signature={signature}"
+            "content-type": "application/json;charset=UTF-8",
+            "x-date": self._x_date,
+            "x-host": "api.vmoscloud.com",
+            "authorization": f"HMAC-SHA256 Credential={self._ak}, SignedHeaders=content-type;host;x-content-sha256;x-date, Signature={signature}",
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers, data=payload) as response:
