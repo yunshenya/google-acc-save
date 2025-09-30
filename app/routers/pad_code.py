@@ -242,13 +242,13 @@ async def add_pad_codes(
                 "message": f"所有提供的代码都已存在于配置中: {', '.join(already_exists)}",
             }
 
-        for i, pad_code in enumerate(new_codes):
+        for pad_code in new_codes:
             template_id = random.choice(config.TEMPLE_IDS)
-            await add_cloud_status(pad_code, template_id)
-            default_proxy: Any = manager.get_proxy_countries()
-            selected_proxy = random.choice(default_proxy)
-            await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
             if not config.DEBUG:
+                await add_cloud_status(pad_code, template_id)
+                default_proxy: Any = manager.get_proxy_countries()
+                selected_proxy = random.choice(default_proxy)
+                await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
                 result = await replace_pad([pad_code], template_id=template_id)
                 task_logger.info(
                     f"云机启动完成: {pad_code}, 模板: {template_id}, 结果: {result.get('msg', '未知')}"

@@ -3,9 +3,12 @@ import json
 import random
 from datetime import datetime, timedelta
 from typing import Set, Dict, Optional
+
+from anyio import Semaphore
+
 from app.config import config
 from app.dependencies.utils import replace_pad
-from app.curd.status import update_cloud_status, set_proxy_status
+from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_status
 from app.dependencies.countries import manager
 from fastapi import WebSocket
 from sqlalchemy import select
@@ -57,11 +60,12 @@ def get_websocket_client_ip(websocket: WebSocket) -> str:
 class WebSocketManager:
     def __init__(self):
         self.active_connections: Set[WebSocket] = set()
-        self.connection_info: Dict[WebSocket, Dict] = {}  # 存储连接信息
+        self.connection_info: Dict[WebSocket, Dict] = {}
         self._lock = asyncio.Lock()
         self.heartbeat_interval = 30  # 心跳间隔（秒）
         self.heartbeat_task: Optional[asyncio.Task] = None
         self.timeout_check_minutes = config.get_timeout("global")
+        self._timeout_semaphore = Semaphore(5)
 
     async def connect(self, websocket: WebSocket):
         """建立WebSocket连接"""
@@ -186,35 +190,30 @@ class WebSocketManager:
                 f"{pad_code}: 检测到超时（超过{self.timeout_check_minutes}分钟未更新），开始执行一键新机"
             )
 
-            # 设置代理
-            await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
+            if pad_code in config.PAD_CODES:
+                # 设置代理
+                await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
 
-            # 更新状态
-            await update_cloud_status(
-                pad_code=pad_code,
-                current_status=f"超时检测触发一键新机（超过{self.timeout_check_minutes}分钟未更新）",
-                temple_id=temple_id,
-            )
-
-            # 执行一键新机
-            if not config.DEBUG and pad_code in config.PAD_CODES:
-                result = await replace_pad([pad_code], template_id=temple_id)
+                # 更新状态
                 await update_cloud_status(
                     pad_code=pad_code,
-                    current_status="开始新机",
+                    current_status=f"超时检测触发一键新机（超过{self.timeout_check_minutes}分钟未更新）",
                     temple_id=temple_id,
-                    num_other_error=1,
                 )
-                ws_logger.info(
-                    f"{pad_code}: 超时触发一键新机结果 - {result.get('msg', '未知结果')}"
-                )
+
+                if not config.DEBUG and pad_code in config.PAD_CODES:
+                    result = await replace_pad([pad_code], template_id=temple_id)
+                    await update_cloud_status(
+                        pad_code=pad_code,
+                        current_status="开始新机",
+                        temple_id=temple_id,
+                        num_other_error=1,
+                    )
+                    ws_logger.info(
+                        f"{pad_code}: 超时触发一键新机结果 - {result.get('msg', '未知结果')}"
+                    )
             else:
-                ws_logger.info(f"{pad_code}: 调试模式 - 模拟超时触发一键新机")
-                await update_cloud_status(
-                    pad_code=pad_code,
-                    current_status=f"{pad_code}: 调试模式 - 模拟超时触发一键新机",
-                    temple_id=temple_id,
-                )
+                await remove_cloud_status(pad_code=pad_code)
 
         except Exception as e:
             ws_logger.error(f"{pad_code}: 处理超时设备失败 - {e}")
@@ -285,7 +284,7 @@ class WebSocketManager:
                     )
                     for device in timeout_devices:
                         asyncio.create_task(
-                            self._handle_timeout_device(device["pad_code"])
+                            self._handle_timeout_devices_batch(timeout_devices)
                         )
 
             message = {
@@ -358,6 +357,20 @@ class WebSocketManager:
             ws_logger.info("心跳任务被取消")
         except Exception as e:
             ws_logger.error(f"心跳任务出错: {e}")
+
+    async def _handle_timeout_devices_batch(self, timeout_devices: list):
+        tasks = []
+        for device in timeout_devices:
+            task = self._handle_timeout_device_with_semaphore(device["pad_code"])
+            tasks.append(task)
+        await asyncio.gather(*tasks, return_exceptions=True)
+
+    async def _handle_timeout_device_with_semaphore(self, pad_code: str):
+        async with self._timeout_semaphore:  # 限制并发数
+            try:
+                await self._handle_timeout_device(pad_code)
+            except Exception as e:
+                ws_logger.error(f"{pad_code}: 超时处理失败 - {e}")
 
     async def handle_client_message(self, websocket: WebSocket, message: dict):
         """处理客户端消息"""

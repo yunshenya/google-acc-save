@@ -5,39 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="单次提交">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deployment.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deployment.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/proxy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/auth_middleware.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/auth_middleware.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/proxy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/accounts.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/accounts.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/auth.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routers/pad_code.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/pad_code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/proxy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/proxy_collection.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/proxy_collection.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/statistics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/websocket.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/websocket.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/logger.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/logger.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/websocket_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/websocket_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/data.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/proxy.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/proxy.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/status.sql" beforeDir="false" afterPath="$PROJECT_DIR$/database/status.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -644,15 +616,8 @@
       <workItem from="1759109346636" duration="28488000" />
       <workItem from="1759141987804" duration="1408000" />
       <workItem from="1759199557292" duration="132000" />
-      <workItem from="1759199697294" duration="464000" />
-    </task>
-    <task id="LOCAL-00155" summary="解决一些小bug">
-      <option name="closed" value="true" />
-      <created>1758891431010</created>
-      <option name="number" value="00155" />
-      <option name="presentableId" value="LOCAL-00155" />
-      <option name="project" value="LOCAL" />
-      <updated>1758891431010</updated>
+      <workItem from="1759199697294" duration="1383000" />
+      <workItem from="1759201314792" duration="3109000" />
     </task>
     <task id="LOCAL-00156" summary="解决一些小bug">
       <option name="closed" value="true" />
@@ -1038,7 +1003,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759199767901</updated>
     </task>
-    <option name="localTasksCounter" value="204" />
+    <task id="LOCAL-00204" summary="单次提交">
+      <option name="closed" value="true" />
+      <created>1759200182019</created>
+      <option name="number" value="00204" />
+      <option name="presentableId" value="LOCAL-00204" />
+      <option name="project" value="LOCAL" />
+      <updated>1759200182019</updated>
+    </task>
+    <option name="localTasksCounter" value="205" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
