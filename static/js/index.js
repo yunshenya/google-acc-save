@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let fetchMode = 'none'; // 'all', 'page', 'single'
 
     // 新增状态变量
-    let currentView = 'accounts'; // 'accounts' or 'status'
+    let currentView = 'status'; // 'accounts' or 'status'
     let websocket = null;
     let reconnectInterval = null;
     let reconnectAttempts = 0;
@@ -62,6 +62,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function init() {
         setupEventListeners();
+
+        // 默认显示状态监控页面
+        if (accountsSection) accountsSection.style.display = 'none';
+        if (statusSection) statusSection.style.display = 'block';
+        if (toggleViewBtn) toggleViewBtn.textContent = '切换到账户管理';
+
+        // 初始化 WebSocket 连接
+        initWebSocket();
+
         updateUI();
     }
 
@@ -192,17 +201,13 @@ document.addEventListener('DOMContentLoaded', function() {
                         type: 'pong',
                         client_time: new Date().toISOString()
                     }));
-                    console.log('💓 响应服务器心跳');
                 }
                 break;
 
             case 'pong':
-                // 服务器响应客户端心跳
-                console.log('💓 收到服务器心跳响应');
                 break;
 
             case 'error':
-                console.error('❌ 服务器错误消息:', message.message);
                 break;
 
             case 'config_updated':
@@ -231,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 timestamp: new Date().toISOString()
             }));
         } else {
-            fetchCloudStatus().then(r => {});
+            fetchCloudStatus().then(r =>{});
         }
     }
 
@@ -328,7 +333,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 更新状态列
                 const statusCell = row.cells[1];
                 if (statusCell && statusData.current_status) {
-                    const oldStatus = statusCell.textContent;
                     statusCell.textContent = statusData.current_status;
                     statusCell.className = getStatusClass(statusData.current_status);
 
@@ -362,74 +366,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-// 改进的状态表格渲染函数
-    function renderStatusTable(statusData) {
-        if (!statusTableBody) {
-            return;
-        }
-
-        // 清空现有内容
-        statusTableBody.innerHTML = '';
-
-        if (!Array.isArray(statusData) || statusData.length === 0) {
-            if (statusEmptyState) statusEmptyState.style.display = 'block';
-            statusTableBody.innerHTML = '<tr><td colspan="10" style="text-align: center; padding: 20px; color: #666;">暂无状态数据</td></tr>';
-            return;
-        }
-
-        if (statusEmptyState) statusEmptyState.style.display = 'none';
-
-        // 使用文档片段提高性能
-        const fragment = document.createDocumentFragment();
-
-        statusData.forEach((status, index) => {
-            const row = document.createElement('tr');
-            row.style.animationDelay = `${index * 50}ms`; // 添加渐入动画
-
-            // 根据状态设置样式
-            const statusClass = getStatusClass(status.current_status);
-
-            // 计算占比
-            const totalRuns = status.number_of_run || 1;
-            const forwardRatio = Math.round(((status.forward_num || 0) / totalRuns) * 100);
-            const phoneRatio = Math.round(((status.phone_number_counts || 0) / totalRuns) * 100);
-            const secondaryEmailRatio = Math.round(((status.secondary_email_num || 0) / totalRuns) * 100);
-
-            // 为占比添加颜色样式
-            const getRatioClass = (ratio) => {
-                if (ratio >= 80) return 'ratio-high';
-                if (ratio >= 50) return 'ratio-medium';
-                if (ratio >= 20) return 'ratio-low';
-                return 'ratio-none';
-            };
-
-            row.innerHTML = `
-            <td title="${status.pad_code}">${status.pad_name || "未知设备"}</td>
-            <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
-            <td title="运行次数">${status.number_of_run}</td>
-            <td title="成功次数">${status.num_of_success}</td>
-            <td title="error次数">${status.num_of_error}</td>
-            <td title="其他错误">${status.num_other_error}</td>
-            <td title="模板ID">${status.temple_id}</td>
-            <td class="${getRatioClass(forwardRatio)}" title="转发邮箱: ${status.forward_num || 0}/${totalRuns}">${forwardRatio}%</td>
-            <td class="${getRatioClass(phoneRatio)}" title="手机号: ${status.phone_number_counts || 0}/${totalRuns}">${phoneRatio}%</td>
-            <td class="${getRatioClass(secondaryEmailRatio)}" title="辅助邮箱: ${status.secondary_email_num || 0}/${totalRuns}">${secondaryEmailRatio}%</td>
-            <td title="国家">${status.country || '未设置'}</td>
-            <td title="更新时间">${formatDateTime(status.updated_at)}</td>
-            <td>
-                <button class="status-btn" onclick="refreshSingleStatus('${status.pad_code}')" title="刷新该设备状态">
-                    🔄
-                </button>
-            </td>
-        `;
-
-            fragment.appendChild(row);
-        });
-
-        statusTableBody.appendChild(fragment);
-    }
-
-// 视图切换函数 - 增强WebSocket管理
     function toggleView() {
         if (currentView === 'accounts') {
             currentView = 'status';
@@ -1031,7 +967,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             const response = await authenticatedFetch('/cloud_status');
             if (!response || !response.ok) {
-                throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
+                new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
             }
             const statusData = await response.json();
             renderStatusTable(statusData);
@@ -1379,7 +1315,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response || !response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.detail || '更新失败');
+                new Error(errorData.detail || '更新失败');
             }
 
             showToast(`设备 ${padCode} 配置更新成功`, 'success');
@@ -1400,7 +1336,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-// 修改 renderStatusTable 函数，添加数据属性和编辑按钮
     function renderStatusTable(statusData) {
         if (!statusTableBody) {
             return;
@@ -1449,11 +1384,11 @@ document.addEventListener('DOMContentLoaded', function() {
             row.innerHTML = `
             <td title="${status.pad_code}" data-pad-code="${status.pad_code}">${status.pad_name || "未知设备"}</td>
             <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
-            <td title="运行次数">${status.number_of_run}</td>
+            <td title="运行次数">${status.number_of_run -1 }</td>
             <td title="成功次数">${status.num_of_success}</td>
             <td title="error次数">${status.num_of_error}</td>
             <td title="其他错误">${status.num_other_error}</td>
-            <td title="模板ID">${status.temple_id}</td>
+            <td title="模板ID">${status.temple_id || "未设置"}</td>
             <td class="${getRatioClass(forwardRatio)}" title="转发邮箱: ${status.forward_num || 0}/${totalRuns}">${forwardRatio}%</td>
             <td class="${getRatioClass(phoneRatio)}" title="手机号: ${status.phone_number_counts || 0}/${totalRuns}">${phoneRatio}%</td>
             <td class="${getRatioClass(secondaryEmailRatio)}" title="辅助邮箱: ${status.secondary_email_num || 0}/${totalRuns}">${secondaryEmailRatio}%</td>

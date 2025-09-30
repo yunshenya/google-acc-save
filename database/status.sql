@@ -7,7 +7,7 @@ CREATE TABLE "google-manager".public.cloud_status (
                               number_of_run INT DEFAULT 0,
                               phone_number_counts INT DEFAULT 0,
                               country VARCHAR(100),
-                              temple_id INT NOT NULL,
+                              temple_id INT,
                               code varchar(100),
                               latitude float,
                               proxy VARCHAR(100),

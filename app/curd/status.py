@@ -1,9 +1,10 @@
 from typing import cast, Any
+import asyncio
 
 from fastapi import HTTPException
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy.exc import DBAPIError
 from app.dependencies.utils import get_pad_info
 from app.models.proxy import ProxyResponse
 from app.models.status import StatusResponse
@@ -78,116 +79,141 @@ async def update_cloud_status(
     num_of_success: int = None,
     num_of_error: int = None,
     num_other_error: int = None,
+    max_retries: int = 3,  # 添加重试次数
 ) -> StatusResponse:
-    """更新云机状态"""
-    async with SessionLocal() as db:
+    last_error = None
+
+    for attempt in range(max_retries):
         try:
-            from sqlalchemy import select
+            async with SessionLocal() as db:
+                from sqlalchemy import select
 
-            stmt = select(Status).filter(
-                cast(ColumnElement[bool], Status.pad_code == pad_code)
+                stmt = select(Status).filter(
+                    cast(ColumnElement[bool], Status.pad_code == pad_code)
+                )
+                result = await db.execute(stmt)
+                db_status = result.scalars().first()
+
+                if db_status is None:
+                    raise HTTPException(status_code=404, detail="云机状态不存在")
+
+                # 记录更新前的状态用于比较
+                old_status = db_status.current_status
+                status_changed = False
+
+                if (
+                    current_status is not None
+                    and db_status.current_status != current_status
+                ):
+                    db_status.current_status = current_status
+                    status_changed = True
+                    task_logger.info(
+                        f"{pad_code}: 状态更新 {old_status} -> {current_status}"
+                    )
+
+                if number_of_run is not None:
+                    old_run = db_status.number_of_run
+                    db_status.number_of_run += number_of_run
+                    task_logger.debug(
+                        f"{pad_code}: 运行次数更新 {old_run} -> {db_status.number_of_run}"
+                    )
+
+                if phone_number_counts is not None:
+                    old_phone = db_status.phone_number_counts
+                    db_status.phone_number_counts += phone_number_counts
+                    task_logger.debug(
+                        f"{pad_code}: 手机号数量更新 {old_phone} -> {db_status.phone_number_counts}"
+                    )
+
+                if temple_id is not None:
+                    db_status.temple_id = temple_id
+                    task_logger.debug(f"{pad_code}: 模板ID更新为 {temple_id}")
+
+                if secondary_email_num is not None:
+                    old_secondary = db_status.secondary_email_num
+                    db_status.secondary_email_num += secondary_email_num
+                    task_logger.debug(
+                        f"{pad_code}: 辅助邮箱数量更新 {old_secondary} -> {db_status.secondary_email_num}"
+                    )
+
+                if forward_num is not None:
+                    old_forward = db_status.forward_num
+                    db_status.forward_num += forward_num
+                    task_logger.debug(
+                        f"{pad_code}: 转发邮箱数量更新 {old_forward} -> {db_status.forward_num}"
+                    )
+
+                if num_of_success is not None:
+                    old_num_success = db_status.num_of_success
+                    db_status.num_of_success += num_of_success
+                    task_logger.debug(
+                        f"{pad_code}: 注册成功数量更新 {old_num_success} -> {db_status.num_of_success}"
+                    )
+
+                if num_of_error is not None:
+                    old_num_error = db_status.num_of_error
+                    db_status.num_of_error += num_of_error
+                    task_logger.debug(
+                        f"{pad_code}: 注册失败数量更新 {old_num_error} -> {db_status.num_of_error}"
+                    )
+
+                if num_other_error is not None:
+                    old_num_other_error = db_status.num_other_error
+                    db_status.num_other_error += num_other_error
+                    task_logger.debug(
+                        f"{pad_code}: 其他错误数量更新 {old_num_other_error} -> {db_status.num_other_error}"
+                    )
+
+                await db.commit()
+                await db.refresh(db_status)
+
+                # 延迟导入避免循环依赖
+                from app.services.websocket_manager import ws_manager
+
+                # 如果状态发生变化或有重要更新，通知WebSocket客户端
+                if (
+                    status_changed
+                    or number_of_run
+                    or phone_number_counts
+                    or secondary_email_num
+                    or forward_num
+                    or num_of_success
+                    or num_of_error
+                    or temple_id
+                ):
+                    if status_changed:
+                        await ws_manager.notify_status_change(pad_code, current_status)
+                    else:
+                        await ws_manager.send_status_update()
+
+                return db_status
+
+        except (DBAPIError, IntegrityError) as e:
+            last_error = e
+            task_logger.warning(
+                f"{pad_code}: 数据库操作失败 (尝试 {attempt + 1}/{max_retries}): {e}"
             )
-            result = await db.execute(stmt)
-            db_status = result.scalars().first()
-            if db_status is None:
-                raise HTTPException(status_code=404, detail="云机状态不存在")
 
-            # 记录更新前的状态用于比较
-            old_status = db_status.current_status
-            status_changed = False
-
-            if (
-                current_status is not None
-                and db_status.current_status != current_status
-            ):
-                db_status.current_status = current_status
-                status_changed = True
-                task_logger.info(
-                    f"{pad_code}: 状态更新 {old_status} -> {current_status}"
+            if attempt < max_retries - 1:
+                # 等待一段时间后重试，使用指数退避
+                await asyncio.sleep(0.5 * (2**attempt))
+                continue
+            else:
+                task_logger.error(f"{pad_code}: 数据库操作最终失败: {e}")
+                raise HTTPException(
+                    status_code=500, detail=f"更新云机状态失败: {str(e)}"
                 )
+        except HTTPException:
+            raise
+        except Exception as e:
+            task_logger.error(f"{pad_code}: 更新云机状态异常: {e}")
+            raise HTTPException(status_code=500, detail=f"更新失败: {str(e)}")
 
-            if number_of_run is not None:
-                old_run = db_status.number_of_run
-                db_status.number_of_run += number_of_run
-                task_logger.debug(
-                    f"{pad_code}: 运行次数更新 {old_run} -> {db_status.number_of_run}"
-                )
-
-            if phone_number_counts is not None:
-                old_phone = db_status.phone_number_counts
-                db_status.phone_number_counts += phone_number_counts
-                task_logger.debug(
-                    f"{pad_code}: 手机号数量更新 {old_phone} -> {db_status.phone_number_counts}"
-                )
-
-            if temple_id is not None:
-                db_status.temple_id = temple_id
-                task_logger.debug(f"{pad_code}: 模板ID更新为 {temple_id}")
-
-            if secondary_email_num is not None:
-                old_secondary = db_status.secondary_email_num
-                db_status.secondary_email_num += secondary_email_num
-                task_logger.debug(
-                    f"{pad_code}: 辅助邮箱数量更新 {old_secondary} -> {db_status.secondary_email_num}"
-                )
-
-            if forward_num is not None:
-                old_forward = db_status.forward_num
-                db_status.forward_num += forward_num
-                task_logger.debug(
-                    f"{pad_code}: 转发邮箱数量更新 {old_forward} -> {db_status.forward_num}"
-                )
-
-            if num_of_success is not None:
-                old_num_success = db_status.num_of_success
-                db_status.num_of_success += num_of_success
-                task_logger.debug(
-                    f"{pad_code}: 注册成功数量更新 {old_num_success} -> {db_status.num_of_success}"
-                )
-
-            if num_of_error is not None:
-                old_num_error = db_status.num_of_error
-                db_status.num_of_error += num_of_error
-                task_logger.debug(
-                    f"{pad_code}: 注册失败数量更新 {old_num_error} -> {db_status.num_of_error}"
-                )
-
-            if num_other_error is not None:
-                old_num_other_error = db_status.num_other_error
-                db_status.num_other_error += num_other_error
-                task_logger.debug(
-                    f"{pad_code}: 其他错误数量更新 {old_num_other_error} -> {db_status.num_other_error}"
-                )
-
-            await db.commit()
-            await db.refresh(db_status)
-
-            # 延迟导入避免循环依赖
-            from app.services.websocket_manager import ws_manager
-
-            # 如果状态发生变化或有重要更新，通知WebSocket客户端
-            if (
-                status_changed
-                or number_of_run
-                or phone_number_counts
-                or secondary_email_num
-                or forward_num
-                or num_of_success
-                or num_of_error
-                or temple_id
-                or forward_num
-            ):
-                if status_changed:
-                    # 状态变化时发送单个状态更新
-                    await ws_manager.notify_status_change(pad_code, current_status)
-                else:
-                    # 数据更新时发送完整状态更新
-                    await ws_manager.send_status_update()
-
-            return db_status
-        except IntegrityError:
-            await db.rollback()
-            raise HTTPException(status_code=400, detail="云机状态已存在")
+    # 如果所有重试都失败
+    raise HTTPException(
+        status_code=500,
+        detail=f"更新云机状态失败，已重试{max_retries}次: {str(last_error)}",
+    )
 
 
 async def set_proxy_status(
