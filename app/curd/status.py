@@ -79,7 +79,7 @@ async def update_cloud_status(
     num_of_success: int = None,
     num_of_error: int = None,
     num_other_error: int = None,
-    max_retries: int = 3,  # 添加重试次数
+    max_retries: int = 3,  # 重试次数
 ) -> StatusResponse:
     last_error = None
 

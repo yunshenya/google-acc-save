@@ -889,7 +889,6 @@ async def update_account(
             if db_account is None:
                 raise HTTPException(status_code=404, detail=f"{account_id}: 账号不存在")
 
-            # 仅更新提供的字段
             if account_update.account is not None:
                 db_account.account = account_update.account
             if account_update.password is not None:

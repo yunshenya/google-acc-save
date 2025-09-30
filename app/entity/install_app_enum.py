@@ -4,7 +4,6 @@ from app.config import config
 
 
 class InstallAppEnum:
-    total_app_count: int = 4
     script_md5_list: Any = config.get_app_url("script").split("/")
     script_md5 = script_md5_list[-1].replace(".apk", "")
     clash_md5_list: Any = config.get_app_url("clash").split("/")

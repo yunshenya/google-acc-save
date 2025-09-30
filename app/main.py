@@ -56,9 +56,6 @@ class InterceptHandler(logging.Handler):
 # noinspection PyShadowingNames
 @asynccontextmanager
 async def startup_event(app: FastAPI):
-    """应用启动事件"""
-    logger.info("=== 应用启动开始 ===")
-
     try:
         # 配置日志拦截器
         logging.getLogger("uvicorn.access").handlers = [InterceptHandler()]
@@ -66,13 +63,8 @@ async def startup_event(app: FastAPI):
         logging.getLogger("uvicorn.error").propagate = False
         logging.getLogger("uvicorn").propagate = False
         logging.getLogger("fastapi").propagate = False
-
-        logger.info("日志系统初始化完成")
-
         # 加载代理国家列表
         load_proxy_countries()
-        logger.info("代理国家列表加载完成")
-
         # 挂载静态文件和路由
         app.mount("/static", StaticFiles(directory="static"), name="static")
         app.include_router(auth.router, prefix="/auth", tags=["认证"])
@@ -86,12 +78,9 @@ async def startup_event(app: FastAPI):
         app.include_router(server.router, prefix="")
         app.include_router(status.router, prefix="")
 
-        logger.info("路由注册完成")
-
         # 创建数据库表
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
-        logger.info("数据库表创建/检查完成")
 
         # 初始化云机状态
         logger.info(f"开始初始化 {len(config.PAD_CODES)} 台云机")
@@ -123,16 +112,11 @@ async def startup_event(app: FastAPI):
                 logger.error(f"初始化云机 {pad_code} 失败: {e}")
                 continue
 
-        logger.success("=== 应用启动完成 ===")
-
     except Exception as e:
         logger.error(f"应用启动过程中出错: {e}")
         raise
 
     yield
-
-    # 应用关闭时的清理工作
-    logger.info("=== 应用开始关闭 ===")
 
     try:
         # 清理云机状态
@@ -142,18 +126,14 @@ async def startup_event(app: FastAPI):
             except Exception as e:
                 logger.warning(f"清理云机状态失败 {pad_code}: {e}")
 
-        logger.info("云机状态清理完成")
-
     except Exception as e:
         logger.error(f"应用关闭时出错: {e}")
-
-    logger.info("=== 应用关闭完成 ===")
 
 
 app = FastAPI(
     title="Google账号管理系统",
     lifespan=startup_event,
-    description="云机管理和账号自动化系统",
+    description="云机管理和账号",
     version="1.0.0",
 )
 
@@ -164,5 +144,3 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-logger.info("FastAPI应用创建完成")

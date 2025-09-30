@@ -129,7 +129,7 @@ async def get_overall_summary():
         device_count_result = await db.execute(device_count_query)
         total_devices = device_count_result.scalar() or 0
 
-        # 获取账号统计数据，包含转发邮箱统计
+        # 获取账号统计数据
         account_stats_query = text("""
                                    SELECT COUNT(*)                                                              as total_accounts,
                                           COUNT(CASE WHEN is_forward_email = true  THEN 1 END) as total_forward_emails,

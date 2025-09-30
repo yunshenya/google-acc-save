@@ -64,7 +64,6 @@ logger.add(
 )
 
 
-# 导出配置好的logger
 def get_logger(name: str = None):
     """获取配置好的logger实例"""
     if name:
@@ -72,8 +71,6 @@ def get_logger(name: str = None):
     return logger
 
 
-# 为WebSocket创建专用logger
 ws_logger = logger.bind(name="websocket", ws=True)
 
-# 为任务状态创建专用logger
 task_logger = logger.bind(name="task", category="task")

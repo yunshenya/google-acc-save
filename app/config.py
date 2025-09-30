@@ -6,10 +6,9 @@ from pathlib import Path
 from typing import Dict, Any, Optional, List
 from dotenv import load_dotenv, set_key
 
-# 加载环境变量
 load_dotenv()
 
-# 环境变量文件路径
+
 ENV_FILE = Path(".env")
 
 
@@ -168,7 +167,6 @@ def safe_parse_str_list(env_value: str, default: List[str] = None) -> List[str]:
     except (json.JSONDecodeError, TypeError):
         pass
 
-    # 尝试作为Python字面量解析
     try:
         result = ast.literal_eval(env_value)
         if isinstance(result, (list, tuple)):
@@ -410,7 +408,6 @@ class Config:
         if key in os.environ:
             del os.environ[key]
 
-        # 从 .env 文件删除（通过重写文件）
         if ENV_FILE.exists():
             lines = []
             with open(ENV_FILE, "r", encoding="utf-8") as f:
@@ -422,5 +419,4 @@ class Config:
                 f.writelines(lines)
 
 
-# 创建全局配置实例以便于访问
 config = Config()

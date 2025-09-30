@@ -37,9 +37,8 @@ class VmosUtil(object):
             f"signedHeaders:{self._signed_headers}\n"
             f"x-content-sha256:{x_content_sha256}"
         )
-        # 假设这些变量已经被赋值
-        # short_x_date = datetime.datetime.now().strftime("%Y%m%d")  # 短请求时间，例如："20240101"
-        short_x_date = self._x_date[:8]  # 短请求时间，例如："20240101"
+
+        short_x_date = self._x_date[:8]
         service = "armcloud-paas"  # 服务名
 
         # 构建credentialScope

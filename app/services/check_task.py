@@ -145,7 +145,6 @@ class TaskManager:
         try:
             await asyncio.sleep(timeout_seconds)
 
-            # 检查超时任务是否还应该继续（可能被 /status 接口取消了）
             async with self._lock:
                 if pad_code not in self._timeout_tasks:
                     logger.info(f"超时任务已被取消: {pad_code}")
