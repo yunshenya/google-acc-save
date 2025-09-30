@@ -28,15 +28,15 @@ async def create_account(account: AccountCreate) -> AccountResponse:
                 created_at=datetime.datetime.now()
             )
             if account.pad_code is not None:
-                logger.success(f"{account.pad_code}: 账号上传成功")
-                await update_proxies(pade_code=account.pad_code)
                 current_proxy: ProxyResponse = await get_proxy_status(account.pad_code)
                 db_account.code = current_proxy.code
                 db_account.proxy_platform = current_proxy.proxy_platform
-                await update_cloud_status(pad_code=account.pad_code, num_of_success=1)
             db.add(db_account)
             await db.commit()
             await db.refresh(db_account)
+            logger.success(f"{account.pad_code}: 账号上传成功")
+            await update_proxies(pade_code=account.pad_code)
+            await update_cloud_status(pad_code=account.pad_code, num_of_success=1)
             return db_account
         except IntegrityError:
             await db.rollback()

@@ -68,6 +68,8 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
             await update_cloud_status(pad_code, num_other_error=1, number_of_run=1)
         case 1:
             await update_cloud_status(pad_code=pad_code, num_of_error=1, number_of_run=1)
+        case _:
+            await update_cloud_status(pad_code=pad_code, num_of_error=0, number_of_run=1)
     try:
         await task_manager.cancel_timeout_task_only(pad_code)
         if pad_code in config.PAD_CODES:
