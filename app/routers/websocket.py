@@ -19,8 +19,8 @@ def get_client_ip(websocket: WebSocket) -> str:
                 return websocket.client.host
             # 如果是元组形式
             elif (
-                    isinstance(websocket.client, (tuple, list))
-                    and len(websocket.client) > 0
+                isinstance(websocket.client, (tuple, list))
+                and len(websocket.client) > 0
             ):
                 return str(websocket.client[0])
 
@@ -69,7 +69,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 # 设置接收超时，避免长时间阻塞
                 data = await asyncio.wait_for(
                     websocket.receive_text(),
-                    timeout=300.0  # 5分钟超时
+                    timeout=300.0,  # 5分钟超时
                 )
                 ws_logger.debug(f"收到客户端消息 ({client_ip}): {data[:100]}...")
 
@@ -82,13 +82,12 @@ async def websocket_endpoint(websocket: WebSocket):
                     if connection_accepted:
                         try:
                             await websocket.send_text(
-                                json.dumps({
-                                    "type": "error",
-                                    "message": "消息格式无效"
-                                })
+                                json.dumps({"type": "error", "message": "消息格式无效"})
                             )
                         except Exception as e:
-                            ws_logger.debug(f"无法发送错误消息，连接可能已断开: {client_ip}， 错误为{e}")
+                            ws_logger.debug(
+                                f"无法发送错误消息，连接可能已断开: {client_ip}， 错误为{e}"
+                            )
                             break
 
             except asyncio.TimeoutError:
@@ -111,10 +110,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 if connection_accepted:
                     try:
                         await websocket.send_text(
-                            json.dumps({
-                                "type": "error",
-                                "message": "服务器处理消息时出错"
-                            })
+                            json.dumps(
+                                {"type": "error", "message": "服务器处理消息时出错"}
+                            )
                         )
                     except Exception as send_error:
                         ws_logger.warning(

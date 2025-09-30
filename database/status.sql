@@ -16,9 +16,13 @@ CREATE TABLE "google-manager".public.cloud_status (
                               time_zone VARCHAR(100),
                               forward_num INT NOT NULL DEFAULT 0,
                               secondary_email_num INT NOT NULL DEFAULT 0,
+                              is_secondary_email BOOLEAN NOT NULL DEFAULT false,
                               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                               num_of_error INT NOT NULL DEFAULT 0,
+                              num_of_success INT NOT NULL DEFAULT 0,
+                              num_other_error INT NOT NULL DEFAULT 0,
+                              proxy_platform TEXT,
                               pad_name TEXT
 );
 

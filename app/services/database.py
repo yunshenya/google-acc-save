@@ -24,14 +24,16 @@ engine: Any = create_async_engine(
         },
         "command_timeout": 60,  # 命令超时60秒
         "prepared_statement_cache_size": 0,  # 禁用预编译语句缓存
-    } if "postgresql" in config.DATABASE_URL else {},
+    }
+    if "postgresql" in config.DATABASE_URL
+    else {},
 )
 
 SessionLocal = sessionmaker(
     class_=AsyncSession,
     bind=engine,
     autocommit=False,  # 关闭自动提交
-    expire_on_commit=False  # 提交后不过期对象
+    expire_on_commit=False,  # 提交后不过期对象
 )
 
 
