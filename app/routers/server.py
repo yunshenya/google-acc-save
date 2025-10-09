@@ -4,12 +4,13 @@ from typing import Any
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from starlette.responses import HTMLResponse
-
+from app.dependencies.utils import click, Position, ActionType, input_text
 from app.config import config
 from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_status
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
+from app.models.action import ClickRequest, ClickResponse, InputRequest, InputResponse
 from app.services.check_task import TaskManager
 from app.services.logger import task_logger, get_logger
 from app.services.task_status import (
@@ -202,3 +203,46 @@ async def callback(data: dict) -> str:
     except Exception as e:
         callback_logger.error(f"处理回调时出错: {e}, 数据: {data}")
         return "error: callback processing failed"
+
+
+
+@router.post("/vmos-click", response_model=ClickResponse)
+async def click_api(click_request: ClickRequest) -> ClickResponse:
+    result: Any = await click(
+        pad_code_list=[click_request.pade_code],
+        width=click_request.width,
+        height=click_request.height,
+        positions=[
+            Position(
+                x=click_request.x,
+                y=click_request.y,
+                action_type=ActionType.press,
+                next_position_wait_time=10,
+            ).to_dict(),
+            Position(
+                x=click_request.x,
+                y=click_request.y,
+                action_type=ActionType.lift,
+                next_position_wait_time=100,
+            ).to_dict()
+        ]
+    )
+    return ClickResponse(
+        code=result.get("code"),
+        msg=result.get("msg"),
+        data=result.get("data")
+    )
+
+
+@router.post("/vmos-input", response_model=InputResponse)
+async def input_api(input_request: InputRequest) -> InputResponse:
+    result: Any = await input_text(
+        pad_code_list=[input_request.pade_code],
+        message=input_request.text,
+    )
+    return InputResponse(
+        code=result.get("code"),
+        msg=result.get("msg"),
+        data=result.get("data"),
+        ts=result.get("ts")
+    )

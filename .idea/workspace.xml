@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化一些不必要的输出">
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/models/action.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dependencies/countries.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/countries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/代理国家列表 - IPIDEA.csv" beforeDir="false" afterPath="$PROJECT_DIR$/default_proxy.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/dependencies/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/dependencies/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/pade_code.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,11 +20,11 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="TypeScript File" />
         <option value="CSS File" />
         <option value="JavaScript File" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -325,9 +327,9 @@
     <list>
       <item itemvalue="Python.run" />
       <item itemvalue="Python.test" />
-      <item itemvalue="数据库脚本.status.sql" />
       <item itemvalue="数据库脚本.data.sql" />
       <item itemvalue="数据库脚本.proxy.sql" />
+      <item itemvalue="数据库脚本.status.sql" />
     </list>
     <recent_temporary>
       <list>
@@ -578,15 +580,13 @@
       <workItem from="1759199557292" duration="132000" />
       <workItem from="1759199697294" duration="1383000" />
       <workItem from="1759201314792" duration="17532000" />
-      <workItem from="1759220513430" duration="1591000" />
-    </task>
-    <task id="LOCAL-00163" summary="添加热更新">
-      <option name="closed" value="true" />
-      <created>1758950704422</created>
-      <option name="number" value="00163" />
-      <option name="presentableId" value="LOCAL-00163" />
-      <option name="project" value="LOCAL" />
-      <updated>1758950704422</updated>
+      <workItem from="1759220513430" duration="2369000" />
+      <workItem from="1759225760966" duration="801000" />
+      <workItem from="1759973261922" duration="19000" />
+      <workItem from="1759974987370" duration="1657000" />
+      <workItem from="1759978713599" duration="1229000" />
+      <workItem from="1760008804764" duration="51000" />
+      <workItem from="1760008939200" duration="2847000" />
     </task>
     <task id="LOCAL-00164" summary="添加热更新">
       <option name="closed" value="true" />
@@ -972,7 +972,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759219198556</updated>
     </task>
-    <option name="localTasksCounter" value="212" />
+    <task id="LOCAL-00212" summary="优化一些不必要的输出">
+      <option name="closed" value="true" />
+      <created>1759222120306</created>
+      <option name="number" value="00212" />
+      <option name="presentableId" value="LOCAL-00212" />
+      <option name="project" value="LOCAL" />
+      <updated>1759222120307</updated>
+    </task>
+    <option name="localTasksCounter" value="213" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -987,7 +995,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>

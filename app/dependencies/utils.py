@@ -110,6 +110,14 @@ async def click(
 
     return await VmosUtil(click_url, body).send()
 
+async def input_text(pad_code_list: list[str], message: str) -> str:
+    input_text_url = "/vcpcloud/api/padApi/inputText"
+    body = {
+        "padCodes": pad_code_list,
+        "text": message
+    }
+
+    return await VmosUtil(input_text_url, body).send()
 
 async def replacement(pad_code: str) -> dict[str, str]:
     replace_ment_url = "/vcpcloud/api/padApi/replacement"
