@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化一些不必要的输出">
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
-    </list>
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -584,15 +581,7 @@
       <workItem from="1760008804764" duration="51000" />
       <workItem from="1760008939200" duration="7664000" />
       <workItem from="1760063913060" duration="1505000" />
-      <workItem from="1760067989039" duration="3349000" />
-    </task>
-    <task id="LOCAL-00166" summary="添加热更新">
-      <option name="closed" value="true" />
-      <created>1758954126097</created>
-      <option name="number" value="00166" />
-      <option name="presentableId" value="LOCAL-00166" />
-      <option name="project" value="LOCAL" />
-      <updated>1758954126097</updated>
+      <workItem from="1760067989039" duration="3549000" />
     </task>
     <task id="LOCAL-00167" summary="添加热更新">
       <option name="closed" value="true" />
@@ -978,7 +967,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760068029778</updated>
     </task>
-    <option name="localTasksCounter" value="215" />
+    <task id="LOCAL-00215" summary="优化">
+      <option name="closed" value="true" />
+      <created>1760072584474</created>
+      <option name="number" value="00215" />
+      <option name="presentableId" value="LOCAL-00215" />
+      <option name="project" value="LOCAL" />
+      <updated>1760072584474</updated>
+    </task>
+    <option name="localTasksCounter" value="216" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1012,7 +1009,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="提高控制的精细度" />
     <MESSAGE value="修复多次设置新机的bug" />
     <MESSAGE value="开始时随机模板" />
     <MESSAGE value="设置单个代理" />
@@ -1037,6 +1033,7 @@
     <MESSAGE value="单次提交" />
     <MESSAGE value="增加连接池" />
     <MESSAGE value="优化一些不必要的输出" />
-    <option name="LAST_COMMIT_MESSAGE" value="优化一些不必要的输出" />
+    <MESSAGE value="优化" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化" />
   </component>
 </project>
