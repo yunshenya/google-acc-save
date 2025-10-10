@@ -1,3 +1,4 @@
+import datetime
 from typing import cast, Any
 import asyncio
 
@@ -54,15 +55,20 @@ async def remove_cloud_status(pad_code: str):
                 cast(ColumnElement[bool], Status.pad_code == pad_code)
             )
             result = await db.execute(stmt)
-            account = result.scalars().first()
-            if account is None:
+            status = result.scalars().first()
+            if status is None:
                 raise HTTPException(status_code=404, detail="云机不存在")
-            await db.execute(
-                delete(Status).filter(
-                    cast(ColumnElement[bool], Status.pad_code == pad_code)
+
+            if status.current_status is not "调试用机":
+                await db.execute(
+                    delete(Status).filter(
+                        cast(ColumnElement[bool], Status.pad_code == pad_code)
+                    )
                 )
-            )
+            else:
+                status.updated_at = datetime.datetime.now()
             await db.commit()
+            await db.refresh(status)
             task_logger.success(f"云机数据 {pad_code} : 删除成功")
         except IntegrityError:
             await db.rollback()
@@ -79,7 +85,7 @@ async def update_cloud_status(
     num_of_success: int = None,
     num_of_error: int = None,
     num_other_error: int = None,
-    max_retries: int = 3,  # 重试次数
+    max_retries: Any = 3,  # 重试次数
 ) -> StatusResponse:
     last_error = None
 
