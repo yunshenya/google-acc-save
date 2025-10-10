@@ -10,7 +10,7 @@ from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
-from app.models.action import ClickRequest, ClickResponse, InputRequest, InputResponse
+from app.models.action import ClickRequest, ClickResponse, InputRequest, InputResponse, SlideRequest
 from app.services.check_task import TaskManager
 from app.services.logger import task_logger, get_logger
 from app.services.task_status import (
@@ -245,4 +245,38 @@ async def input_api(input_request: InputRequest) -> InputResponse:
         msg=result.get("msg"),
         data=result.get("data"),
         ts=result.get("ts")
+    )
+
+
+@router.post("/vmos-slide", response_model=ClickResponse)
+async def slide_api(slide: SlideRequest) -> ClickResponse:
+    result: Any = await click(
+        pad_code_list=[slide.pade_code],
+        width=slide.width,
+        height=slide.height,
+        positions=[
+            Position(
+                x=slide.x1,
+                y=slide.y1,
+                action_type=ActionType.press,
+                next_position_wait_time=slide.next_position_wait_time1,
+            ).to_dict(),
+            Position(
+                x=slide.x2,
+                y=slide.y2,
+                action_type=ActionType.touching,
+                next_position_wait_time=slide.next_position_wait_time2,
+            ).to_dict(),
+            Position(
+                x=slide.x3,
+                y=slide.y3,
+                action_type=ActionType.lift,
+                next_position_wait_time=slide.next_position_wait_time3,
+            ).to_dict(),
+        ]
+    )
+    return ClickResponse(
+        code=result.get("code"),
+        msg=result.get("msg"),
+        data=result.get("data")
     )

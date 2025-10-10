@@ -268,7 +268,7 @@ class TaskManager:
                                 longitude=current_proxy.longitude,
                             )
 
-                            await asyncio.sleep(10)
+                            await asyncio.sleep(5)
                             await update_cloud_status(
                                 pad_code=pad_code, current_status="开始启动应用"
                             )
