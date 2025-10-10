@@ -59,7 +59,7 @@ async def remove_cloud_status(pad_code: str):
             if status is None:
                 raise HTTPException(status_code=404, detail="云机不存在")
 
-            if status.pad_name is not "调试用机":
+            if status.pad_name != "调试用机":
                 await db.execute(
                     delete(Status).filter(
                         cast(ColumnElement[bool], Status.pad_code == pad_code)
