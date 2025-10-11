@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化">
+      <change beforePath="$PROJECT_DIR$/.idea/webServers.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webServers.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -137,7 +141,7 @@
       <recent name="D:\Document\PythonProjects\google-acc-save\app\dependencies" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run">
+  <component name="RunManager" selected="Python.test">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/database/data.sql" />
       <script-mode>FILE</script-mode>
@@ -318,19 +322,16 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.run" />
-      <item itemvalue="Python.test" />
       <item itemvalue="数据库脚本.data.sql" />
       <item itemvalue="数据库脚本.proxy.sql" />
       <item itemvalue="数据库脚本.status.sql" />
+      <item itemvalue="Python.run" />
+      <item itemvalue="Python.test" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.run" />
         <item itemvalue="Python.test" />
-        <item itemvalue="数据库脚本.status.sql" />
-        <item itemvalue="数据库脚本.proxy.sql" />
-        <item itemvalue="数据库脚本.data.sql" />
+        <item itemvalue="Python.run" />
       </list>
     </recent_temporary>
   </component>
@@ -582,22 +583,10 @@
       <workItem from="1760008939200" duration="7664000" />
       <workItem from="1760063913060" duration="1505000" />
       <workItem from="1760067989039" duration="3549000" />
-    </task>
-    <task id="LOCAL-00167" summary="添加热更新">
-      <option name="closed" value="true" />
-      <created>1758958492877</created>
-      <option name="number" value="00167" />
-      <option name="presentableId" value="LOCAL-00167" />
-      <option name="project" value="LOCAL" />
-      <updated>1758958492877</updated>
-    </task>
-    <task id="LOCAL-00168" summary="添加热更新">
-      <option name="closed" value="true" />
-      <created>1758960091527</created>
-      <option name="number" value="00168" />
-      <option name="presentableId" value="LOCAL-00168" />
-      <option name="project" value="LOCAL" />
-      <updated>1758960091527</updated>
+      <workItem from="1760073152579" duration="2772000" />
+      <workItem from="1760089630484" duration="795000" />
+      <workItem from="1760167260263" duration="1196000" />
+      <workItem from="1760170993469" duration="2659000" />
     </task>
     <task id="LOCAL-00169" summary="添加热更新">
       <option name="closed" value="true" />
@@ -975,7 +964,23 @@
       <option name="project" value="LOCAL" />
       <updated>1760072584474</updated>
     </task>
-    <option name="localTasksCounter" value="216" />
+    <task id="LOCAL-00216" summary="优化">
+      <option name="closed" value="true" />
+      <created>1760073400521</created>
+      <option name="number" value="00216" />
+      <option name="presentableId" value="LOCAL-00216" />
+      <option name="project" value="LOCAL" />
+      <updated>1760073400521</updated>
+    </task>
+    <task id="LOCAL-00217" summary="优化">
+      <option name="closed" value="true" />
+      <created>1760076669462</created>
+      <option name="number" value="00217" />
+      <option name="presentableId" value="LOCAL-00217" />
+      <option name="project" value="LOCAL" />
+      <updated>1760076669462</updated>
+    </task>
+    <option name="localTasksCounter" value="218" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

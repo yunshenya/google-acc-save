@@ -9,6 +9,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="e02c6086-3c41-47b2-a2fa-25b891cb3c99" name="测试环境">
+        <fileTransfer rootFolder="/home/google-save" accessType="SFTP" host="203.91.72.67" port="22" sshConfigId="578f760d-1a4e-4ed2-913b-72435b78e3bc" sshConfig="root@203.91.72.67:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

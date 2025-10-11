@@ -4,10 +4,11 @@ from typing import Any
 from fastapi import APIRouter
 from fastapi.responses import FileResponse
 from starlette.responses import HTMLResponse
-from app.dependencies.utils import click, Position, ActionType, input_text
+
 from app.config import config
 from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_status
 from app.dependencies.countries import manager
+from app.dependencies.utils import click, Position, ActionType, input_text
 from app.dependencies.utils import replace_pad
 from app.models.accounts import AndroidPadCodeRequest
 from app.models.action import ClickRequest, ClickResponse, InputRequest, InputResponse, SlideRequest
@@ -111,7 +112,7 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
             }
         else:
             await remove_cloud_status(pad_code=pad_code)
-            return {"message": "其他机器成功"}
+            return {"message": "移除成功"}
 
     except Exception as e:
         callback_logger.error(f"{pad_code}: 手动一键新机失败 - {e}")
