@@ -51,29 +51,46 @@ async def remove_cloud_status(pad_code: str):
     """删除云机状态"""
     async with SessionLocal() as db:
         try:
-            from sqlalchemy import select, delete
+            from sqlalchemy import select, delete, update
 
-            stmt = select(Status).filter(
-                cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
-            )
+            # 先查询状态以检查是否为调试用机
+            stmt = select(Status.pad_name).where(cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code)))
             result = await db.execute(stmt)
-            status = result.scalars().first()
-            if status is None:
+            pad_name = result.scalar_one_or_none()
+
+            if pad_name is None:
                 raise HTTPException(status_code=404, detail="云机不存在")
 
-            if status.pad_name != "调试用机":
-                await db.execute(
-                    delete(Status).filter(
-                        cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
-                    )
+            # 如果是调试用机，只更新时间而不删除
+            if pad_name == "调试用机":
+                update_stmt = (
+                    update(Status)
+                    .where(cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code)))
+                    .values(updated_at=datetime.datetime.now())
                 )
-            else:
-                status.updated_at = datetime.datetime.now()
+                await db.execute(update_stmt)
+                await db.commit()
+                task_logger.info(f"调试用机 {pad_code} 保留，仅更新时间")
+                return
+
+            # 执行删除
+            delete_stmt = delete(Status).where(cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code)))
+            result = await db.execute(delete_stmt)
             await db.commit()
-            await db.refresh(status)
-            task_logger.success(f"云机数据 {pad_code} : 删除成功")
-        except IntegrityError:
+
+            task_logger.success(f"云机数据 {pad_code} 删除成功，影响行数: {result.rowcount}")
+
+        except HTTPException:
             await db.rollback()
+            raise
+        except IntegrityError as e:
+            await db.rollback()
+            task_logger.error(f"{pad_code}: 删除失败(完整性约束) - {e}")
+            raise HTTPException(status_code=400, detail="删除失败：存在关联数据")
+        except Exception as e:
+            await db.rollback()
+            task_logger.error(f"{pad_code}: 删除失败 - {e}")
+            raise HTTPException(status_code=500, detail=f"删除失败: {str(e)}")
 
 
 async def all_cloud_status():

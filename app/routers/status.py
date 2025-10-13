@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
 
-from app.curd.status import update_cloud_status
+from app.curd.status import update_cloud_status, remove_cloud_status
 from app.dependencies.countries import manager, load_proxy_countries
 from app.models.status import (
     StatusResponse,
@@ -158,3 +158,21 @@ async def add_cloud_status(status: AddStatusRequest) -> dict[str, str]:
         except IntegrityError:
             await db.rollback()
             return {"msg": f"云机已存在: {status.pad_code}"}
+
+
+@router.delete("/cloud_status/{pad_code}", response_model=dict)
+async def delete_cloud_status(pad_code: str) -> dict:
+    """删除指定的云机状态"""
+    try:
+        await remove_cloud_status(pad_code=pad_code)
+
+        # 通知WebSocket客户端
+        from app.services.websocket_manager import ws_manager
+        await ws_manager.send_status_update()
+
+        return {"success": True, "message": f"云机 {pad_code} 已成功删除"}
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        task_logger.error(f"{pad_code}: 删除云机失败 - {e}")
+        raise HTTPException(status_code=500, detail=f"删除失败: {str(e)}")

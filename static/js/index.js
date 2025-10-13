@@ -1402,6 +1402,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button class="status-btn" onclick="openEditDeviceModal('${status.pad_code}')" title="编辑设备配置" style="background-color: var(--warning-color);">
                         ✏️
                     </button>
+                    <button class="status-btn" onclick="deleteCloudDevice('${status.pad_code}')" title="删除该设备" style="background-color: var(--danger-color);">
+                        🗑️
+                    </button>
                 </div>
             </td>
         `;
@@ -1471,7 +1474,120 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-// 确保全局可访问
+    // 删除云机设备
+    async function deleteCloudDevice(padCode) {
+        // 二次确认
+        const confirmation = confirm(
+            `⚠️ 确定要删除设备 "${padCode}" 吗？\n\n` +
+            `此操作将：\n` +
+            `• 从状态监控列表中移除该设备\n` +
+            `• 删除该设备的所有状态数据\n` +
+            `• 此操作不可撤销\n\n` +
+            `是否继续？`
+        );
+
+        if (!confirmation) {
+            return;
+        }
+
+        try {
+            showLoading(true);
+
+            const response = await authenticatedFetch(`/cloud_status/${padCode}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            if (!response || !response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '删除失败');
+            }
+
+            const result = await response.json();
+            showToast(result.message || `设备 ${padCode} 删除成功`, 'success');
+
+            // 刷新状态列表
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                requestStatusUpdate();
+            } else {
+                await fetchCloudStatus();
+            }
+
+        } catch (error) {
+            console.error('删除云机设备失败:', error);
+            showToast('删除失败: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+// 批量删除云机设备
+    async function batchDeleteCloudDevices() {
+        const checkboxes = document.querySelectorAll('.device-checkbox:checked');
+
+        if (checkboxes.length === 0) {
+            showToast('请先选择要删除的设备', 'warning');
+            return;
+        }
+
+        const padCodes = Array.from(checkboxes).map(cb => cb.dataset.padCode);
+
+        const confirmation = confirm(
+            `⚠️ 确定要删除 ${padCodes.length} 个设备吗？\n\n` +
+            `设备列表：\n${padCodes.join('\n')}\n\n` +
+            `此操作不可撤销，是否继续？`
+        );
+
+        if (!confirmation) {
+            return;
+        }
+
+        try {
+            showLoading(true);
+            let successCount = 0;
+            let failCount = 0;
+
+            for (const padCode of padCodes) {
+                try {
+                    const response = await authenticatedFetch(`/cloud_status/${padCode}`, {
+                        method: 'DELETE',
+                        headers: getAuthHeaders()
+                    });
+
+                    if (response && response.ok) {
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                } catch (error) {
+                    console.error(`删除 ${padCode} 失败:`, error);
+                    failCount++;
+                }
+            }
+
+            showToast(
+                `批量删除完成：成功 ${successCount} 个，失败 ${failCount} 个`,
+                failCount === 0 ? 'success' : 'warning'
+            );
+
+            // 刷新状态列表
+            if (websocket && websocket.readyState === WebSocket.OPEN) {
+                requestStatusUpdate();
+            } else {
+                await fetchCloudStatus();
+            }
+
+        } catch (error) {
+            console.error('批量删除失败:', error);
+            showToast('批量删除失败: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    // 全局暴露函数
+    window.deleteCloudDevice = deleteCloudDevice;
+    window.batchDeleteCloudDevices = batchDeleteCloudDevices;
     window.openEditDeviceModal = openEditDeviceModal;
     window.closeEditDeviceModal = closeEditDeviceModal;
     window.saveDeviceConfig = saveDeviceConfig;

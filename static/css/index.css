@@ -659,3 +659,12 @@ tr:hover {
 .status-btn:hover {
     transform: scale(1.05);
 }
+
+/* 删除按钮样式 */
+.status-btn[style*="danger"] {
+    background-color: var(--danger-color) !important;
+}
+
+.status-btn[style*="danger"]:hover {
+    background-color: #c0392b !important;
+}
