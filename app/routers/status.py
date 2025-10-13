@@ -66,7 +66,7 @@ async def get_one_cloud_status(
 
 @router.put("/cloud_status/{pad_code}", response_model=StatusResponse)
 async def update_single_cloud_status(
-    pad_code: str, status_update: StatusUpdateRequest
+        pad_code: str, status_update: StatusUpdateRequest
 ) -> StatusResponse:
     """更新单个云机的配置信息"""
     async with SessionLocal() as db:
@@ -105,6 +105,10 @@ async def update_single_cloud_status(
             # 更新辅助邮箱状态
             if status_update.is_secondary_email is not None:
                 db_status.is_secondary_email = status_update.is_secondary_email
+
+            # 更新随机代理状态
+            if status_update.is_random_proxy is not None:
+                db_status.is_random_proxy = status_update.is_random_proxy
 
             await db.commit()
             await db.refresh(db_status)

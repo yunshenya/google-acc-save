@@ -33,6 +33,7 @@ class StatusUpdateRequest(BaseModel):
     latitude: float | None = None
     longitude: float | None = None
     is_secondary_email: bool | None = None
+    is_random_proxy: bool | None = None
 
 
 class StatusRequest(BaseModel):

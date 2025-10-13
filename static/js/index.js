@@ -1246,7 +1246,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     language: row.getAttribute('data-language'),
                     latitude: row.getAttribute('data-latitude'),
                     longitude: row.getAttribute('data-longitude'),
-                    isSecondaryEmail: row.getAttribute('data-is-secondary-email') === 'true'
+                    isSecondaryEmail: row.getAttribute('data-is-secondary-email') === 'true',
+                    isRandomProxy: row.getAttribute('data-is-random-proxy') === 'true'
                 };
                 break;
             }
@@ -1270,6 +1271,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('editLatitude').value = deviceData.latitude || '';
         document.getElementById('editLongitude').value = deviceData.longitude || '';
         document.getElementById('editIsSecondaryEmail').checked = deviceData.isSecondaryEmail;
+        document.getElementById('editIsRandomProxy').checked = deviceData.isRandomProxy;
 
         // 显示弹窗
         document.getElementById('editDeviceModal').style.display = 'flex';
@@ -1301,7 +1303,8 @@ document.addEventListener('DOMContentLoaded', function() {
             language: document.getElementById('editLanguage').value.trim(),
             latitude: parseFloat(document.getElementById('editLatitude').value),
             longitude: parseFloat(document.getElementById('editLongitude').value),
-            is_secondary_email: document.getElementById('editIsSecondaryEmail').checked
+            is_secondary_email: document.getElementById('editIsSecondaryEmail').checked,
+            is_random_proxy: document.getElementById('editIsRandomProxy').checked
         };
 
         try {
@@ -1367,6 +1370,7 @@ document.addEventListener('DOMContentLoaded', function() {
             row.setAttribute('data-latitude', status.latitude || '');
             row.setAttribute('data-longitude', status.longitude || '');
             row.setAttribute('data-is-secondary-email', status.is_secondary_email || false);
+            row.setAttribute('data-is-random-proxy', status.is_random_proxy || false);
 
             const statusClass = getStatusClass(status.current_status);
             const totalRuns = status.number_of_run || 1;
@@ -1500,7 +1504,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (!response || !response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.detail || '删除失败');
+                new Error(errorData.detail || '删除失败');
             }
 
             const result = await response.json();
