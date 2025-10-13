@@ -16,7 +16,8 @@ SECRET_KEY = os.getenv(
     "JWT_SECRET_KEY", '+H~I52e."@bM5BC"?-5mpKUnr\}{+nh,>>SrV4Sx@qfthW/_D9'
 )
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+# 延长访问令牌有效期到7天
+ACCESS_TOKEN_EXPIRE_MINUTES = 7 * 24 * 60  # 7天
 
 # 默认管理员账户
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME", "admin")
@@ -52,6 +53,12 @@ def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
                 headers={"WWW-Authenticate": "Bearer"},
             )
         return username
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="登录已过期，请重新登录",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except jwt.PyJWTError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
