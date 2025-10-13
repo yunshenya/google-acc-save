@@ -9,7 +9,7 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import config
 from app.curd.proxy import get_proxies_by_country_code
-from app.curd.status import add_cloud_status, remove_cloud_status, set_proxy_status, get_one_pade_status, \
+from app.curd.status import add_cloud_status, set_proxy_status, get_one_pade_status, \
     all_cloud_status
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
@@ -23,11 +23,10 @@ from app.routers import (
     statistics,
     proxy_collection,
 )
-from app.routers import pad_code as pad_code_router
 from app.routers import config as config_router
+from app.routers import pad_code as pad_code_router
 from app.routers import websocket as websocket_router
 from app.services.database import engine, Base
-
 # 导入日志配置
 from app.services.logger import get_logger, task_logger
 
