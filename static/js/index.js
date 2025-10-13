@@ -1398,6 +1398,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td class="${getRatioClass(secondaryEmailRatio)}" title="辅助邮箱: ${status.secondary_email_num || 0}/${totalRuns}">${secondaryEmailRatio}%</td>
             <td title="国家">${status.country || '未设置'}</td>
             <td title="更新时间">${formatDateTime(status.updated_at)}</td>
+            <td title="随机代理状态">${status.is_random_proxy ? '✓ 启用' : '✗ 关闭'}</td>
             <td>
                 <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                     <button class="status-btn" onclick="refreshSingleStatus('${status.pad_code}')" title="刷新该设备状态">
