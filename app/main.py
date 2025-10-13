@@ -9,7 +9,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.config import config
 from app.curd.proxy import get_proxies_by_country_code
-from app.curd.status import add_cloud_status, remove_cloud_status, set_proxy_status, get_one_pade_status
+from app.curd.status import add_cloud_status, remove_cloud_status, set_proxy_status, get_one_pade_status, \
+    all_cloud_status
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
@@ -120,16 +121,13 @@ async def startup_event(app: FastAPI):
     except Exception as e:
         logger.error(f"应用启动过程中出错: {e}")
         raise
-
     yield
 
     try:
-        # 清理云机状态
-        for pad_code in config.PAD_CODES:
-            try:
-                await remove_cloud_status(pad_code)
-            except Exception as e:
-                logger.warning(f"清理云机状态失败 {pad_code}: {e}")
+        try:
+            await all_cloud_status()
+        except Exception as e:
+            logger.warning(f"清理云机状态失败: {e}")
 
     except Exception as e:
         logger.error(f"应用关闭时出错: {e}")

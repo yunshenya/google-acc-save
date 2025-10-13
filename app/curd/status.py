@@ -3,6 +3,7 @@ import datetime
 from typing import cast, Any
 
 from fastapi import HTTPException
+from loguru import logger
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.exc import IntegrityError
@@ -74,6 +75,41 @@ async def remove_cloud_status(pad_code: str):
         except IntegrityError:
             await db.rollback()
 
+
+async def all_cloud_status():
+    # 清理云机状态
+    async with SessionLocal() as db:
+        try:
+            from sqlalchemy import select, delete
+
+            # 查询所有状态
+            result = await db.execute(select(Status))
+            all_statuses = result.scalars().all()
+
+            for status in all_statuses:
+                try:
+                    # 跳过调试用机
+                    if status.pad_name == "调试用机":
+                        logger.info(f"保留调试用机: {status.pad_code}")
+                        continue
+
+                    # 删除其他云机状态
+                    await db.execute(
+                        delete(Status).filter(
+                            cast(ColumnElement[bool], cast(object, Status.pad_code == status.pad_code))
+                        )
+                    )
+                    logger.info(f"已删除云机状态: {status.pad_code}")
+
+                except Exception as e:
+                    logger.warning(f"清理云机状态失败 {status.pad_code}: {e}")
+
+            await db.commit()
+            logger.info("云机状态清理完成")
+
+        except Exception as e:
+            logger.error(f"清理云机状态时出错: {e}")
+            await db.rollback()
 
 async def update_cloud_status(
     pad_code: str,
