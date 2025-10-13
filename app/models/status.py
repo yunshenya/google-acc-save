@@ -50,3 +50,32 @@ class GetOneCloudStatus(BaseModel):
 class AddStatusRequest(BaseModel):
     pad_code: str
     country_code: str
+
+
+class OnePadeAllStatus(BaseModel):
+    id : int
+    pad_code : str
+    country : str| None = None
+    temple_id : int | None = None
+    current_status : str | None = None
+    phone_number_counts : int
+    forward_num : int
+    secondary_email_num : int
+    num_of_success : int
+    proxy_platform : str | None = None
+    num_of_success : int
+    num_of_run : int
+    temple_id : int
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
+    proxy : str | None = None
+    code : str | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    language: str | None = None
+    time_zone: str | None = None
+    is_secondary_email: bool | None = None
+    num_of_error : int
+    num_other_error : int
+    pad_name: str | None = None
+    is_random_proxy : bool

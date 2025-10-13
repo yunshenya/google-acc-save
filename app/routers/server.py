@@ -6,7 +6,8 @@ from fastapi.responses import FileResponse
 from starlette.responses import HTMLResponse
 
 from app.config import config
-from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_status
+from app.curd.proxy import get_proxies_by_country_code
+from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_status, get_one_pade_status
 from app.dependencies.countries import manager
 from app.dependencies.utils import click, Position, ActionType, input_text
 from app.dependencies.utils import replace_pad
@@ -88,8 +89,12 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
         if pad_code in config.PAD_CODES:
             # 选择模板和代理
             template_id = random.choice(config.TEMPLE_IDS)
-            default_proxy: Any = manager.get_proxy_countries()
-            selected_proxy = random.choice(default_proxy)
+            pade_status = await get_one_pade_status(pade_code=pad_code)
+            if pade_status.is_random_proxy:
+                default_proxy: Any = manager.get_proxy_countries()
+                selected_proxy = random.choice(default_proxy)
+            else:
+                selected_proxy = get_proxies_by_country_code(country_code=pade_status.code)
             await set_proxy_status(pad_code, selected_proxy)
             await update_cloud_status(
                 pad_code, temple_id=template_id, current_status="一键新机中"
@@ -271,9 +276,15 @@ async def slide_api(slide: SlideRequest) -> ClickResponse:
             Position(
                 x=slide.x3,
                 y=slide.y3,
-                action_type=ActionType.lift,
+                action_type=ActionType.touching,
                 next_position_wait_time=slide.next_position_wait_time3,
             ).to_dict(),
+            Position(
+                x=slide.x3,
+                y=slide.y3,
+                action_type=ActionType.lift,
+                next_position_wait_time=slide.next_position_wait_time3,
+            ).to_dict()
         ]
     )
     return ClickResponse(

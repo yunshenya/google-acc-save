@@ -54,7 +54,7 @@ async def get_one_cloud_status(
             select(Status).filter(
                 cast(
                     ColumnElement[bool],
-                    Status.pad_code == one_cloud_status_request.pad_code,
+                    cast(object, Status.pad_code == one_cloud_status_request.pad_code),
                 )
             )
         )
@@ -74,7 +74,7 @@ async def update_single_cloud_status(
             from sqlalchemy import select
 
             stmt = select(Status).filter(
-                cast(ColumnElement[bool], Status.pad_code == pad_code)
+                cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
             )
             result = await db.execute(stmt)
             db_status = result.scalars().first()

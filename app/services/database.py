@@ -79,6 +79,7 @@ class Status(Base):
     num_other_error = Column(Integer, nullable=False, default=0)
     proxy_platform = Column(Text, nullable=True)
     pad_name = Column(Text, nullable=True)
+    is_random_proxy = Column(Boolean, nullable=False, default=False)
 
 
 class ProxyCollection(Base):

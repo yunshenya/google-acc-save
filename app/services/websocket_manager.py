@@ -2,13 +2,14 @@ import asyncio
 import json
 import random
 from datetime import datetime, timedelta
-from typing import Set, Dict, Optional
+from typing import Set, Dict, Optional, Any
 
 from anyio import Semaphore
 
 from app.config import config
+from app.curd.proxy import get_proxies_by_country_code
 from app.dependencies.utils import replace_pad
-from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_status
+from app.curd.status import update_cloud_status, set_proxy_status, remove_cloud_status, get_one_pade_status
 from app.dependencies.countries import manager
 from fastapi import WebSocket
 from sqlalchemy import select
@@ -185,10 +186,13 @@ class WebSocketManager:
             await task_manager.cancel_timeout_task_only(pad_code)
             # 选择随机模板
             temple_id = random.choice(config.TEMPLE_IDS)
-
+            pade_status = await get_one_pade_status(pade_code=pad_code)
             # 选择随机代理
-            default_proxy = manager.get_proxy_countries()
-            selected_proxy = random.choice(default_proxy)
+            if pade_status.is_random_proxy:
+                default_proxy: Any = manager.get_proxy_countries()
+                selected_proxy = random.choice(default_proxy)
+            else:
+                selected_proxy = get_proxies_by_country_code(country_code=pade_status.code)
 
             ws_logger.warning(
                 f"{pad_code}: 检测到超时（超过{self.timeout_check_minutes}分钟未更新），开始执行一键新机"

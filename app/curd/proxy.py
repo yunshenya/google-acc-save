@@ -3,7 +3,9 @@ from typing import Any
 
 from sqlalchemy import cast, ColumnElement
 
+from app.config import config
 from app.curd.status import get_proxy_status
+from app.dependencies.countries import manager, load_proxy_countries
 from app.dependencies.utils import get_cloud_phone_info
 from app.models.proxy import ProxyResponse
 from app.services.database import SessionLocal, ProxyCollection
@@ -44,3 +46,15 @@ async def get_proxies():
         )
         status = result.scalars().all()
         return status
+
+
+
+def get_proxies_by_country_code(country_code: str):
+    proxy_countries = manager.get_proxy_countries()
+    # 如果代理国家列表为空，尝试加载
+    if not proxy_countries:
+        load_proxy_countries()
+    for country in proxy_countries:
+        if country.code.lower() == country_code.lower():
+            return country
+    return config.PROXY_COUNTRIES

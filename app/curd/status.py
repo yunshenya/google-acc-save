@@ -1,14 +1,15 @@
+import asyncio
 import datetime
 from typing import cast, Any
-import asyncio
 
 from fastapi import HTTPException
 from sqlalchemy import ColumnElement
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import IntegrityError
+
 from app.dependencies.utils import get_pad_info
 from app.models.proxy import ProxyResponse
-from app.models.status import StatusResponse
+from app.models.status import StatusResponse, OnePadeAllStatus
 from app.services.database import SessionLocal, Status
 from app.services.logger import task_logger
 
@@ -52,7 +53,7 @@ async def remove_cloud_status(pad_code: str):
             from sqlalchemy import select, delete
 
             stmt = select(Status).filter(
-                cast(ColumnElement[bool], Status.pad_code == pad_code)
+                cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
             )
             result = await db.execute(stmt)
             status = result.scalars().first()
@@ -62,7 +63,7 @@ async def remove_cloud_status(pad_code: str):
             if status.pad_name != "调试用机":
                 await db.execute(
                     delete(Status).filter(
-                        cast(ColumnElement[bool], Status.pad_code == pad_code)
+                        cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
                     )
                 )
             else:
@@ -95,7 +96,7 @@ async def update_cloud_status(
                 from sqlalchemy import select
 
                 stmt = select(Status).filter(
-                    cast(ColumnElement[bool], Status.pad_code == pad_code)
+                    cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
                 )
                 result = await db.execute(stmt)
                 db_status = result.scalars().first()
@@ -231,7 +232,7 @@ async def set_proxy_status(
             from sqlalchemy import select
 
             stmt = select(Status).filter(
-                cast(ColumnElement[bool], Status.pad_code == pad_code)
+                cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
             )
             result = await db.execute(stmt)
             db_status = result.scalars().first()
@@ -276,11 +277,28 @@ async def get_proxy_status(pad_code: str) -> ProxyResponse:
 
         result = await db.execute(
             select(Status).filter(
-                cast(ColumnElement[bool], Status.pad_code == pad_code)
+                cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
             )
         )
         status = result.scalars().first()
         if status is None:
             task_logger.error(f"云机不存在: {pad_code}")
+            raise HTTPException(status_code=404, detail="云机不存在")
+        return status
+
+
+async def get_one_pade_status(pade_code: str) -> OnePadeAllStatus:
+    async with SessionLocal() as db:
+        from sqlalchemy import select
+        result = await db.execute(
+            select(Status).filter(
+                cast(
+                    ColumnElement[bool],
+                    cast(object, Status.pad_code == pade_code),
+                )
+            )
+        )
+        status = result.scalars().first()
+        if status is None:
             raise HTTPException(status_code=404, detail="云机不存在")
         return status
