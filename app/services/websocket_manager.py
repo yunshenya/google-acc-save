@@ -283,6 +283,7 @@ class WebSocketManager:
                         "proxy": status.proxy,
                         "num_of_error": status.num_of_error,
                         "num_other_error": status.num_other_error,
+                        "is_secondary_email": bool(status.is_secondary_email) if status.is_secondary_email is not None else False,
                     }
                     status_data.append(status_dict)
 

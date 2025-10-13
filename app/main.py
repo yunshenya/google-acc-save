@@ -8,9 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.config import config
-from app.curd.proxy import get_proxies_by_country_code
-from app.curd.status import add_cloud_status, set_proxy_status, get_one_pade_status, \
-    all_cloud_status
+from app.curd.status import add_cloud_status, set_proxy_status, all_cloud_status
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
@@ -90,15 +88,9 @@ async def startup_event(app: FastAPI):
             try:
                 template_id = random.choice(config.TEMPLE_IDS)
                 await add_cloud_status(pad_code, template_id)
-
-                pade_status = await get_one_pade_status(pade_code=pad_code)
-                if pade_status.is_random_proxy:
-                    default_proxy: Any = manager.get_proxy_countries()
-                    selected_proxy = random.choice(default_proxy)
-                else:
-                    selected_proxy = get_proxies_by_country_code(country_code=pade_status.code)
+                default_proxy: Any = manager.get_proxy_countries()
+                selected_proxy = random.choice(default_proxy)
                 await set_proxy_status(pad_code, selected_proxy, number_of_run=1)
-
                 if not config.DEBUG:
                     result = await replace_pad([pad_code], template_id=template_id)
                     task_logger.info(
