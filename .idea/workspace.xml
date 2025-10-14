@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加设置随机代理功能">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/statistics.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/statistics.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -600,15 +600,7 @@
       <workItem from="1760405693640" duration="453000" />
       <workItem from="1760407842341" duration="94000" />
       <workItem from="1760409966241" duration="323000" />
-      <workItem from="1760421094355" duration="4201000" />
-    </task>
-    <task id="LOCAL-00177" summary="增加字段">
-      <option name="closed" value="true" />
-      <created>1759025542385</created>
-      <option name="number" value="00177" />
-      <option name="presentableId" value="LOCAL-00177" />
-      <option name="project" value="LOCAL" />
-      <updated>1759025542387</updated>
+      <workItem from="1760421094355" duration="5621000" />
     </task>
     <task id="LOCAL-00178" summary="增加图片">
       <option name="closed" value="true" />
@@ -994,7 +986,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760423651802</updated>
     </task>
-    <option name="localTasksCounter" value="226" />
+    <task id="LOCAL-00226" summary="增加设置随机代理功能">
+      <option name="closed" value="true" />
+      <created>1760425608011</created>
+      <option name="number" value="00226" />
+      <option name="presentableId" value="LOCAL-00226" />
+      <option name="project" value="LOCAL" />
+      <updated>1760425608011</updated>
+    </task>
+    <option name="localTasksCounter" value="227" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

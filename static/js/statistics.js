@@ -433,3 +433,86 @@ function showError(message) {
         }
     }, 5000);
 }
+
+function updateForwardEmailMetrics(data) {
+    const forwardEmailMetrics = document.getElementById('forwardEmailMetrics');
+    const forwardEmailTrends = document.getElementById('forwardEmailTrends');
+
+    if (forwardEmailMetrics) {
+        // 计算转发邮箱成功率等级
+        function getForwardRateClass(rate) {
+            if (rate >= 80) return 'forward-rate-high';
+            if (rate >= 50) return 'forward-rate-medium';
+            return 'forward-rate-low';
+        }
+
+        forwardEmailMetrics.innerHTML = `
+            <div class="metric-row">
+                <span class="metric-label">总转发邮箱成功率</span>
+                <span class="metric-value">
+                    <span class="forward-rate-indicator ${getForwardRateClass(data.forward_rate_total)}">
+                        ${data.forward_rate_total}%
+                    </span>
+                </span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">24小时转发邮箱成功率</span>
+                <span class="metric-value">
+                    <span class="forward-rate-indicator ${getForwardRateClass(data.forward_rate_24h)}">
+                        ${data.forward_rate_24h}%
+                    </span>
+                </span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">7天转发邮箱成功率</span>
+                <span class="metric-value">
+                    <span class="forward-rate-indicator ${getForwardRateClass(data.forward_rate_7d)}">
+                        ${data.forward_rate_7d}%
+                    </span>
+                </span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">每设备平均转发邮箱效率</span>
+                <span class="metric-value positive">${data.avg_forward_total_per_device}/设备</span>
+            </div>
+        `;
+    }
+
+    if (forwardEmailTrends) {
+        // 计算趋势指标
+        const trend1hTo24h = data.forward_rate_1h - data.forward_rate_24h;
+        const trend24hTo7d = data.forward_rate_24h - data.forward_rate_7d;
+
+        function getTrendIcon(trend) {
+            if (trend > 5) return '📈 ↗️';
+            if (trend < -5) return '📉 ↘️';
+            return '➡️ →';
+        }
+
+        forwardEmailTrends.innerHTML = `
+            <div class="metric-row">
+                <span class="metric-label">1小时 vs 24小时趋势</span>
+                <span class="metric-value">${getTrendIcon(trend1hTo24h)} ${trend1hTo24h > 0 ? '+' : ''}${trend1hTo24h.toFixed(1)}%</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">24小时 vs 7天趋势</span>
+                <span class="metric-value">${getTrendIcon(trend24hTo7d)} ${trend24hTo7d > 0 ? '+' : ''}${trend24hTo7d.toFixed(1)}%</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">设备转发邮箱达成率</span>
+                <span class="metric-value">${((data.avg_forward_24h_per_device / data.avg_24h_per_device) * 100).toFixed(1)}%</span>
+            </div>
+            <div class="metric-row">
+                <span class="metric-label">转发邮箱每小时增长率</span>
+                <span class="metric-value positive">${data.avg_forward_per_device_per_hour_24h}/设备/小时</span>
+            </div>
+        `;
+    }
+}
+
+// 修改原有的 updateMetrics 函数，在末尾添加转发邮箱专项分析
+const originalUpdateMetrics = updateMetrics;
+updateMetrics = function(data) {
+    originalUpdateMetrics(data);
+    updateForwardEmailMetrics(data);
+};
