@@ -1,3 +1,4 @@
+import random
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
@@ -5,8 +6,9 @@ from enum import IntEnum
 import asyncio
 from loguru import logger
 
-from app.dependencies.utils import install_app, exe_cmd, open_root
-from app.curd.status import update_cloud_status
+from app.curd.proxy import get_proxies_by_country_code
+from app.dependencies.utils import install_app, exe_cmd, open_root, replace_pad
+from app.curd.status import update_cloud_status, get_one_pade_status, set_proxy_status
 
 
 class InstallTaskStatus(IntEnum):
@@ -181,7 +183,7 @@ def init_app_manager(config) -> AppInstallManager:
     # 从配置中获取MD5
     clash_md5 = config.get_app_url("clash").split("/")[-1].replace(".apk", "")
     script_md5 = config.get_app_url("script").split("/")[-1].replace(".apk", "")
-    script2_md5 = config.get_app_url("script2").split("/")[-1].replace(".apk", "")
+    # script2_md5 = config.get_app_url("script2").split("/")[-1].replace(".apk", "")
     chrome_md5 = config.get_app_url("chrome").split("/")[-1].replace(".apk", "")
 
     # 注册Clash
@@ -205,14 +207,14 @@ def init_app_manager(config) -> AppInstallManager:
     ))
 
     # 注册Script2
-    manager.register_app(AppConfig(
-        name="script2",
-        package_name=config.get_package_name("secondary"),
-        download_url=config.get_app_url("script2"),
-        md5=script2_md5,
-        needs_root=True,
-        install_order=3
-    ))
+    # manager.register_app(AppConfig(
+    #     name="script2",
+    #     package_name=config.get_package_name("secondary"),
+    #     download_url=config.get_app_url("script2"),
+    #     md5=script2_md5,
+    #     needs_root=True,
+    #     install_order=3
+    # ))
 
     # 注册Script（主脚本，最后安装）
     manager.register_app(
@@ -376,5 +378,27 @@ async def install_all_apps(pad_code: str, config, task_manager):
         return True
     else:
         logger.error(f"{pad_code}: 部分应用安装失败")
+        from app.dependencies.countries import manager
         await update_cloud_status(pad_code=pad_code, current_status="部分应用安装失败")
+        await task_manager.cancel_timeout_task_only(pad_code)
+        template_id = random.choice(config.TEMPLE_IDS)
+        pade_status = await get_one_pade_status(pade_code=pad_code)
+        if pade_status.is_random_proxy:
+            default_proxy: Any = manager.get_proxy_countries()
+            selected_proxy = random.choice(default_proxy)
+        else:
+            selected_proxy = get_proxies_by_country_code(country_code=pade_status.code)
+        await set_proxy_status(pad_code, selected_proxy)
+        await update_cloud_status(
+            pad_code, temple_id=template_id, current_status="部分应用安装失败,一键新机中"
+        )
+        logger.success(
+            f"{pad_code}: 模板: {template_id}, 代理: {selected_proxy.country}"
+        )
+        # 执行一键新机
+        if not config.DEBUG:
+            result = await replace_pad([pad_code], template_id=template_id)
+            logger.info(
+                f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}"
+            )
         return False

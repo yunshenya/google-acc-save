@@ -36,29 +36,29 @@ async def start_app_state(package_name, pad_code, task_manager):
                     await update_cloud_status(pad_code=pad_code, current_status="启动app中...")
                     await asyncio.sleep(2)
                 case 1:
-                    await update_cloud_status(pad_code=pad_code, current_status="开始点击脚本")
-                    await sleep(5)
-                    await click(
-                        [pad_code],
-                        [
-                            Position(x=559, y=2056, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
-                            Position(x=559, y=2056, action_type=ActionType.lift, next_position_wait_time=100).to_dict(),
-                            Position(x=1003, y=671, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
-                            Position(x=1003, y=671, action_type=ActionType.lift, next_position_wait_time=100).to_dict(),
-                            Position(x=456, y=674, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
-                            Position(x=456, y=674, action_type=ActionType.lift).to_dict(),
-                        ],
-                    )
-                    await sleep(5)
-                    await click(
-                        [pad_code],
-                        [
-                            Position(x=1003, y=671, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
-                            Position(x=1003, y=671, action_type=ActionType.lift, next_position_wait_time=2000).to_dict(),
-                            Position(x=456, y=674, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
-                            Position(x=456, y=674, action_type=ActionType.lift).to_dict(),
-                        ],
-                    )
+                    # await update_cloud_status(pad_code=pad_code, current_status="开始点击脚本")
+                    # await sleep(5)
+                    # await click(
+                    #     [pad_code],
+                    #     [
+                    #         Position(x=559, y=2056, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
+                    #         Position(x=559, y=2056, action_type=ActionType.lift, next_position_wait_time=100).to_dict(),
+                    #         Position(x=1003, y=671, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
+                    #         Position(x=1003, y=671, action_type=ActionType.lift, next_position_wait_time=100).to_dict(),
+                    #         Position(x=456, y=674, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
+                    #         Position(x=456, y=674, action_type=ActionType.lift).to_dict(),
+                    #     ],
+                    # )
+                    # await sleep(5)
+                    # await click(
+                    #     [pad_code],
+                    #     [
+                    #         Position(x=1003, y=671, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
+                    #         Position(x=1003, y=671, action_type=ActionType.lift, next_position_wait_time=2000).to_dict(),
+                    #         Position(x=456, y=674, action_type=ActionType.press, next_position_wait_time=10).to_dict(),
+                    #         Position(x=456, y=674, action_type=ActionType.lift).to_dict(),
+                    #     ],
+                    # )
                     logger.success(f"{pad_code}: 启动app成功")
                     await update_cloud_status(pad_code=pad_code, current_status="app启动成功")
                     break
