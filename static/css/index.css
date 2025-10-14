@@ -668,3 +668,26 @@ tr:hover {
 .status-btn[style*="danger"]:hover {
     background-color: #c0392b !important;
 }
+
+/* 添加设备按钮样式 */
+.add-btn {
+    background-color: var(--success-color) !important;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 14px;
+}
+
+.add-btn:hover {
+    background-color: #219a52 !important;
+    transform: translateY(-1px);
+}
+
+.add-btn:disabled {
+    background-color: var(--dark-gray) !important;
+    cursor: not-allowed;
+    transform: none;
+}

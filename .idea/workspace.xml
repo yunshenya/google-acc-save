@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加设置随机代理功能">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/static/css/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -601,15 +602,7 @@
       <workItem from="1760405693640" duration="453000" />
       <workItem from="1760407842341" duration="94000" />
       <workItem from="1760409966241" duration="323000" />
-      <workItem from="1760421094355" duration="717000" />
-    </task>
-    <task id="LOCAL-00175" summary="优化文件结构">
-      <option name="closed" value="true" />
-      <created>1758971843258</created>
-      <option name="number" value="00175" />
-      <option name="presentableId" value="LOCAL-00175" />
-      <option name="project" value="LOCAL" />
-      <updated>1758971843258</updated>
+      <workItem from="1760421094355" duration="2536000" />
     </task>
     <task id="LOCAL-00176" summary="优化文件结构">
       <option name="closed" value="true" />
@@ -995,7 +988,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760358248355</updated>
     </task>
-    <option name="localTasksCounter" value="224" />
+    <task id="LOCAL-00224" summary="增加设置随机代理功能">
+      <option name="closed" value="true" />
+      <created>1760421831636</created>
+      <option name="number" value="00224" />
+      <option name="presentableId" value="LOCAL-00224" />
+      <option name="project" value="LOCAL" />
+      <updated>1760421831636</updated>
+    </task>
+    <option name="localTasksCounter" value="225" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1016,7 +1017,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="master" />
+                        <option value="origin/master" />
                       </list>
                     </value>
                   </entry>

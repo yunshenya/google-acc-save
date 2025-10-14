@@ -1589,8 +1589,77 @@ document.addEventListener('DOMContentLoaded', function() {
             showLoading(false);
         }
     }
+    // 显示添加设备弹窗
+    function showAddDeviceModal() {
+        document.getElementById('addDeviceModal').style.display = 'flex';
+        document.getElementById('addDeviceForm').reset();
+    }
 
-    // 全局暴露函数
+// 关闭添加设备弹窗
+    function closeAddDeviceModal() {
+        document.getElementById('addDeviceModal').style.display = 'none';
+        document.getElementById('addDeviceForm').reset();
+    }
+
+// 添加新设备
+    async function addNewDevice() {
+        const form = document.getElementById('addDeviceForm');
+
+        // 表单验证
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const padCode = document.getElementById('addPadCode').value.trim();
+        const countryCode = document.getElementById('addCountryCode').value.trim();
+
+        if (!padCode || !countryCode) {
+            showToast('请填写所有必填项', 'error');
+            return;
+        }
+
+        try {
+            showLoading(true);
+
+            const response = await authenticatedFetch('/add_cloud_status', {
+                method: 'POST',
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    pad_code: padCode,
+                    country_code: countryCode
+                })
+            });
+
+            if (!response || !response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.detail || '添加失败');
+            }
+
+            const result = await response.json();
+            showToast(result.msg || `设备 ${padCode} 添加成功`, 'success');
+            closeAddDeviceModal();
+
+            // 刷新状态列表
+            setTimeout(() => {
+                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    requestStatusUpdate();
+                } else {
+                    fetchCloudStatus();
+                }
+            }, 500);
+
+        } catch (error) {
+            console.error('添加设备失败:', error);
+            showToast('添加失败: ' + error.message, 'error');
+        } finally {
+            showLoading(false);
+        }
+    }
+
+    window.showAddDeviceModal = showAddDeviceModal;
+    window.closeAddDeviceModal = closeAddDeviceModal;
+    window.addNewDevice = addNewDevice;
     window.deleteCloudDevice = deleteCloudDevice;
     window.batchDeleteCloudDevices = batchDeleteCloudDevices;
     window.openEditDeviceModal = openEditDeviceModal;

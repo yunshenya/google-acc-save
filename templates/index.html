@@ -131,6 +131,7 @@
                 <div class="connection-status" id="connectionStatus">
                     <span class="status-info">● 未连接</span>
                 </div>
+                <button onclick="showAddDeviceModal()" class="add-btn">➕ 添加设备</button>
                 <button onclick="showDeviceManager()" class="secondary">📱 设备管理</button>
                 <button id="refreshAllStatus">刷新所有状态</button>
             </div>
@@ -325,6 +326,52 @@
             </div>
             <div class="modal-footer">
                 <button onclick="closeDeviceManager()" class="secondary">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加设备弹窗 -->
+    <div id="addDeviceModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3>➕ 添加新设备</h3>
+                <button class="modal-close" onclick="closeAddDeviceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addDeviceForm">
+                    <!-- 基础信息 -->
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: var(--text-color);">基础信息</h4>
+                        <div class="form-group">
+                            <label>设备代码 <span style="color: red;">*</span></label>
+                            <input type="text" id="addPadCode" required placeholder="请输入设备代码，例如: 123456">
+                            <small style="color: var(--dark-gray);">设备的唯一标识符</small>
+                        </div>
+                    </div>
+
+                    <!-- 代理配置 -->
+                    <div style="background: #e8f5e9; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                        <h4 style="margin: 0 0 10px 0; color: #388e3c;">🌐 代理配置</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="form-group">
+                                <label>国家代码 <span style="color: red;">*</span></label>
+                                <input type="text" id="addCountryCode" required placeholder="例如: ma">
+                                <small style="color: var(--dark-gray);">两位国家代码，如 us, cn, ma 等</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 提示信息 -->
+                    <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                        <p style="margin: 0; color: #1976d2; font-size: 14px;">
+                            ℹ️ <strong>说明：</strong>系统会自动从代理国家列表中匹配对应的国家配置
+                        </p>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeAddDeviceModal()" class="secondary">取消</button>
+                <button onclick="addNewDevice()" class="add-btn">➕ 添加设备</button>
             </div>
         </div>
     </div>
