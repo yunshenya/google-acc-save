@@ -1,4 +1,3 @@
-// ========== 全局变量声明 ==========
 let allAccounts = [];
 let filteredAccounts = [];
 let currentPage = 1;
@@ -13,9 +12,135 @@ let reconnectAttempts = 0;
 const maxReconnectAttempts = 5;
 let isConnecting = false;
 
-// ========== 全局函数声明（需要被 HTML onclick 调用的函数）==========
 
-// 显示添加设备弹窗
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 6px;
+        color: white;
+        font-size: 14px;
+        z-index: 10002;
+        max-width: 300px;
+        word-wrap: break-word;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        animation: slideInFromRight 0.3s ease-out;
+    `;
+
+    switch (type) {
+        case 'success':
+            toast.style.backgroundColor = '#27ae60';
+            break;
+        case 'error':
+            toast.style.backgroundColor = '#e74c3c';
+            break;
+        case 'warning':
+            toast.style.backgroundColor = '#f39c12';
+            break;
+        default:
+            toast.style.backgroundColor = '#3498db';
+    }
+
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+    }, 3000);
+
+    toast.addEventListener('click', () => {
+        if (toast.parentNode) {
+            toast.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+    });
+}
+
+function showError(message) {
+    showToast(message, 'error');
+}
+
+function showSuccess(message) {
+    showToast(message, 'success');
+}
+
+function showLoading(show = true) {
+    const loadingElement = document.getElementById('loading');
+    if (show) {
+        isFetching = true;
+        if (loadingElement) loadingElement.style.display = 'flex';
+    } else {
+        isFetching = false;
+        if (loadingElement) loadingElement.style.display = 'none';
+    }
+}
+
+function showConfigUpdateNotification(message, updatedFields) {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        max-width: 350px;
+        animation: slideIn 0.3s ease-out;
+    `;
+
+    notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <span style="font-size: 18px;">⚙️</span>
+            <strong>系统配置已更新</strong>
+        </div>
+        <div style="font-size: 14px; opacity: 0.9;">
+            ${message}
+        </div>
+        <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">
+            更新项目: ${updatedFields.join(', ')}
+        </div>
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                notification.parentNode.removeChild(notification);
+            }, 300);
+        }
+    }, 5000);
+
+    notification.addEventListener('click', () => {
+        if (notification.parentNode) {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => {
+                notification.parentNode.removeChild(notification);
+            }, 300);
+        }
+    });
+}
+
+
 function showAddDeviceModal() {
     document.getElementById('addDeviceModal').style.display = 'flex';
     document.getElementById('addDeviceForm').reset();
@@ -253,6 +378,10 @@ async function refreshSingleStatus(padCode) {
     }
 }
 
+// 设备管理器相关变量和函数
+let allCloudDevices = [];
+let currentConfiguredDevices = [];
+
 // 显示设备管理器
 async function showDeviceManager() {
     document.getElementById('deviceManagerModal').style.display = 'flex';
@@ -262,6 +391,73 @@ async function showDeviceManager() {
 // 关闭设备管理器
 function closeDeviceManager() {
     document.getElementById('deviceManagerModal').style.display = 'none';
+}
+
+async function loadDeviceManagerData() {
+    try {
+        const [cloudResponse, configResponse] = await Promise.all([
+            authenticatedFetch('/api/pad-codes/available'),
+            authenticatedFetch('/api/pad-codes/current')
+        ]);
+
+        if (cloudResponse && cloudResponse.ok && configResponse && configResponse.ok) {
+            const cloudData = await cloudResponse.json();
+            const configData = await configResponse.json();
+
+            allCloudDevices = cloudData.data || [];
+            currentConfiguredDevices = configData.data || [];
+
+            updateDeviceStats();
+            renderDeviceList();
+        }
+    } catch (error) {
+        console.error('加载设备数据失败:', error);
+        showError('加载设备数据失败: ' + error.message);
+    }
+}
+
+function updateDeviceStats() {
+    const configuredSet = new Set(currentConfiguredDevices);
+    const notConfigured = allCloudDevices.filter(d => !configuredSet.has(d.padCode));
+
+    const configuredCountEl = document.getElementById('configuredCount');
+    const cloudTotalCountEl = document.getElementById('cloudTotalCount');
+    const notConfiguredCountEl = document.getElementById('notConfiguredCount');
+
+    if (configuredCountEl) configuredCountEl.textContent = currentConfiguredDevices.length;
+    if (cloudTotalCountEl) cloudTotalCountEl.textContent = allCloudDevices.length;
+    if (notConfiguredCountEl) notConfiguredCountEl.textContent = notConfigured.length;
+}
+
+function renderDeviceList() {
+    const tbody = document.getElementById('deviceListBody');
+    if (!tbody) return;
+
+    const configuredSet = new Set(currentConfiguredDevices);
+
+    tbody.innerHTML = allCloudDevices.map(device => {
+        const isConfigured = configuredSet.has(device.padCode);
+        const statusBadge = device.status === 1
+            ? '<span style="color: #27ae60;">🟢 在线</span>'
+            : '<span style="color: #e74c3c;">🔴 离线</span>';
+        const configBadge = isConfigured
+            ? '<span style="color: #27ae60;">✓</span>'
+            : '<span style="color: #e74c3c;">✗</span>';
+
+        return `
+            <tr data-code="${device.padCode}" style="border-bottom: 1px solid #eee;">
+                <td title="${device.padCode}" style="padding: 10px;">${device.padName}</td>
+                <td style="padding: 10px;">${statusBadge}</td>
+                <td style="padding: 10px; text-align: center;">${configBadge}</td>
+                <td style="padding: 10px; text-align: center;">
+                    ${isConfigured
+            ? `<button onclick="removeDevice('${device.padCode}')" class="remove-btn" style="padding: 4px 8px; font-size: 12px;">移除</button>`
+            : `<button onclick="addDevice('${device.padCode}')" class="add-btn" style="padding: 4px 8px; font-size: 12px;">添加</button>`
+        }
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 // 同步所有设备
@@ -663,16 +859,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function requestFullStatusUpdate() {
-        if (websocket && websocket.readyState === WebSocket.OPEN) {
-            websocket.send(JSON.stringify({
-                type: 'request_full_update',
-                timestamp: new Date().toISOString()
-            }));
-        } else {
-            fetchCloudStatus();
-        }
-    }
 
     function toggleView() {
         if (currentView === 'accounts') {
@@ -696,6 +882,25 @@ document.addEventListener('DOMContentLoaded', function() {
             if (elements.toggleViewBtn) elements.toggleViewBtn.textContent = '切换到状态监控';
             closeWebSocket();
         }
+    }
+
+    async function authenticatedFetch(url, options = {}) {
+        const headers = getAuthHeaders();
+
+        const response = await fetch(url, {
+            ...options,
+            headers: {
+                ...headers,
+                ...options.headers
+            }
+        });
+
+        if (response.status === 401) {
+            redirectToLogin();
+            return;
+        }
+
+        return response;
     }
 
     function handleVisibilityChange() {
@@ -757,24 +962,7 @@ document.addEventListener('DOMContentLoaded', function() {
         redirectToLogin();
     }
 
-    async function authenticatedFetch(url, options = {}) {
-        const headers = getAuthHeaders();
 
-        const response = await fetch(url, {
-            ...options,
-            headers: {
-                ...headers,
-                ...options.headers
-            }
-        });
-
-        if (response.status === 401) {
-            redirectToLogin();
-            return;
-        }
-
-        return response;
-    }
 
     // 工具函数
     function debounce(func, wait) {
@@ -1246,7 +1434,7 @@ document.addEventListener('DOMContentLoaded', function() {
             row.innerHTML = `
                 <td title="${status.pad_code}" data-pad-code="${status.pad_code}">${status.pad_name || "未知设备"}</td>
                 <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
-                <td title="运行次数">${status.number_of_run - 1}</td>
+                <td title="运行次数">${totalRuns}</td>
                 <td title="成功次数">${status.num_of_success}</td>
                 <td title="error次数">${status.num_of_error}</td>
                 <td title="其他错误">${status.num_other_error}</td>
@@ -1278,204 +1466,14 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.statusTableBody.appendChild(fragment);
     }
 
-    // 设备管理相关变量和函数
-    let allCloudDevices = [];
-    let currentConfiguredDevices = [];
-
-    async function loadDeviceManagerData() {
-        try {
-            const [cloudResponse, configResponse] = await Promise.all([
-                authenticatedFetch('/api/pad-codes/available'),
-                authenticatedFetch('/api/pad-codes/current')
-            ]);
-
-            if (cloudResponse && cloudResponse.ok && configResponse && configResponse.ok) {
-                const cloudData = await cloudResponse.json();
-                const configData = await configResponse.json();
-
-                allCloudDevices = cloudData.data || [];
-                currentConfiguredDevices = configData.data || [];
-
-                updateDeviceStats();
-                renderDeviceList();
-            }
-        } catch (error) {
-            console.error('加载设备数据失败:', error);
-            showError('加载设备数据失败: ' + error.message);
-        }
-    }
-
-    function updateDeviceStats() {
-        const configuredSet = new Set(currentConfiguredDevices);
-        const notConfigured = allCloudDevices.filter(d => !configuredSet.has(d.padCode));
-
-        const configuredCountEl = document.getElementById('configuredCount');
-        const cloudTotalCountEl = document.getElementById('cloudTotalCount');
-        const notConfiguredCountEl = document.getElementById('notConfiguredCount');
-
-        if (configuredCountEl) configuredCountEl.textContent = currentConfiguredDevices.length;
-        if (cloudTotalCountEl) cloudTotalCountEl.textContent = allCloudDevices.length;
-        if (notConfiguredCountEl) notConfiguredCountEl.textContent = notConfigured.length;
-    }
-
-    function renderDeviceList() {
-        const tbody = document.getElementById('deviceListBody');
-        if (!tbody) return;
-
-        const configuredSet = new Set(currentConfiguredDevices);
-
-        tbody.innerHTML = allCloudDevices.map(device => {
-            const isConfigured = configuredSet.has(device.padCode);
-            const statusBadge = device.status === 1
-                ? '<span style="color: #27ae60;">🟢 在线</span>'
-                : '<span style="color: #e74c3c;">🔴 离线</span>';
-            const configBadge = isConfigured
-                ? '<span style="color: #27ae60;">✓</span>'
-                : '<span style="color: #e74c3c;">✗</span>';
-
-            return `
-                <tr data-code="${device.padCode}" style="border-bottom: 1px solid #eee;">
-                    <td title="${device.padCode}" style="padding: 10px;">${device.padName}</td>
-                    <td style="padding: 10px;">${statusBadge}</td>
-                    <td style="padding: 10px; text-align: center;">${configBadge}</td>
-                    <td style="padding: 10px; text-align: center;">
-                        ${isConfigured
-                ? `<button onclick="removeDevice('${device.padCode}')" class="remove-btn" style="padding: 4px 8px; font-size: 12px;">移除</button>`
-                : `<button onclick="addDevice('${device.padCode}')" class="add-btn" style="padding: 4px 8px; font-size: 12px;">添加</button>`
-            }
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    function showSuccess(message) {
-        const div = document.createElement('div');
-        div.style.cssText = `
-            position: fixed; top: 20px; right: 20px; z-index: 10000;
-            background: #27ae60; color: white; padding: 15px 20px;
-            border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        `;
-        div.textContent = message;
-        document.body.appendChild(div);
-        setTimeout(() => div.remove(), 3000);
-    }
 
     // 将内部函数暴露到全局作用域（仅用于内部调用）
     window.requestStatusUpdate = requestStatusUpdate;
     window.fetchCloudStatus = fetchCloudStatus;
     window.loadDeviceManagerData = loadDeviceManagerData;
+    window.fetchCloudStatus = fetchCloudStatus
+    window.authenticatedFetch = authenticatedFetch;
 });
-
-// ========== 辅助函数 ==========
-
-function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 6px;
-        color: white;
-        font-size: 14px;
-        z-index: 10002;
-        max-width: 300px;
-        word-wrap: break-word;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        animation: slideInFromRight 0.3s ease-out;
-    `;
-
-    switch (type) {
-        case 'success':
-            toast.style.backgroundColor = '#27ae60';
-            break;
-        case 'error':
-            toast.style.backgroundColor = '#e74c3c';
-            break;
-        case 'warning':
-            toast.style.backgroundColor = '#f39c12';
-            break;
-        default:
-            toast.style.backgroundColor = '#3498db';
-    }
-
-    toast.textContent = message;
-    document.body.appendChild(toast);
-
-    setTimeout(() => {
-        if (toast.parentNode) {
-            toast.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            }, 300);
-        }
-    }, 3000);
-
-    toast.addEventListener('click', () => {
-        if (toast.parentNode) {
-            toast.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            }, 300);
-        }
-    });
-}
-
-function showConfigUpdateNotification(message, updatedFields) {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        z-index: 10000;
-        max-width: 350px;
-        animation: slideIn 0.3s ease-out;
-    `;
-
-    notification.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-            <span style="font-size: 18px;">⚙️</span>
-            <strong>系统配置已更新</strong>
-        </div>
-        <div style="font-size: 14px; opacity: 0.9;">
-            ${message}
-        </div>
-        <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">
-            更新项目: ${updatedFields.join(', ')}
-        </div>
-    `;
-
-    document.body.appendChild(notification);
-
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => {
-                notification.parentNode.removeChild(notification);
-            }, 300);
-        }
-    }, 5000);
-
-    notification.addEventListener('click', () => {
-        if (notification.parentNode) {
-            notification.style.animation = 'slideOut 0.3s ease-out';
-            setTimeout(() => {
-                notification.parentNode.removeChild(notification);
-            }, 300);
-        }
-    });
-}
 
 // 添加CSS动画
 const style = document.createElement('style');

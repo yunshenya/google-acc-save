@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="增加设置随机代理功能">
-      <change afterPath="$PROJECT_DIR$/app/services/app_installer.py" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="优化安装">
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/check_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/check_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/app_installer.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/app_installer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -604,14 +605,6 @@
       <workItem from="1760409966241" duration="323000" />
       <workItem from="1760421094355" duration="5621000" />
     </task>
-    <task id="LOCAL-00178" summary="增加图片">
-      <option name="closed" value="true" />
-      <created>1759029323949</created>
-      <option name="number" value="00178" />
-      <option name="presentableId" value="LOCAL-00178" />
-      <option name="project" value="LOCAL" />
-      <updated>1759029323949</updated>
-    </task>
     <task id="LOCAL-00179" summary="增加图片">
       <option name="closed" value="true" />
       <created>1759035183688</created>
@@ -996,7 +989,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760425608011</updated>
     </task>
-    <option name="localTasksCounter" value="227" />
+    <task id="LOCAL-00227" summary="优化安装">
+      <option name="closed" value="true" />
+      <created>1760433681486</created>
+      <option name="number" value="00227" />
+      <option name="presentableId" value="LOCAL-00227" />
+      <option name="project" value="LOCAL" />
+      <updated>1760433681486</updated>
+    </task>
+    <option name="localTasksCounter" value="228" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1030,7 +1031,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="开始时随机模板" />
     <MESSAGE value="设置单个代理" />
     <MESSAGE value="最新版" />
     <MESSAGE value="修改后" />
@@ -1055,6 +1055,7 @@
     <MESSAGE value="优化一些不必要的输出" />
     <MESSAGE value="优化" />
     <MESSAGE value="增加设置随机代理功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="增加设置随机代理功能" />
+    <MESSAGE value="优化安装" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化安装" />
   </component>
 </project>
