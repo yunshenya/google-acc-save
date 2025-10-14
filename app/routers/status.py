@@ -150,7 +150,7 @@ async def add_cloud_status(status: AddStatusRequest) -> dict[str, str]:
                         latitude=country.latitude,
                         longitude=country.longitude,
                         proxy_platform= "ipmars",
-                        pad_name= "调试用机"
+                        pad_name= f"调试用机:{status.pad_code}",
                     )
                     db.add(db_account)
                     await db.commit()

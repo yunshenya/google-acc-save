@@ -56,13 +56,13 @@ async def remove_cloud_status(pad_code: str):
             # 先查询状态以检查是否为调试用机
             stmt = select(Status.pad_name).where(cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code)))
             result = await db.execute(stmt)
-            pad_name = result.scalar_one_or_none()
+            pad_name: str = result.scalar_one_or_none()
 
             if pad_name is None:
                 raise HTTPException(status_code=404, detail="云机不存在")
 
             # 如果是调试用机，只更新时间而不删除
-            if pad_name == "调试用机":
+            if pad_name.startswith("调试用机"):
                 update_stmt = (
                     update(Status)
                     .where(cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code)))
