@@ -1,36 +1,12 @@
 import asyncio
 import random
-from enum import IntEnum
-from typing import Any, Dict, Set
+from typing import Dict, Set
 
 from loguru import logger
 
 from app.config import config
-from app.curd.status import get_proxy_status, update_cloud_status
-from app.dependencies.utils import (
-    get_cloud_file_task_info,
-    open_root,
-    install_app,
-    replace_pad,
-    update_language,
-    update_time_zone,
-    gps_in_ject_info,
-    exe_cmd,
-)
-from app.entity.install_app_enum import InstallAppEnum
-from app.models.proxy import ProxyResponse
-from app.services.every_task import start_app_state
-from app.services.logger import get_logger
-
-
-class InstallTaskStatus(IntEnum):
-    ALL_FAILED = -1
-    SOME_FAILED = -2
-    CANCEL = -3
-    TIMEOUT = -4
-    PENDING = 1
-    RUNNING = 2
-    COMPLETED = 3
+from app.curd.status import update_cloud_status
+from app.dependencies.utils import replace_pad
 
 
 def _cancel_task_simple(task: asyncio.Task) -> None:
@@ -39,48 +15,27 @@ def _cancel_task_simple(task: asyncio.Task) -> None:
         task.cancel()
 
 
-install_logger = get_logger("callback")
-
-
 class TaskManager:
     def __init__(self):
-        # 只存储主任务和超时任务
         self._operations: Dict[str, asyncio.Task] = {}
         self._timeout_tasks: Dict[str, asyncio.Task] = {}
-        # 正在清理的任务，防止重复清理
         self._cleaning: Set[str] = set()
         self._lock = asyncio.Lock()
-        self._clash_install_url = config.get_app_url("clash")
-        self._script_install_url = config.get_app_url("script")
-        self._script2_install_url = config.get_app_url("script2")
-        self._chrome_install_url = config.get_app_url("chrome")
         self._global_timeout_minute = config.get_timeout("global")
-        self._check_task_timeout_minute = config.get_timeout("check_task")
         self._temple_id_list = config.TEMPLE_IDS
-        self._pkg_name_of_script = config.get_package_name("primary")
-        self._pkg_name_of_script2 = config.get_package_name("secondary")
-        self._pkg_name_of_chrome = (
-            config.get_package_name("chrome") or "com.android.chrome"
-        )
-        self._pkg_name_of_clash = (
-            config.get_package_name("clash") or "com.github.kr328.clash"
-        )
 
     async def add_task(self, pad_code: str, task: asyncio.Task) -> None:
         """添加主任务"""
         async with self._lock:
-            # 先清理现有任务
             await self._clean_existing_tasks(pad_code)
             self._operations[pad_code] = task
 
     async def add_timeout_task(self, pad_code: str, timeout_task: asyncio.Task) -> None:
         """添加超时任务"""
         async with self._lock:
-            # 取消之前的超时任务
             if pad_code in self._timeout_tasks:
                 old_task = self._timeout_tasks[pad_code]
                 _cancel_task_simple(old_task)
-
             self._timeout_tasks[pad_code] = timeout_task
 
     async def _clean_existing_tasks(self, pad_code: str) -> None:
@@ -91,13 +46,11 @@ class TaskManager:
         self._cleaning.add(pad_code)
 
         try:
-            # 取消主任务
             if pad_code in self._operations:
                 task = self._operations[pad_code]
                 _cancel_task_simple(task)
                 del self._operations[pad_code]
 
-            # 取消超时任务
             if pad_code in self._timeout_tasks:
                 timeout_task = self._timeout_tasks[pad_code]
                 _cancel_task_simple(timeout_task)
@@ -119,7 +72,7 @@ class TaskManager:
             return False
 
     async def start_task_with_timeout(
-        self, pad_code: str, main_task_coro, timeout_seconds: int = None
+            self, pad_code: str, main_task_coro, timeout_seconds: int = None
     ) -> None:
         """启动带超时的任务"""
         if timeout_seconds is None:
@@ -128,11 +81,9 @@ class TaskManager:
         if await self.has_task(pad_code):
             raise ValueError(f"标识符 {pad_code} 已在使用")
 
-        # 创建主任务
         main_task = asyncio.create_task(main_task_coro)
         await self.add_task(pad_code, main_task)
 
-        # 创建超时任务
         timeout_task = asyncio.create_task(
             self._handle_timeout_internal(pad_code, timeout_seconds)
         )
@@ -152,7 +103,6 @@ class TaskManager:
 
             logger.warning(f"任务超时: {pad_code}")
 
-            # 执行替换逻辑
             if pad_code in config.PAD_CODES:
                 temple_id = random.choice(self._temple_id_list)
                 await replace_pad([pad_code], template_id=temple_id)
@@ -165,7 +115,6 @@ class TaskManager:
                 )
                 logger.info(f"{pad_code}: 超时处理完成，模板: {temple_id}")
 
-            # 超时后清理所有任务
             await self.remove_task(pad_code)
 
         except asyncio.CancelledError:
@@ -188,290 +137,7 @@ class TaskManager:
         """标记主任务完成，但保留超时任务"""
         logger.info(f"主任务完成: {pad_code}")
         async with self._lock:
-            # 只清理主任务，保留超时任务
             if pad_code in self._operations:
                 task = self._operations[pad_code]
                 _cancel_task_simple(task)
                 del self._operations[pad_code]
-        """标记主任务完成，但保留超时任务"""
-        logger.info(f"主任务完成: {pad_code}")
-        async with self._lock:
-            # 只清理主任务，保留超时任务
-            if pad_code in self._operations:
-                task = self._operations[pad_code]
-                _cancel_task_simple(task)
-                del self._operations[pad_code]
-
-    async def handle_install_result(self, result, task_type, task_manager) -> bool:
-        """处理安装结果"""
-        pad_code = result["data"][0]["padCode"]
-
-        # 检查任务是否仍然存在
-        if not await self.has_task(pad_code):
-            logger.warning(f"{pad_code}: 任务已不存在")
-            return False
-        cmd_result: Any = await exe_cmd(pad_code=pad_code, cmd="pm list packages")
-        try:
-            system_app_str = cmd_result["data"][0]["errorMsg"]
-            packages = [
-                item.replace("package:", "")
-                for item in system_app_str.split()
-                if item.startswith("package:")
-            ]
-            if task_type.lower() == "script":
-                if self._pkg_name_of_script in packages:
-                    while await self.has_task(pad_code):
-                        if await self.app_install_all_done(pad_code):
-                            logger.success(f"{pad_code}: 安装成功")
-                            await update_cloud_status(
-                                pad_code=pad_code, current_status="安装成功"
-                            )
-                            # 设置root权限
-                            await open_root(
-                                pad_code_list=[pad_code],
-                                pkg_name=self._pkg_name_of_script,
-                            )
-                            await asyncio.sleep(2)
-                            await open_root(
-                                pad_code_list=[pad_code],
-                                pkg_name=self._pkg_name_of_script2,
-                            )
-
-                            # 获取代理信息并设置
-                            current_proxy: ProxyResponse = await get_proxy_status(
-                                pad_code
-                            )
-                            status_msg = f"设置语言、时区和GPS信息（使用代理国家: {current_proxy.country})"
-                            await update_cloud_status(
-                                pad_code=pad_code, current_status=status_msg
-                            )
-
-                            # 设置语言
-                            result_update_language = await update_language(
-                                "en",
-                                country=current_proxy.code,
-                                pad_code_list=[pad_code],
-                            )
-                            install_logger.info(f"{pad_code}: {result_update_language}")
-                            # 设置时区
-                            result_update_time_zone = await update_time_zone(
-                                pad_code_list=[pad_code],
-                                time_zone=current_proxy.time_zone,
-                            )
-                            install_logger.info(
-                                f"{pad_code}: {result_update_time_zone}"
-                            )
-                            # 设置GPS
-                            await gps_in_ject_info(
-                                pad_code_list=[pad_code],
-                                latitude=current_proxy.latitude,
-                                longitude=current_proxy.longitude,
-                            )
-
-                            await asyncio.sleep(5)
-                            await update_cloud_status(
-                                pad_code=pad_code, current_status="开始启动应用"
-                            )
-                            await start_app_state(
-                                package_name=self._pkg_name_of_script,
-                                pad_code=pad_code,
-                                task_manager=task_manager,
-                            )
-                            await self.complete_main_task(pad_code)
-                            return True
-                        else:
-                            await asyncio.sleep(10)
-                else:
-                    await update_cloud_status(
-                        pad_code=pad_code, current_status="正在安装script"
-                    )
-                    await install_app(
-                        pad_code_list=[pad_code],
-                        app_url=self._script_install_url,
-                        md5=InstallAppEnum.script_md5,
-                    )
-
-            elif task_type.lower() == "clash":
-                if self._pkg_name_of_clash not in packages:
-                    await update_cloud_status(
-                        pad_code=pad_code, current_status="正在安装clash"
-                    )
-                    await install_app(
-                        pad_code_list=[pad_code],
-                        app_url=self._clash_install_url,
-                        md5=InstallAppEnum.clash_md5,
-                    )
-
-            elif task_type.lower() == "chrome":
-                if self._pkg_name_of_chrome not in packages:
-                    await update_cloud_status(
-                        pad_code=pad_code, current_status="正在安装chrome"
-                    )
-                    await install_app(
-                        pad_code_list=[pad_code],
-                        app_url=self._chrome_install_url,
-                        md5=InstallAppEnum.chrome_md5,
-                    )
-
-            elif task_type.lower() == "script2":
-                if self._pkg_name_of_script2 not in packages:
-                    await update_cloud_status(
-                        pad_code=pad_code, current_status="正在安装script2"
-                    )
-                    await install_app(
-                        pad_code_list=[pad_code],
-                        app_url=self._script2_install_url,
-                        md5=InstallAppEnum.script2_md5,
-                    )
-
-        except Exception as e:
-            logger.error(
-                f"处理安装结果时出错 {pad_code}: 错误为{e} ,返回为{cmd_result}"
-            )
-            return False
-
-        return False
-
-    async def check_task_status(
-        self,
-        task_id,
-        task_type,
-        task_manager,
-        timeout_seconds: int = None,
-        retry_interval: int = 10,
-    ):
-        """检查任务状态"""
-        app_url = ""
-        if timeout_seconds is None:
-            timeout_seconds = config.get_timeout("check_task") * 60
-        if task_type.lower() == "script":
-            app_url = self._script_install_url
-
-        elif task_type.lower() == "clash":
-            app_url = self._clash_install_url
-
-        if task_type.lower() == "chrome":
-            app_url = self._chrome_install_url
-
-        if task_type.lower() == "script2":
-            app_url = self._script2_install_url
-
-        app_md5_list: Any = app_url.split("/")
-        app_md5 = app_md5_list[-1].replace(".apk", "")
-
-        end_time = asyncio.get_event_loop().time() + timeout_seconds
-
-        try:
-            while asyncio.get_event_loop().time() < end_time:
-                try:
-                    result: Any = await get_cloud_file_task_info([str(task_id)])
-                    error_message = result["data"][0]["errorMsg"]
-                    task_status = result["data"][0]["taskStatus"]
-                    pad_code = result["data"][0]["padCode"]
-
-                    # 检查主任务是否还存在
-                    if not await self.has_task(pad_code):
-                        logger.info(f"{pad_code}: 主任务已不存在，停止检查")
-                        break
-
-                    match InstallTaskStatus(task_status):
-                        case InstallTaskStatus.PENDING:
-                            logger.info(f"{pad_code}: {task_type} 等待安装中")
-                            await update_cloud_status(
-                                pad_code=pad_code,
-                                current_status=f"{task_type}等待安装中",
-                            )
-
-                        case InstallTaskStatus.RUNNING:
-                            logger.info(f"{pad_code}: {task_type} 安装中")
-                            await update_cloud_status(
-                                pad_code=pad_code, current_status=f"{task_type}安装中"
-                            )
-
-                        case InstallTaskStatus.SOME_FAILED:
-                            logger.warning(f"{pad_code}: {task_type} 下载失败，重试")
-                            await update_cloud_status(
-                                pad_code=pad_code, current_status=f"{task_type}下载失败"
-                            )
-                            await install_app(
-                                pad_code_list=[pad_code], app_url=app_url, md5=app_md5
-                            )
-
-                        case InstallTaskStatus.ALL_FAILED:
-                            logger.error(f"{pad_code}: {task_type} 全部失败")
-                            if error_message:
-                                await update_cloud_status(
-                                    pad_code=pad_code,
-                                    current_status=f"安装失败: {error_message}",
-                                )
-                            return False
-
-                        case InstallTaskStatus.COMPLETED:
-                            if await self.handle_install_result(
-                                result, task_type, task_manager=task_manager
-                            ):
-                                return True
-
-                        case InstallTaskStatus.TIMEOUT | InstallTaskStatus.CANCEL:
-                            logger.warning(f"{pad_code}: {task_type} 任务超时或取消")
-                            return False
-
-                    if error_message:
-                        logger.warning(f"{pad_code}: {error_message}")
-
-                    await asyncio.sleep(retry_interval)
-
-                except (KeyError, IndexError, TypeError) as e:
-                    logger.error(f"获取任务 {task_id} 状态失败: {e}")
-                    await asyncio.sleep(retry_interval)
-
-        except asyncio.CancelledError:
-            logger.info(f"任务状态检查被取消: {task_id}")
-        except Exception as e:
-            logger.error(f"检查任务状态异常 {task_id}: {e}")
-
-        # 超时处理
-        logger.warning(f"{task_type} 任务 {task_id} 检查超时")
-        result: Any = await get_cloud_file_task_info([str(task_id)])
-        pad_code = result["data"][0]["padCode"]
-        if "pad_code" in locals():
-            if await self.has_task(pad_code):
-                if pad_code in config.PAD_CODES:
-                    temple_id = random.choice(self._temple_id_list)
-                    await replace_pad([pad_code], template_id=temple_id)
-                    await update_cloud_status(
-                        pad_code=pad_code,
-                        current_status="安装超时，正在一键新机",
-                        temple_id=temple_id,
-                        number_of_run=1,
-                        num_other_error=1,
-                    )
-                await self.remove_task(pad_code)
-
-        return False
-
-    async def app_install_all_done(self, pad_code_str: str) -> bool:
-        """检查应用是否全部安装完成"""
-        try:
-            pkg_name_list = [
-                self._pkg_name_of_script2,
-                self._pkg_name_of_chrome,
-                self._pkg_name_of_script,
-                self._pkg_name_of_clash,
-            ]
-            result: Any = await exe_cmd(pad_code=pad_code_str, cmd="pm list packages")
-            system_app_str = result["data"][0]["errorMsg"]
-            packages = [
-                item.replace("package:", "")
-                for item in system_app_str.split()
-                if item.startswith("package:")
-            ]
-            install_done_count = 0
-            for pkg_name in pkg_name_list:
-                if pkg_name in packages:
-                    install_done_count += 1
-
-            return install_done_count == len(pkg_name_list)
-        except Exception as e:
-            logger.error(f"检查安装状态失败 {pad_code_str}: {e}")
-            return False
