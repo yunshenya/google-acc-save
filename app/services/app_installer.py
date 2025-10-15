@@ -377,12 +377,12 @@ async def install_all_apps(pad_code: str, config, task_manager):
             pad_code, temple_id=template_id, current_status="部分应用安装失败,一键新机中"
         )
         logger.success(
-            f"{pad_code}: 模板: {template_id}, 代理: {selected_proxy.country}"
+            f"部分应用安装失败, {pad_code}: 模板: {template_id}, 代理: {selected_proxy.country}"
         )
         # 执行一键新机
         if not config.DEBUG:
             result = await replace_pad([pad_code], template_id=template_id)
             logger.info(
-                f"{pad_code}: 一键新机结果 - {result.get('msg', '未知结果')}"
+                f"{pad_code}: 一键新机结果{result.get('msg', '未知结果')}"
             )
         return False

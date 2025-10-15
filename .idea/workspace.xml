@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="解耦安装流程">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routers/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entity/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/entity/install_app_enum.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/app_installer.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/app_installer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -605,15 +605,7 @@
       <workItem from="1760445907368" duration="2513000" />
       <workItem from="1760448554835" duration="4000" />
       <workItem from="1760493053176" duration="759000" />
-      <workItem from="1760497438839" duration="4961000" />
-    </task>
-    <task id="LOCAL-00181" summary="增加图片">
-      <option name="closed" value="true" />
-      <created>1759040092003</created>
-      <option name="number" value="00181" />
-      <option name="presentableId" value="LOCAL-00181" />
-      <option name="project" value="LOCAL" />
-      <updated>1759040092003</updated>
+      <workItem from="1760497438839" duration="5756000" />
     </task>
     <task id="LOCAL-00182" summary="增加图片">
       <option name="closed" value="true" />
@@ -999,7 +991,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760443983518</updated>
     </task>
-    <option name="localTasksCounter" value="230" />
+    <task id="LOCAL-00230" summary="解耦安装流程">
+      <option name="closed" value="true" />
+      <created>1760509193846</created>
+      <option name="number" value="00230" />
+      <option name="presentableId" value="LOCAL-00230" />
+      <option name="project" value="LOCAL" />
+      <updated>1760509193846</updated>
+    </task>
+    <option name="localTasksCounter" value="231" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
