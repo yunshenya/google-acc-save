@@ -174,11 +174,11 @@ async def reboot_task_status(data, package_name, task_manager):
                 )
 
             case TaskStatus.COMPLETED:
-                task_logger.success(f"{pad_code}: 重启成功，等待15秒后启动应用")
+                task_logger.success(f"{pad_code}: 重启成功，等待10秒后启动应用")
                 await update_cloud_status(
                     pad_code=pad_code, current_status="重启成功，准备启动应用"
                 )
-                await asyncio.sleep(15)
+                await asyncio.sleep(10)
                 await start_app_state(
                     package_name=package_name,
                     pad_code=pad_code,
