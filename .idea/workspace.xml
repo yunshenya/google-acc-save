@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="解耦安装流程">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/action.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/action.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/app_installer.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/app_installer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -321,11 +320,11 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.run" />
+      <item itemvalue="Python.test" />
       <item itemvalue="数据库脚本.data.sql" />
       <item itemvalue="数据库脚本.proxy.sql" />
       <item itemvalue="数据库脚本.status.sql" />
-      <item itemvalue="Python.run" />
-      <item itemvalue="Python.test" />
     </list>
     <recent_temporary>
       <list>
@@ -609,14 +608,7 @@
       <workItem from="1760515654401" duration="187000" />
       <workItem from="1760516570460" duration="53000" />
       <workItem from="1760517033180" duration="121000" />
-    </task>
-    <task id="LOCAL-00185" summary="优化安装逻辑">
-      <option name="closed" value="true" />
-      <created>1759056004783</created>
-      <option name="number" value="00185" />
-      <option name="presentableId" value="LOCAL-00185" />
-      <option name="project" value="LOCAL" />
-      <updated>1759056004783</updated>
+      <workItem from="1760518327382" duration="4193000" />
     </task>
     <task id="LOCAL-00186" summary="优化安装逻辑">
       <option name="closed" value="true" />
@@ -1002,7 +994,15 @@
       <option name="project" value="LOCAL" />
       <updated>1760512911360</updated>
     </task>
-    <option name="localTasksCounter" value="234" />
+    <task id="LOCAL-00234" summary="解耦安装流程">
+      <option name="closed" value="true" />
+      <created>1760518558335</created>
+      <option name="number" value="00234" />
+      <option name="presentableId" value="LOCAL-00234" />
+      <option name="project" value="LOCAL" />
+      <updated>1760518558335</updated>
+    </task>
+    <option name="localTasksCounter" value="235" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
