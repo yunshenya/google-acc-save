@@ -222,6 +222,8 @@ class Config:
         check_task_timeout=int(os.getenv("CHECK_TASK_TIMEOUT_MINUTES", "5")),
     )
 
+    PROXY_COUNTRIES = [DEFAULT_PROXY]
+
     @classmethod
     def get_package_name(cls, package_type: str = "primary") -> str:
         """Get package name by type"""
