@@ -233,6 +233,7 @@ async def click_api(click_request: ClickRequest) -> ClickResponse:
             ).to_dict()
         ]
     )
+    callback_logger.info(f"{click_request.pade_code}:{result}")
     return ClickResponse(
         code=result.get("code"),
         msg=result.get("msg"),
@@ -246,6 +247,7 @@ async def input_api(input_request: InputRequest) -> InputResponse:
         pad_code_list=[input_request.pade_code],
         message=input_request.text,
     )
+    callback_logger.info(f"{input_request.pade_code}:{result}")
     return InputResponse(
         code=result.get("code"),
         msg=result.get("msg"),
@@ -287,6 +289,7 @@ async def slide_api(slide: SlideRequest) -> ClickResponse:
             ).to_dict()
         ]
     )
+    callback_logger.info(f"{slide.pade_code}:{result}")
     return ClickResponse(
         code=result.get("code"),
         msg=result.get("msg"),

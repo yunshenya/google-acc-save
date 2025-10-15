@@ -33,19 +33,15 @@ class AppConfig:
 
 
 class AppInstaller(ABC):
-    """应用安装器基类"""
-
     def __init__(self, app_config: AppConfig):
         self.config = app_config
 
     @abstractmethod
     async def pre_install(self, pad_code: str) -> bool:
-        """安装前的准备工作"""
         pass
 
     @abstractmethod
     async def post_install(self, pad_code: str) -> bool:
-        """安装后的处理工作"""
         pass
 
     async def is_installed(self, pad_code: str) -> bool:
@@ -84,9 +80,6 @@ class AppInstaller(ABC):
                 md5=self.config.md5
             )
 
-            if not await self.post_install(pad_code):
-                return {"code": 500, "msg": "post_install_failed"}
-
             return result
         except Exception as e:
             logger.error(f"{pad_code}: 安装{self.config.name}失败 - {e}")
@@ -115,14 +108,10 @@ class DefaultAppInstaller(AppInstaller):
 
 
 class ScriptAppInstaller(DefaultAppInstaller):
-    """脚本应用安装器（特殊处理）"""
+    """脚本应用安装器"""
 
     async def post_install(self, pad_code: str) -> bool:
         await super().post_install(pad_code)
-        await update_cloud_status(
-            pad_code=pad_code,
-            current_status=f"{self.config.name}安装完成"
-        )
         return True
 
 
@@ -183,7 +172,6 @@ def init_app_manager(config) -> AppInstallManager:
     # 从配置中获取MD5
     clash_md5 = config.get_app_url("clash").split("/")[-1].replace(".apk", "")
     script_md5 = config.get_app_url("script").split("/")[-1].replace(".apk", "")
-    # script2_md5 = config.get_app_url("script2").split("/")[-1].replace(".apk", "")
     chrome_md5 = config.get_app_url("chrome").split("/")[-1].replace(".apk", "")
 
     # 注册Clash
@@ -211,12 +199,12 @@ def init_app_manager(config) -> AppInstallManager:
     #     name="script2",
     #     package_name=config.get_package_name("secondary"),
     #     download_url=config.get_app_url("script2"),
-    #     md5=script2_md5,
+    #     md5=config.get_app_url("script2").split("/")[-1].replace(".apk", ""),
     #     needs_root=True,
     #     install_order=3
     # ))
 
-    # 注册Script（主脚本，最后安装）
+    # 注册Script
     manager.register_app(
         AppConfig(
             name="script",
@@ -294,6 +282,7 @@ class InstallTaskChecker:
                         case InstallTaskStatus.COMPLETED:
                             if await installer.is_installed(pad_code):
                                 logger.success(f"{pad_code}: {app_name}安装成功")
+                                await installer.post_install(pad_code=pad_code)
                                 return True
 
                         case InstallTaskStatus.TIMEOUT | InstallTaskStatus.CANCEL:
@@ -357,11 +346,6 @@ async def install_all_apps(pad_code: str, config, task_manager):
             pad_code_list=[pad_code],
             latitude=current_proxy.latitude,
             longitude=current_proxy.longitude
-        )
-
-        await open_root(
-            pad_code_list=[pad_code],
-            pkg_name=config.get_package_name("primary")
         )
 
         await asyncio.sleep(5)
