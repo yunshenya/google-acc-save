@@ -5,8 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="解耦安装流程">
-      <change beforePath="$PROJECT_DIR$/app/entity/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/entity/install_app_enum.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/app_installer.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/app_installer.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -605,23 +604,8 @@
       <workItem from="1760445907368" duration="2513000" />
       <workItem from="1760448554835" duration="4000" />
       <workItem from="1760493053176" duration="759000" />
-      <workItem from="1760497438839" duration="5756000" />
-    </task>
-    <task id="LOCAL-00182" summary="增加图片">
-      <option name="closed" value="true" />
-      <created>1759041449194</created>
-      <option name="number" value="00182" />
-      <option name="presentableId" value="LOCAL-00182" />
-      <option name="project" value="LOCAL" />
-      <updated>1759041449194</updated>
-    </task>
-    <task id="LOCAL-00183" summary="增加图片拖拽功能">
-      <option name="closed" value="true" />
-      <created>1759042624568</created>
-      <option name="number" value="00183" />
-      <option name="presentableId" value="LOCAL-00183" />
-      <option name="project" value="LOCAL" />
-      <updated>1759042624568</updated>
+      <workItem from="1760497438839" duration="6428000" />
+      <workItem from="1760511446208" duration="1460000" />
     </task>
     <task id="LOCAL-00184" summary="修复新机bug">
       <option name="closed" value="true" />
@@ -999,7 +983,23 @@
       <option name="project" value="LOCAL" />
       <updated>1760509193846</updated>
     </task>
-    <option name="localTasksCounter" value="231" />
+    <task id="LOCAL-00231" summary="解耦安装流程">
+      <option name="closed" value="true" />
+      <created>1760509997200</created>
+      <option name="number" value="00231" />
+      <option name="presentableId" value="LOCAL-00231" />
+      <option name="project" value="LOCAL" />
+      <updated>1760509997200</updated>
+    </task>
+    <task id="LOCAL-00232" summary="解耦安装流程">
+      <option name="closed" value="true" />
+      <created>1760510276617</created>
+      <option name="number" value="00232" />
+      <option name="presentableId" value="LOCAL-00232" />
+      <option name="project" value="LOCAL" />
+      <updated>1760510276617</updated>
+    </task>
+    <option name="localTasksCounter" value="233" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

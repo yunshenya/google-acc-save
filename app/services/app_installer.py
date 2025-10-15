@@ -282,8 +282,7 @@ class InstallTaskChecker:
                         case InstallTaskStatus.COMPLETED:
                             if await installer.is_installed(pad_code):
                                 logger.success(f"{pad_code}: {app_name}安装成功")
-                                await installer.post_install(pad_code=pad_code)
-                                return True
+                                return await installer.post_install(pad_code=pad_code)
 
                         case InstallTaskStatus.TIMEOUT | InstallTaskStatus.CANCEL:
                             logger.warning(f"{pad_code}: {app_name}任务超时或取消")
