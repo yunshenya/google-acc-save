@@ -19,8 +19,8 @@ def get_client_ip(websocket: WebSocket) -> str:
                 return websocket.client.host
             # 如果是元组形式
             elif (
-                isinstance(websocket.client, (tuple, list))
-                and len(websocket.client) > 0
+                    isinstance(websocket.client, (tuple, list))
+                    and len(websocket.client) > 0
             ):
                 return str(websocket.client[0])
 
@@ -84,9 +84,9 @@ async def websocket_endpoint(websocket: WebSocket):
                             await websocket.send_text(
                                 json.dumps({"type": "error", "message": "消息格式无效"})
                             )
-                        except Exception as e:
+                        except Exception as send_error:
                             ws_logger.debug(
-                                f"无法发送错误消息，连接可能已断开: {client_ip}， 错误为{e}"
+                                f"无法发送错误消息，连接可能已断开: {client_ip}, 错误: {send_error}"
                             )
                             break
 
@@ -96,7 +96,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 try:
                     await websocket.send_text(json.dumps({"type": "ping"}))
                 except Exception as e:
-                    ws_logger.info(f"连接已断开 ({client_ip})，退出接收循环, 错误为{e}")
+                    ws_logger.info(f"连接已断开 ({client_ip})，退出接收循环, 错误: {e}")
                     break
                 continue
 
@@ -109,11 +109,13 @@ async def websocket_endpoint(websocket: WebSocket):
                 # 尝试发送错误消息，但如果失败就断开连接
                 if connection_accepted:
                     try:
-                        await websocket.send_text(
-                            json.dumps(
-                                {"type": "error", "message": "服务器处理消息时出错"}
+                        # 先检查连接状态
+                        if websocket.client_state.name == "CONNECTED":
+                            await websocket.send_text(
+                                json.dumps(
+                                    {"type": "error", "message": "服务器处理消息时出错"}
+                                )
                             )
-                        )
                     except Exception as send_error:
                         ws_logger.warning(
                             f"向客户端发送错误消息失败，连接可能已断开 ({client_ip}): {send_error}"
@@ -121,6 +123,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         break
                 else:
                     # 如果连接还没接受就出错，直接断开
+                    ws_logger.error(f"连接未建立时发生错误，断开连接: {client_ip}")
                     break
 
     except WebSocketDisconnect:

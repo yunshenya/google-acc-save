@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="解耦安装流程">
-      <change beforePath="$PROJECT_DIR$/app/services/app_installer.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/app_installer.py" afterDir="false" />
+    <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="fix:修复安装时间过快导致安装失败的bug">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routers/websocket.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routers/websocket.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -608,23 +609,7 @@
       <workItem from="1760515654401" duration="187000" />
       <workItem from="1760516570460" duration="53000" />
       <workItem from="1760517033180" duration="121000" />
-      <workItem from="1760518327382" duration="4193000" />
-    </task>
-    <task id="LOCAL-00186" summary="优化安装逻辑">
-      <option name="closed" value="true" />
-      <created>1759056468956</created>
-      <option name="number" value="00186" />
-      <option name="presentableId" value="LOCAL-00186" />
-      <option name="project" value="LOCAL" />
-      <updated>1759056468956</updated>
-    </task>
-    <task id="LOCAL-00187" summary="增加查看转发邮箱">
-      <option name="closed" value="true" />
-      <created>1759058150520</created>
-      <option name="number" value="00187" />
-      <option name="presentableId" value="LOCAL-00187" />
-      <option name="project" value="LOCAL" />
-      <updated>1759058150520</updated>
+      <workItem from="1760518327382" duration="9237000" />
     </task>
     <task id="LOCAL-00188" summary="增加查看转发邮箱">
       <option name="closed" value="true" />
@@ -1002,7 +987,23 @@
       <option name="project" value="LOCAL" />
       <updated>1760518558335</updated>
     </task>
-    <option name="localTasksCounter" value="235" />
+    <task id="LOCAL-00235" summary="fix:修复安装时间过快导致安装失败的bug">
+      <option name="closed" value="true" />
+      <created>1760522572294</created>
+      <option name="number" value="00235" />
+      <option name="presentableId" value="LOCAL-00235" />
+      <option name="project" value="LOCAL" />
+      <updated>1760522572294</updated>
+    </task>
+    <task id="LOCAL-00236" summary="fix:修复安装时间过快导致安装失败的bug">
+      <option name="closed" value="true" />
+      <created>1760526623562</created>
+      <option name="number" value="00236" />
+      <option name="presentableId" value="LOCAL-00236" />
+      <option name="project" value="LOCAL" />
+      <updated>1760526623562</updated>
+    </task>
+    <option name="localTasksCounter" value="237" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1036,7 +1037,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="最新版" />
     <MESSAGE value="修改后" />
     <MESSAGE value="增加登录页面" />
     <MESSAGE value="安装两个" />
@@ -1061,6 +1061,7 @@
     <MESSAGE value="增加设置随机代理功能" />
     <MESSAGE value="优化安装" />
     <MESSAGE value="解耦安装流程" />
-    <option name="LAST_COMMIT_MESSAGE" value="解耦安装流程" />
+    <MESSAGE value="fix:修复安装时间过快导致安装失败的bug" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix:修复安装时间过快导致安装失败的bug" />
   </component>
 </project>
