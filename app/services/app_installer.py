@@ -100,9 +100,9 @@ class DefaultAppInstaller(AppInstaller):
             )
             await update_cloud_status(
                 pad_code=pad_code,
-                current_status=f"{self.config.package_name}获取root成功"
+                current_status=f"{self.config.name}:获取root成功"
             )
-            logger.success(f"{self.config.package_name}获取root成功")
+            logger.success(f"{self.config.name}:获取root成功")
             await asyncio.sleep(2)
         return True
 
