@@ -1,9 +1,11 @@
 from typing import List, cast
 
 from fastapi import APIRouter, HTTPException
+from loguru import logger
 from sqlalchemy import ColumnElement
 from sqlalchemy.exc import IntegrityError
 
+from app.config import Config
 from app.curd.status import update_cloud_status, remove_cloud_status
 from app.dependencies.countries import manager, load_proxy_countries
 from app.models.status import (
@@ -169,6 +171,18 @@ async def delete_cloud_status(pad_code: str) -> dict:
     """删除指定的云机状态"""
     try:
         await remove_cloud_status(pad_code=pad_code)
+        current_codes = set(Config.PAD_CODES)
+        codes_to_remove = {pad_code}
+
+        not_exists = codes_to_remove - current_codes
+        if not_exists:
+            logger.warning(f"以下代码不在当前配置中: {not_exists}")
+
+        # 计算移除后的代码
+        remaining_codes = current_codes - codes_to_remove
+
+        # 更新配置
+        Config.update_config({"pad_codes": list(remaining_codes)})
 
         # 通知WebSocket客户端
         from app.services.websocket_manager import ws_manager
