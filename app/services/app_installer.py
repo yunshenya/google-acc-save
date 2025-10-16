@@ -94,7 +94,7 @@ class DefaultAppInstaller(AppInstaller):
 
     async def post_install(self, pad_code: str) -> bool:
         if self.config.needs_root:
-            await asyncio.sleep(6)
+            await asyncio.sleep(10)
             await open_root(
                 pad_code_list=[pad_code],
                 pkg_name=self.config.package_name
@@ -104,7 +104,7 @@ class DefaultAppInstaller(AppInstaller):
                 current_status=f"{self.config.name}:获取root成功"
             )
             logger.success(f"{self.config.name}:获取root成功")
-            await asyncio.sleep(2)
+            await asyncio.sleep(1)
         return True
 
 
@@ -369,7 +369,7 @@ async def install_all_apps(pad_code: str, config, task_manager):
         await task_manager.cancel_timeout_task_only(pad_code)
         template_id = random.choice(config.TEMPLE_IDS)
         pade_status = await get_one_pade_status(pade_code=pad_code)
-        if pade_status.is_random_proxy:
+        if pade_status.is_random_proxy and pade_status.is_changed_proxy:
             default_proxy: Any = manager.get_proxy_countries()
             selected_proxy = random.choice(default_proxy)
         else:

@@ -33,6 +33,7 @@ async def add_cloud_status(
                 proxy_platform="ipmars",
                 pad_name=pad_name,
                 android_version = android_version,
+                is_changed_proxy = True
             )
             db.add(db_account)
             await db.commit()
@@ -142,6 +143,7 @@ async def update_cloud_status(
     num_of_error: int = None,
     num_other_error: int = None,
     max_retries: Any = 3,  # 重试次数
+    is_changed_proxy: bool = None,
 ) -> StatusResponse:
     last_error = None
 
@@ -224,6 +226,13 @@ async def update_cloud_status(
                     db_status.num_other_error += num_other_error
                     task_logger.debug(
                         f"{pad_code}: 其他错误数量更新 {old_num_other_error} -> {db_status.num_other_error}"
+                    )
+
+                if is_changed_proxy is not None:
+                    old_is_changed_proxy = db_status.is_changed_proxy
+                    db_status.is_changed_proxy = is_changed_proxy
+                    task_logger.debug(
+                        f"{pad_code}: 其他错误数量更新 {old_is_changed_proxy} -> {is_changed_proxy}"
                     )
 
                 await db.commit()

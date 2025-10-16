@@ -94,3 +94,4 @@ class OnePadeAllStatus(BaseModel):
     num_other_error : int
     pad_name: str | None = None
     is_random_proxy : bool
+    is_changed_proxy: bool

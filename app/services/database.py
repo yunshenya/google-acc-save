@@ -81,6 +81,7 @@ class Status(Base):
     pad_name = Column(Text, nullable=True)
     is_random_proxy = Column(Boolean, nullable=False, default=False)
     android_version = Column(Text, nullable=True)
+    is_changed_proxy = Column(Boolean, nullable=False, default=True)
 
 
 class ProxyCollection(Base):

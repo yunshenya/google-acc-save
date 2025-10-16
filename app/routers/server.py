@@ -75,14 +75,14 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
     pad_code = android_code.pad_code
     match android_code.type:
         case 0:
-            await update_cloud_status(pad_code, num_other_error=1, number_of_run=1)
+            await update_cloud_status(pad_code, num_other_error=1, number_of_run=1, is_changed_proxy=True)
         case 1:
             await update_cloud_status(
-                pad_code=pad_code, num_of_error=1, number_of_run=1
+                pad_code=pad_code, num_of_error=1, number_of_run=1, is_changed_proxy=True
             )
         case _:
             await update_cloud_status(
-                pad_code=pad_code, num_of_error=0, number_of_run=1
+                current_status=f"状态类型为: {android_code.type}", pad_code=pad_code, num_of_error=0, number_of_run=1
             )
     try:
         await task_manager.cancel_timeout_task_only(pad_code)
@@ -90,7 +90,7 @@ async def status(android_code: AndroidPadCodeRequest) -> dict[str, Any]:
             # 选择模板和代理
             template_id = random.choice(config.TEMPLE_IDS)
             pade_status = await get_one_pade_status(pade_code=pad_code)
-            if pade_status.is_random_proxy:
+            if pade_status.is_random_proxy and pade_status.is_changed_proxy:
                 default_proxy: Any = manager.get_proxy_countries()
                 selected_proxy = random.choice(default_proxy)
             else:

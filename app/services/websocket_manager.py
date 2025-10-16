@@ -188,7 +188,7 @@ class WebSocketManager:
             temple_id = random.choice(config.TEMPLE_IDS)
             pade_status = await get_one_pade_status(pade_code=pad_code)
             # 选择随机代理
-            if pade_status.is_random_proxy:
+            if pade_status.is_random_proxy and pade_status.is_changed_proxy:
                 default_proxy: Any = manager.get_proxy_countries()
                 selected_proxy = random.choice(default_proxy)
             else:

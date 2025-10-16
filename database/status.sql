@@ -23,7 +23,9 @@ CREATE TABLE "google-manager".public.cloud_status (
                               num_of_success INT NOT NULL DEFAULT 0,
                               num_other_error INT NOT NULL DEFAULT 0,
                               proxy_platform TEXT,
-                              pad_name TEXT
+                              pad_name TEXT,
+                              android_version TEXT,
+                              is_changed_proxy BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE OR REPLACE FUNCTION update_updated_at_column()

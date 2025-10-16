@@ -42,7 +42,7 @@ async def create_account(account: AccountCreate) -> AccountResponse:
             await db.refresh(db_account)
             logger.success(f"{account.pad_code}: 账号上传成功")
             await update_proxies(pade_code=account.pad_code)
-            await update_cloud_status(pad_code=account.pad_code, num_of_success=1)
+            await update_cloud_status(pad_code=account.pad_code, num_of_success=1, is_changed_proxy=False)
             return db_account
         except IntegrityError:
             await db.rollback()
@@ -73,7 +73,7 @@ async def get_unique_account(
 
         stmt = (
             select(Account)
-            .filter(cast(ColumnElement[bool], Account.status == 0))
+            .filter(cast(ColumnElement[bool], cast(object, Account.status == 0)))
             .with_for_update()
         )
         result = await db.execute(stmt)
@@ -115,7 +115,7 @@ async def get_single_account_details(
 
         stmt = (
             select(Account)
-            .filter(cast(ColumnElement[bool], Account.status == 0))
+            .filter(cast(ColumnElement[bool], cast(object, Account.status == 0)))
             .with_for_update()
         )
         result = await db.execute(stmt)
@@ -814,7 +814,7 @@ async def get_account(account_id: int) -> AccountResponse:
         from sqlalchemy import select
 
         stmt = select(Account).filter(
-            cast(ColumnElement[bool], Account.id == account_id)
+            cast(ColumnElement[bool], cast(object, Account.id == account_id))
         )
         result = await db.execute(stmt)
         account = result.scalars().first()
@@ -829,7 +829,7 @@ async def update_forward(forward: ForwardRequest) -> AccountResponse:
         from sqlalchemy import select
 
         stmt = select(Account).filter(
-            cast(ColumnElement[bool], Account.account == forward.account)
+            cast(ColumnElement[bool], cast(object, Account.account == forward.account))
         )
         result = await db.execute(stmt)
         account = result.scalars().first()
@@ -854,7 +854,7 @@ async def update_secondary_mail(secondary_mail: SecondaryEmail) -> AccountRespon
         from sqlalchemy import select
 
         stmt = select(Account).filter(
-            cast(ColumnElement[bool], Account.account == secondary_mail.account)
+            cast(ColumnElement[bool], cast(object, Account.account == secondary_mail.account))
         )
         result = await db.execute(stmt)
         account = result.scalars().first()
@@ -882,7 +882,7 @@ async def update_account(
             from sqlalchemy import select
 
             stmt = select(Account).filter(
-                cast(ColumnElement[bool], Account.id == account_id)
+                cast(ColumnElement[bool], cast(object, Account.id == account_id))
             )
             result = await db.execute(stmt)
             db_account = result.scalars().first()
@@ -914,7 +914,7 @@ async def delete_account(account_id: int) -> dict:
         from sqlalchemy import select, delete
 
         stmt = select(Account).filter(
-            cast(ColumnElement[bool], Account.id == account_id)
+            cast(ColumnElement[bool], cast(object, Account.id == account_id))
         )
         result = await db.execute(stmt)
         account = result.scalars().first()
@@ -922,7 +922,7 @@ async def delete_account(account_id: int) -> dict:
             raise HTTPException(status_code=404, detail=f"{account_id}:账号不存在")
 
         await db.execute(
-            delete(Account).filter(cast(ColumnElement[bool], Account.id == account_id))
+            delete(Account).filter(cast(ColumnElement[bool], cast(object, Account.id == account_id)))
         )
         await db.commit()
         logger.success(f"账号 {account_id} 删除成功")
