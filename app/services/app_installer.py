@@ -94,7 +94,7 @@ class DefaultAppInstaller(AppInstaller):
 
     async def post_install(self, pad_code: str) -> bool:
         if self.config.needs_root:
-            await asyncio.sleep(4)
+            await asyncio.sleep(5)
             await open_root(
                 pad_code_list=[pad_code],
                 pkg_name=self.config.package_name
@@ -348,7 +348,7 @@ async def install_all_apps(pad_code: str, config, task_manager):
             longitude=current_proxy.longitude
         )
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(2)
         await update_cloud_status(pad_code=pad_code, current_status="开始启动应用")
 
         await start_app_state(
