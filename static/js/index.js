@@ -11,6 +11,7 @@ let reconnectInterval = null;
 let reconnectAttempts = 0;
 const maxReconnectAttempts = 5;
 let isConnecting = false;
+let selectedPadCodes = new Set();
 
 
 function showToast(message, type = 'info') {
@@ -213,11 +214,11 @@ function openEditDeviceModal(padCode) {
 
     let deviceData = null;
     for (const row of rows) {
-        const padCodeCell = row.cells[0];
+        const padCodeCell = row.querySelector('[data-pad-code]');
         if (padCodeCell && padCodeCell.getAttribute('data-pad-code') === padCode) {
             deviceData = {
                 padCode: padCode,
-                padName: padCodeCell.textContent.trim(),
+                padName: row.getAttribute('data-pad-name'),
                 templeId: row.getAttribute('data-temple-id'),
                 country: row.getAttribute('data-country'),
                 code: row.getAttribute('data-code'),
@@ -661,6 +662,55 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.logoutBtn && elements.logoutBtn.addEventListener('click', logout);
         elements.refreshAllStatusBtn && elements.refreshAllStatusBtn.addEventListener('click', requestStatusUpdate);
 
+        // 批量选择全选
+        const selectAll = document.getElementById('selectAllDevices');
+        if (selectAll) {
+            selectAll.addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.row-select');
+                checkboxes.forEach(cb => {
+                    cb.checked = selectAll.checked;
+                    const code = cb.getAttribute('data-pad-code');
+                    if (cb.checked) selectedPadCodes.add(code); else selectedPadCodes.delete(code);
+                });
+                updateBulkSelectedCount();
+            });
+        }
+
+        // 行选择事件委托
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.classList && e.target.classList.contains('row-select')) {
+                const code = e.target.getAttribute('data-pad-code');
+                if (e.target.checked) selectedPadCodes.add(code); else selectedPadCodes.delete(code);
+                updateBulkSelectedCount();
+            }
+        });
+
+        // 状态分页按钮
+        const spFirst = document.getElementById('statusFirstPage');
+        const spPrev = document.getElementById('statusPrevPage');
+        const spNext = document.getElementById('statusNextPage');
+        const spLast = document.getElementById('statusLastPage');
+        [spFirst, spPrev, spNext, spLast].forEach(btn => {
+            if (!btn) return;
+            btn.addEventListener('click', () => {
+                if (!window.__statusPagination) return;
+                switch (btn.id) {
+                    case 'statusFirstPage': window.__statusPagination.page = 1; break;
+                    case 'statusPrevPage': window.__statusPagination.page = Math.max(1, window.__statusPagination.page - 1); break;
+                    case 'statusNextPage': window.__statusPagination.page = Math.min(window.__statusPagination.totalPages, window.__statusPagination.page + 1); break;
+                    case 'statusLastPage': window.__statusPagination.page = window.__statusPagination.totalPages; break;
+                }
+                // 重新渲染，使用最近一次的完整数据缓存
+                if (window.__lastStatusData) {
+                    renderStatusTable(window.__lastStatusData);
+                } else {
+                    requestStatusUpdate();
+                }
+                // 回顶
+                if (elements.tableContainer) elements.tableContainer.scrollTo(0, 0);
+            });
+        });
+
         document.addEventListener('visibilitychange', handleVisibilityChange);
         window.addEventListener('beforeunload', closeWebSocket);
     }
@@ -734,6 +784,7 @@ document.addEventListener('DOMContentLoaded', function() {
         switch (messageType) {
             case 'status_update':
                 if (currentView === 'status' && message.data) {
+                    window.__lastStatusData = message.data;
                     renderStatusTable(message.data);
                 }
                 break;
@@ -843,9 +894,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const rows = elements.statusTableBody.querySelectorAll('tr');
 
         for (const row of rows) {
-            const padCodeCell = row.cells[0];
-            if (padCodeCell && padCodeCell.textContent.trim() === statusData.pad_code) {
-                const statusCell = row.cells[1];
+            const padCodeCell = row.querySelector('[data-pad-code]');
+            if (padCodeCell && padCodeCell.getAttribute('data-pad-code') === statusData.pad_code) {
+                const statusCell = row.cells[3];
                 if (statusCell && statusData.current_status) {
                     statusCell.textContent = statusData.current_status;
                     statusCell.className = getStatusClass(statusData.current_status);
@@ -1364,6 +1415,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(`HTTP错误! 状态码: ${response?.status || 'unknown'}`);
             }
             const statusData = await response.json();
+            window.__lastStatusData = statusData;
             renderStatusTable(statusData);
         } catch (error) {
             console.error('获取状态失败:', error);
@@ -1392,6 +1444,21 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // 分页准备
+        const pageSizeStatus = 10;
+        const dataArray = Array.isArray(statusData) ? statusData : [];
+        if (!window.__statusPagination) {
+            window.__statusPagination = { page: 1, totalPages: 1 };
+        }
+        window.__statusPagination.totalPages = Math.max(1, Math.ceil(dataArray.length / pageSizeStatus));
+        if (window.__statusPagination.page > window.__statusPagination.totalPages) {
+            window.__statusPagination.page = window.__statusPagination.totalPages;
+        }
+
+        const startIdx = (window.__statusPagination.page - 1) * pageSizeStatus;
+        const endIdx = startIdx + pageSizeStatus;
+        const pageData = dataArray.slice(startIdx, endIdx);
+
         elements.statusTableBody.innerHTML = '';
 
         if (!Array.isArray(statusData) || statusData.length === 0) {
@@ -1404,7 +1471,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const fragment = document.createDocumentFragment();
 
-        statusData.forEach((status, index) => {
+        pageData.forEach((status, index) => {
             const row = document.createElement('tr');
             row.style.animationDelay = `${index * 50}ms`;
 
@@ -1418,6 +1485,7 @@ document.addEventListener('DOMContentLoaded', function() {
             row.setAttribute('data-longitude', status.longitude || '');
             row.setAttribute('data-is-secondary-email', status.is_secondary_email || false);
             row.setAttribute('data-is-random-proxy', status.is_random_proxy || false);
+            row.setAttribute('data-pad-name', status.pad_name || false);
 
             const statusClass = getStatusClass(status.current_status);
             const totalRuns = status.number_of_run || 1;
@@ -1432,7 +1500,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return 'ratio-none';
             };
 
+            const isChecked = selectedPadCodes.has(status.pad_code) ? 'checked' : '';
             row.innerHTML = `
+                <td style="text-align:center"><input type="checkbox" class="row-select" data-pad-code="${status.pad_code}" ${isChecked}></td>
                 <td title="${status.pad_code}" data-pad-code="${status.pad_code}">${status.pad_name || "未知设备"}</td>
                 <td title="安卓版本">${status.android_version || "未知版本"}</td>
                 <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
@@ -1466,6 +1536,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         elements.statusTableBody.appendChild(fragment);
+
+        // 渲染分页UI
+        const pag = document.getElementById('statusPagination');
+        const info = document.getElementById('statusPageInfo');
+        if (pag && info) {
+            if (dataArray.length > pageSizeStatus) {
+                pag.style.display = 'flex';
+                info.textContent = `第 ${window.__statusPagination.page} / ${window.__statusPagination.totalPages} 页（共 ${dataArray.length} 台）`;
+            } else {
+                pag.style.display = 'none';
+            }
+        }
     }
 
 
@@ -1474,7 +1556,106 @@ document.addEventListener('DOMContentLoaded', function() {
     window.fetchCloudStatus = fetchCloudStatus;
     window.loadDeviceManagerData = loadDeviceManagerData;
     window.fetchCloudStatus = fetchCloudStatus
-    window.authenticatedFetch = authenticatedFetch;
+window.authenticatedFetch = authenticatedFetch;
+
+// 批量编辑：打开/关闭/计数/提交
+window.openBulkEditModal = function() {
+    if (selectedPadCodes.size === 0) {
+        showToast('请先勾选至少一台设备', 'warning');
+        return;
+    }
+    document.getElementById('bulkEditModal').style.display = 'flex';
+    updateBulkSelectedCount();
+}
+
+window.closeBulkEditModal = function() {
+    document.getElementById('bulkEditModal').style.display = 'none';
+    clearBulkForm();
+}
+
+function updateBulkSelectedCount() {
+    const el = document.getElementById('bulkSelectedCount');
+    if (el) el.textContent = `${selectedPadCodes.size} 台`;
+}
+
+function clearBulkForm() {
+    ['bulkTempleId','bulkCountry','bulkCode','bulkProxy','bulkTimeZone','bulkLanguage','bulkLatitude','bulkLongitude']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    const sec = document.getElementById('bulkIsSecondaryEmail'); if (sec) sec.checked = false;
+    const rnd = document.getElementById('bulkIsRandomProxy'); if (rnd) rnd.checked = false;
+}
+
+window.applyBulkUpdate = async function() {
+    if (selectedPadCodes.size === 0) {
+        showToast('未选择设备', 'warning');
+        return;
+    }
+
+    const body = {
+        pad_codes: Array.from(selectedPadCodes),
+    };
+
+    const map = {
+        temple_id: 'bulkTempleId',
+        country: 'bulkCountry',
+        code: 'bulkCode',
+        proxy: 'bulkProxy',
+        time_zone: 'bulkTimeZone',
+        language: 'bulkLanguage',
+        latitude: 'bulkLatitude',
+        longitude: 'bulkLongitude',
+    };
+
+    Object.entries(map).forEach(([k, id]) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const val = el.value.trim();
+        if (val !== '') {
+            body[k] = (k === 'temple_id') ? parseInt(val) : (k==='latitude'||k==='longitude') ? parseFloat(val) : val;
+        }
+    });
+
+    const sec = document.getElementById('bulkIsSecondaryEmail');
+    if (sec) body.is_secondary_email = !!sec.checked;
+    const rnd = document.getElementById('bulkIsRandomProxy');
+    if (rnd) body.is_random_proxy = !!rnd.checked;
+
+    try {
+        showLoading(true);
+        let resp = await authenticatedFetch('/cloud_status/bulk', {
+            method: 'PUT',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(body)
+        });
+        if (!resp || resp.status === 404) {
+            // 后端尚未提供 bulk 接口时，逐个回退到单条更新
+            const singlePayload = { ...body };
+            delete singlePayload.pad_codes;
+            const codes = body.pad_codes || [];
+            for (const code of codes) {
+                const r = await authenticatedFetch(`/cloud_status/${encodeURIComponent(code)}`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(singlePayload)
+                });
+                if (!r || !r.ok) {
+                    const err = await r.json().catch(()=>({detail:`${code} 更新失败`}));
+                    throw new Error(err.detail || `${code} 更新失败`);
+                }
+            }
+        } else if (!resp.ok) {
+            const err = await resp.json().catch(()=>({detail:'批量更新失败'}));
+            throw new Error(err.detail || '批量更新失败');
+        }
+        showToast('批量更新成功', 'success');
+        window.closeBulkEditModal();
+        requestStatusUpdate();
+    } catch (e) {
+        showToast(e.message || '批量更新失败', 'error');
+    } finally {
+        showLoading(false);
+    }
+}
 });
 
 // 添加CSS动画

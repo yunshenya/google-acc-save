@@ -4,25 +4,43 @@
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>账户管理系统</title>
+    <link href="../static/css/admin.css" rel="stylesheet">
     <link href="../static/css/comm.css" rel="stylesheet">
     <link href="../static/css/index.css" rel="stylesheet">
 </head>
-<body>
+<body class="admin">
 <div class="progress-bar" id="progressBar"></div>
 
-<div class="container">
-    <div class="header-controls">
-        <h1>账户管理系统</h1>
-        <div class="header-buttons">
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">账户管理系统</div>
+        <nav class="admin-nav">
+            <a href="/" class="active">🏠 首页</a>
+            <a href="/statistics">📊 统计分析</a>
+            <a href="/proxy-collection-page">🌐 代理集合</a>
+            <a href="/config">⚙️ 配置管理</a>
+        </nav>
+    </aside>
+
+    <header class="admin-topbar">
+        <div class="admin-actions">
             <button class="secondary" id="toggleView">切换到状态监控</button>
-            <button class="secondary" id="statisticsBtn" onclick="window.location.href='/statistics'">📊 统计分析</button>
-            <button class="secondary" onclick="window.location.href='/proxy-collection-page'">🌐 代理集合</button>
-            <button class="secondary" onclick="window.location.href='/config'">⚙️ 配置管理</button>
             <button class="logout-btn" id="logoutBtn">退出登录</button>
         </div>
-    </div>
+    </header>
 
-    <div class="error" id="error" style="display: none;">
+    <main class="admin-content">
+    <div class="container">
+        <div class="header-controls">
+            <h1>账户管理系统</h1>
+            <div class="header-buttons">
+                <button class="secondary" id="statisticsBtn" onclick="window.location.href='/statistics'">📊 统计分析</button>
+                <button class="secondary" onclick="window.location.href='/proxy-collection-page'">🌐 代理集合</button>
+                <button class="secondary" onclick="window.location.href='/config'">⚙️ 配置管理</button>
+            </div>
+        </div>
+
+        <div class="error" id="error" style="display: none;">
         <svg fill="currentColor" height="20" viewBox="0 0 20 20" width="20">
             <path clip-rule="evenodd"
                   d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
@@ -131,6 +149,7 @@
                 <div class="connection-status" id="connectionStatus">
                     <span class="status-info">● 未连接</span>
                 </div>
+                <button onclick="openBulkEditModal()" class="secondary">🛠 批量修改配置</button>
                 <button onclick="showAddDeviceModal()" class="add-btn">➕ 添加设备</button>
                 <button onclick="showDeviceManager()" class="secondary">📱 设备管理</button>
                 <button id="refreshAllStatus">刷新所有状态</button>
@@ -141,6 +160,7 @@
             <table id="statusTable">
                 <thead>
                 <tr>
+                    <th width="40px"><input type="checkbox" id="selectAllDevices"></th>
                     <th width="200px">设备名称</th>
                     <th width="200px">安卓版本</th>
                     <th width="200px">运行状态</th>
@@ -168,6 +188,14 @@
                 </svg>
                 <h3>暂无状态数据</h3>
                 <p>系统正在获取云机状态信息...</p>
+            </div>
+
+            <div class="pagination" id="statusPagination" style="display: none;">
+                <button id="statusFirstPage">首页</button>
+                <button id="statusPrevPage">上一页</button>
+                <span id="statusPageInfo" style="padding: 0 10px;"></span>
+                <button id="statusNextPage">下一页</button>
+                <button id="statusLastPage">末页</button>
             </div>
         </div>
     </div>
@@ -377,6 +405,76 @@
             </div>
         </div>
     </div>
+    <!-- 批量修改配置弹窗 -->
+    <div id="bulkEditModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 760px;">
+            <div class="modal-header">
+                <h3>🛠 批量修改配置</h3>
+                <button class="modal-close" onclick="closeBulkEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>已选择设备</label>
+                    <div id="bulkSelectedCount" style="color: var(--dark-gray);">0 台</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>模板ID</label>
+                        <input type="number" id="bulkTempleId" placeholder="保持不变请留空">
+                    </div>
+                    <div class="form-group">
+                        <label>国家</label>
+                        <input type="text" id="bulkCountry" placeholder="保持不变请留空">
+                    </div>
+                    <div class="form-group">
+                        <label>国家代码</label>
+                        <input type="text" id="bulkCode" placeholder="保持不变请留空">
+                    </div>
+                    <div class="form-group">
+                        <label>代理URL</label>
+                        <input type="url" id="bulkProxy" placeholder="保持不变请留空">
+                    </div>
+                    <div class="form-group">
+                        <label>时区</label>
+                        <input type="text" id="bulkTimeZone" placeholder="保持不变请留空">
+                    </div>
+                    <div class="form-group">
+                        <label>语言</label>
+                        <input type="text" id="bulkLanguage" placeholder="保持不变请留空">
+                    </div>
+                    <div class="form-group">
+                        <label>纬度</label>
+                        <input type="number" step="0.0001" id="bulkLatitude" placeholder="保持不变请留空">
+                    </div>
+                    <div class="form-group">
+                        <label>经度</label>
+                        <input type="number" step="0.0001" id="bulkLongitude" placeholder="保持不变请留空">
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="bulkIsSecondaryEmail" style="width: auto;">
+                            绑定辅助邮箱
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px;">
+                            <input type="checkbox" id="bulkIsRandomProxy" style="width: auto;">
+                            设置随机代理
+                        </label>
+                    </div>
+                </div>
+
+                <small style="color: var(--dark-gray); display: block; margin-top: 8px;">留空表示该字段不修改；勾选的布尔选项会被统一设置。</small>
+            </div>
+            <div class="modal-footer">
+                <button class="secondary" onclick="closeBulkEditModal()">取消</button>
+                <button class="save-btn" onclick="applyBulkUpdate()">批量应用</button>
+            </div>
+        </div>
+    </div>
+    </div>
+    </main>
 </div>
 <script src="../static/js/comm.js"></script>
 <script src="../static/js/index.js"></script>

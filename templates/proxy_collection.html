@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>代理集合管理 - 账户管理系统</title>
+    <link href="../static/css/admin.css" rel="stylesheet">
     <link href="../static/css/index.css" rel="stylesheet">
     <link href="../static/css/comm.css" rel="stylesheet">
     <link href="../static/css/proxy.css" rel="stylesheet">
 </head>
-<body>
+<body class="admin">
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">账户管理系统</div>
+        <nav class="admin-nav">
+            <a href="/">🏠 首页</a>
+            <a href="/statistics">📊 统计分析</a>
+            <a href="/proxy-collection-page" class="active">🌐 代理集合</a>
+            <a href="/config">⚙️ 配置管理</a>
+        </nav>
+    </aside>
+
+    <header class="admin-topbar">
+        <div class="admin-actions">
+            <button class="secondary" onclick="window.location.href='/'">返回主页</button>
+        </div>
+    </header>
+
+    <main class="admin-content">
 <div class="proxy-container">
     <div class="proxy-header">
         <h1>🌐 代理集合管理</h1>
@@ -103,6 +122,8 @@
             <p>系统中还没有记录任何代理集合信息</p>
         </div>
     </div>
+</div>
+    </main>
 </div>
 <script src="../static/js/comm.js"></script>
 <script src="../static/js/proxy.js"></script>

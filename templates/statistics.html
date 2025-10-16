@@ -4,12 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>账号增长统计 - 账户管理系统</title>
+    <link href="../static/css/admin.css" rel="stylesheet">
     <link href="../static/css/index.css" rel="stylesheet">
     <link href="../static/css/statistics.css" rel="stylesheet">
     <link href="../static/css/comm.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 </head>
-<body>
+<body class="admin">
+<div class="admin-layout">
+    <aside class="admin-sidebar">
+        <div class="admin-brand">账户管理系统</div>
+        <nav class="admin-nav">
+            <a href="/">🏠 首页</a>
+            <a href="/statistics" class="active">📊 统计分析</a>
+            <a href="/proxy-collection-page">🌐 代理集合</a>
+            <a href="/config">⚙️ 配置管理</a>
+        </nav>
+    </aside>
+
+    <header class="admin-topbar">
+        <div class="admin-actions">
+            <button class="secondary" onclick="window.location.href='/'">返回主页</button>
+        </div>
+    </header>
+
+    <main class="admin-content">
 <div class="statistics-container">
     <div class="stats-header">
         <h1>📊 账号增长统计</h1>
@@ -78,6 +97,8 @@
             </div>
         </div>
     </div>
+</div>
+    </main>
 </div>
 
 <script src="../static/js/comm.js"></script>

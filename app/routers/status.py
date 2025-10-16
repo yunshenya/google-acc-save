@@ -2,7 +2,7 @@ from typing import List, cast
 
 from fastapi import APIRouter, HTTPException
 from loguru import logger
-from sqlalchemy import ColumnElement
+from sqlalchemy import ColumnElement, func
 from sqlalchemy.exc import IntegrityError
 
 from app.config import Config
@@ -16,7 +16,7 @@ from app.models.status import (
 )
 from app.services.database import SessionLocal, Status
 from app.services.logger import task_logger
-from app.models.status import StatusUpdateRequest
+from app.models.status import StatusUpdateRequest, BulkStatusUpdateRequest
 
 router = APIRouter()
 
@@ -75,8 +75,12 @@ async def update_single_cloud_status(
         try:
             from sqlalchemy import select
 
+            normalized_code = (pad_code or "").strip()
             stmt = select(Status).filter(
-                cast(ColumnElement[bool], cast(object, Status.pad_code == pad_code))
+                cast(
+                    ColumnElement[bool],
+                    cast(object, func.lower(Status.pad_code) == func.lower(normalized_code)),
+                )
             )
             result = await db.execute(stmt)
             db_status = result.scalars().first()
@@ -120,7 +124,7 @@ async def update_single_cloud_status(
 
             await ws_manager.send_status_update()
 
-            task_logger.success(f"{pad_code}: 配置更新成功")
+            task_logger.success(f"{normalized_code}: 配置更新成功")
             return db_status
 
         except HTTPException:
@@ -130,6 +134,53 @@ async def update_single_cloud_status(
             task_logger.error(f"{pad_code}: 配置更新失败 - {e}")
             raise HTTPException(status_code=500, detail=f"更新失败: {str(e)}")
 
+
+@router.put("/cloud_status/bulk", response_model=list[StatusResponse])
+async def bulk_update_cloud_status(
+        bulk_update: BulkStatusUpdateRequest,
+) -> list[StatusResponse]:
+    """批量更新多个云机的配置信息"""
+    if not bulk_update.pad_codes:
+        raise HTTPException(status_code=400, detail="pad_codes 不能为空")
+
+    updated_statuses: list[StatusResponse] = []
+    errors: list[str] = []
+
+    for code in bulk_update.pad_codes:
+        try:
+            single = StatusUpdateRequest(
+                temple_id=bulk_update.temple_id,
+                proxy=bulk_update.proxy,
+                country=bulk_update.country,
+                code=bulk_update.code,
+                time_zone=bulk_update.time_zone,
+                language=bulk_update.language,
+                latitude=bulk_update.latitude,
+                longitude=bulk_update.longitude,
+                is_secondary_email=bulk_update.is_secondary_email,
+                is_random_proxy=bulk_update.is_random_proxy,
+            )
+            updated = await update_single_cloud_status(code, single)
+            updated_statuses.append(updated)
+        except HTTPException as e:
+            errors.append(f"{code}:{e.detail}")
+        except Exception as e:
+            errors.append(f"{code}:{str(e)}")
+
+    if not updated_statuses:
+        raise HTTPException(status_code=400, detail=f"批量更新失败: {', '.join(errors[:5])}")
+
+    # 广播一次即可
+    try:
+        from app.services.websocket_manager import ws_manager
+        await ws_manager.send_status_update()
+    except Exception:
+        pass
+
+    if errors:
+        logger.warning(f"部分设备更新失败: {errors}")
+
+    return updated_statuses
 
 @router.post("/add_cloud_status", response_model=dict[str, str])
 async def add_cloud_status(status: AddStatusRequest) -> dict[str, str]:
