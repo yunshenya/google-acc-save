@@ -94,7 +94,7 @@ class DefaultAppInstaller(AppInstaller):
 
     async def post_install(self, pad_code: str) -> bool:
         if self.config.needs_root:
-            await asyncio.sleep(10)
+            await asyncio.sleep(6)
             await open_root(
                 pad_code_list=[pad_code],
                 pkg_name=self.config.package_name

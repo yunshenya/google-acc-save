@@ -12,6 +12,7 @@ from app.curd.status import add_cloud_status, set_proxy_status, all_cloud_status
 from app.dependencies.countries import load_proxy_countries
 from app.dependencies.countries import manager
 from app.dependencies.utils import replace_pad
+from app.dependencies.auth import VmosUtil
 from app.routers import (
     accounts,
     proxy,
@@ -112,13 +113,33 @@ async def startup_event(app: FastAPI):
     except Exception as e:
         logger.error(f"应用启动过程中出错: {e}")
         raise
-    yield
 
+    yield  # Application is running
+
+    # Cleanup on shutdown
     try:
+        logger.info("开始清理应用资源...")
+
+        # Clean up VmosUtil session
+        try:
+            await VmosUtil.close_session()
+            logger.info("VmosUtil session 已清理")
+        except Exception as e:
+            logger.warning(f"清理 VmosUtil session 失败: {e}")
+
+        # Clean up cloud status
         try:
             await all_cloud_status()
+            logger.info("云机状态已清理")
         except Exception as e:
             logger.warning(f"清理云机状态失败: {e}")
+
+        # Close database connections
+        try:
+            await engine.dispose()
+            logger.info("数据库连接已关闭")
+        except Exception as e:
+            logger.warning(f"关闭数据库连接失败: {e}")
 
     except Exception as e:
         logger.error(f"应用关闭时出错: {e}")
