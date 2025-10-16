@@ -447,6 +447,7 @@ function renderDeviceList() {
         return `
             <tr data-code="${device.padCode}" style="border-bottom: 1px solid #eee;">
                 <td title="${device.padCode}" style="padding: 10px;">${device.padName}</td>
+                <td title="安卓版本" style="padding: 10px;">${device.androidVersion}</td>
                 <td style="padding: 10px;">${statusBadge}</td>
                 <td style="padding: 10px; text-align: center;">${configBadge}</td>
                 <td style="padding: 10px; text-align: center;">
@@ -1433,6 +1434,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             row.innerHTML = `
                 <td title="${status.pad_code}" data-pad-code="${status.pad_code}">${status.pad_name || "未知设备"}</td>
+                <td title="安卓版本">${status.android_version || "未知版本"}</td>
                 <td class="${statusClass}" title="${status.current_status || '未知'}">${status.current_status || '未知'}</td>
                 <td title="运行次数">${totalRuns}</td>
                 <td title="成功次数">${status.num_of_success}</td>

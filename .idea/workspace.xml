@@ -5,8 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="fix:修复安装时间过快导致安装失败的bug">
-      <change beforePath="$PROJECT_DIR$/app/models/proxy.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/proxy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/app_installer.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/app_installer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/curd/status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/curd/status.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/services/websocket_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/websocket_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/static/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -614,23 +618,7 @@
       <workItem from="1760533202132" duration="123000" />
       <workItem from="1760534559712" duration="198000" />
       <workItem from="1760579933704" duration="1299000" />
-      <workItem from="1760581547808" duration="3295000" />
-    </task>
-    <task id="LOCAL-00192" summary="增加查看转发邮箱">
-      <option name="closed" value="true" />
-      <created>1759111523506</created>
-      <option name="number" value="00192" />
-      <option name="presentableId" value="LOCAL-00192" />
-      <option name="project" value="LOCAL" />
-      <updated>1759111523506</updated>
-    </task>
-    <task id="LOCAL-00193" summary="增加查看转发邮箱">
-      <option name="closed" value="true" />
-      <created>1759116042156</created>
-      <option name="number" value="00193" />
-      <option name="presentableId" value="LOCAL-00193" />
-      <option name="project" value="LOCAL" />
-      <updated>1759116042156</updated>
+      <workItem from="1760581547808" duration="12713000" />
     </task>
     <task id="LOCAL-00194" summary="增加查看转发邮箱">
       <option name="closed" value="true" />
@@ -1008,7 +996,23 @@
       <option name="project" value="LOCAL" />
       <updated>1760581905778</updated>
     </task>
-    <option name="localTasksCounter" value="241" />
+    <task id="LOCAL-00241" summary="fix:修复安装时间过快导致安装失败的bug">
+      <option name="closed" value="true" />
+      <created>1760585510336</created>
+      <option name="number" value="00241" />
+      <option name="presentableId" value="LOCAL-00241" />
+      <option name="project" value="LOCAL" />
+      <updated>1760585510336</updated>
+    </task>
+    <task id="LOCAL-00242" summary="fix:修复安装时间过快导致安装失败的bug">
+      <option name="closed" value="true" />
+      <created>1760592202653</created>
+      <option name="number" value="00242" />
+      <option name="presentableId" value="LOCAL-00242" />
+      <option name="project" value="LOCAL" />
+      <updated>1760592202653</updated>
+    </task>
+    <option name="localTasksCounter" value="243" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

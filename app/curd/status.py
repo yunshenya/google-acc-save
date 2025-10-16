@@ -24,6 +24,7 @@ async def add_cloud_status(
             pad_info: Any = await get_pad_info(pad_code)
             data = pad_info.get("data", None)
             pad_name = data.get("padName", None)
+            android_version = data.get("androidVersion", None)
             db_account = Status(
                 pad_code=pad_code,
                 current_status=current_status,
@@ -31,6 +32,7 @@ async def add_cloud_status(
                 is_secondary_email=False,
                 proxy_platform="ipmars",
                 pad_name=pad_name,
+                android_version = android_version,
             )
             db.add(db_account)
             await db.commit()

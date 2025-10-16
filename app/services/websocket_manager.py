@@ -285,6 +285,7 @@ class WebSocketManager:
                         "num_other_error": status.num_other_error,
                         "is_secondary_email": bool(status.is_secondary_email) if status.is_secondary_email is not None else False,
                         "is_random_proxy": bool(status.is_random_proxy) if status.is_secondary_email is not None else False,
+                        "android_version" : status.android_version,
                     }
                     status_data.append(status_dict)
 
