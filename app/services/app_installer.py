@@ -350,7 +350,7 @@ async def install_all_apps(pad_code: str, config, task_manager):
             longitude=current_proxy.longitude
         )
 
-        await asyncio.sleep(2)
+        await asyncio.sleep(4)
         await update_cloud_status(pad_code=pad_code, current_status="开始启动应用")
 
         await start_app_state(
