@@ -1,0 +1,113 @@
+/* Admin layout: sidebar + topbar + content */
+:root {
+  --sidebar-width: 220px;
+  --topbar-height: 56px;
+}
+
+html, body {
+  height: 100%;
+}
+
+body.admin {
+  margin: 0;
+  padding: 0;
+  background: #f5f7fb;
+  color: var(--text-color);
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: var(--topbar-height) 1fr;
+  grid-template-areas:
+    "sidebar topbar"
+    "sidebar content";
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  grid-area: sidebar;
+  background: #12233a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  font-weight: 700;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.admin-nav {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+}
+
+.admin-nav a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  color: #cfd8e3;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+}
+
+.admin-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.admin-nav a.active { background: rgba(52, 152, 219, 0.2); color: #fff; border-left-color: var(--primary-color); }
+
+.admin-topbar {
+  grid-area: topbar;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 16px;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.admin-content {
+  grid-area: content;
+  padding: 20px;
+}
+
+.admin-actions { display: flex; gap: 10px; align-items: center; }
+
+.admin-mobile-toggle {
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .admin-layout {
+    grid-template-columns: 1fr;
+    grid-template-rows: var(--topbar-height) auto 1fr;
+    grid-template-areas:
+      "topbar"
+      "sidebar"
+      "content";
+  }
+  .admin-sidebar { position: relative; }
+  .admin-mobile-toggle { display: inline-flex; margin-right: auto; }
+}
+
+/* Utility wrappers so existing pages can drop-in */
+.admin-card {
+  background: #fff;
+  border: 1px solid #e6e9ef;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.admin-page-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
+}
+
+
