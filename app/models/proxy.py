@@ -11,6 +11,7 @@ class ProxyResponse(BaseModel):
     longitude: float
     temple_id: int | None = None
     proxy_platform: str | None = None
+    is_random_proxy: bool | None = None
 
 
 class ProxyRequest(BaseModel):

@@ -94,7 +94,7 @@ class DefaultAppInstaller(AppInstaller):
 
     async def post_install(self, pad_code: str) -> bool:
         if self.config.needs_root:
-            await asyncio.sleep(5)
+            await asyncio.sleep(6)
             await open_root(
                 pad_code_list=[pad_code],
                 pkg_name=self.config.package_name
@@ -334,7 +334,9 @@ async def install_all_apps(pad_code: str, config, task_manager):
         from app.dependencies.utils import update_language, update_time_zone, gps_in_ject_info
         from app.services.every_task import start_app_state
 
-        current_proxy = await get_proxy_status(pad_code)
+        current_current = await get_proxy_status(pad_code)
+        current_proxy = get_proxies_by_country_code(country_code=current_current.code)
+        await set_proxy_status(pad_code, current_proxy)
         await update_cloud_status(
             pad_code=pad_code,
             current_status=f"设置语言、时区和GPS信息（使用代理国家: {current_proxy.country}）"
