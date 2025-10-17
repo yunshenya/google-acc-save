@@ -1,13 +1,12 @@
 import asyncio
 import random
-from asyncio import sleep
 from typing import Any
 
 from loguru import logger
 
 from app.config import config
 from app.curd.status import update_cloud_status
-from app.dependencies.utils import start_app, check_padTaskDetail, replace_pad, click, Position, ActionType
+from app.dependencies.utils import start_app, check_padTaskDetail, replace_pad
 
 
 async def start_app_state(package_name, pad_code, task_manager):
@@ -15,8 +14,8 @@ async def start_app_state(package_name, pad_code, task_manager):
     await update_cloud_status(pad_code=pad_code, current_status="开始启动脚本")
     total_try_count = 0
     try:
+        app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
         while total_try_count < 6:
-            app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
             taskid = app_result["data"][0]["taskId"]
             match await check_padTaskDetail([taskid]):
                 case -1:
@@ -64,8 +63,8 @@ async def start_app_state(package_name, pad_code, task_manager):
                     break
             total_try_count += 1
     except IndexError:
+        app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
         while total_try_count < 6:
-            app_result: Any = await start_app(pad_code_list=[pad_code], pkg_name=package_name)
             taskid = app_result["data"][0]["taskId"]
             match await check_padTaskDetail([taskid]):
                 case -1:

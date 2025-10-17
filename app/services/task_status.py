@@ -1,5 +1,6 @@
 import asyncio
 import random
+from asyncio import sleep
 from enum import IntEnum
 from typing import Any
 
@@ -287,6 +288,7 @@ async def replace_pad_task_status(data, task_manager):
                     temple_id=template_id,
                     current_status="一键新机失败后重试中",
                 )
+                await sleep(60)
                 await replace_pad([pad_code], template_id=template_id)
 
             case _:
