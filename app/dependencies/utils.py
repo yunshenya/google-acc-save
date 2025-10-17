@@ -51,7 +51,7 @@ async def get_pad_info(pad_code):
     return await VmosUtil(url=pad_info_url, data=pad_info_data).send()
 
 
-async def start_app(pad_code_list: list, pkg_name: str) -> list:
+async def start_app(pad_code_list: list, pkg_name: str) -> dict:
     start_app_url = "/vcpcloud/api/padApi/startApp"
 
     body = {"padCodes": pad_code_list, "pkgName": pkg_name}
@@ -99,7 +99,7 @@ class Position:
 
 async def click(
     pad_code_list: list[str], positions: list, width: int = 1080, height: int = 2160
-) -> str:
+) -> dict:
     click_url = "/vcpcloud/api/padApi/simulateTouch"
     body = {
         "padCodes": pad_code_list,
@@ -110,7 +110,7 @@ async def click(
 
     return await VmosUtil(click_url, body).send()
 
-async def input_text(pad_code_list: list[str], message: str) -> str:
+async def input_text(pad_code_list: list[str], message: str) -> dict:
     input_text_url = "/vcpcloud/api/padApi/inputText"
     body = {
         "padCodes": pad_code_list,

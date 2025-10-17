@@ -46,18 +46,17 @@ class AppInstaller(ABC):
 
     async def is_installed(self, pad_code: str) -> bool:
         """检查应用是否已安装"""
-        try:
+        while True:
             result: Any = await exe_cmd(pad_code=pad_code, cmd="pm list packages")
-            system_app_str = result["data"][0]["errorMsg"]
-            packages = [
-                item.replace("package:", "")
-                for item in system_app_str.split()
-                if item.startswith("package:")
-            ]
-            return self.config.package_name in packages
-        except Exception as e:
-            logger.error(f"{pad_code}: 检查{self.config.name}安装状态失败 - {e}")
-            return False
+            if result.get("msg", None) == "success":
+                system_app_str = result["data"][0]["errorMsg"]
+                packages = [
+                    item.replace("package:", "")
+                    for item in system_app_str.split()
+                    if item.startswith("package:")
+                ]
+                return self.config.package_name in packages
+            await asyncio.sleep(2)
 
     async def install(self, pad_code: str) -> Dict[str, Any]:
         """执行安装"""
@@ -74,13 +73,15 @@ class AppInstaller(ABC):
             if not await self.pre_install(pad_code):
                 return {"code": 500, "msg": "pre_install_failed"}
 
-            result = await install_app(
-                pad_code_list=[pad_code],
-                app_url=self.config.download_url,
-                md5=self.config.md5
-            )
-
-            return result
+            while True:
+                result = await install_app(
+                    pad_code_list=[pad_code],
+                    app_url=self.config.download_url,
+                    md5=self.config.md5
+                )
+                if result.get("msg", None) == "success":
+                    return result
+                await asyncio.sleep(2)
         except Exception as e:
             logger.error(f"{pad_code}: 安装{self.config.name}失败 - {e}")
             return {"code": 500, "msg": str(e)}
@@ -94,17 +95,22 @@ class DefaultAppInstaller(AppInstaller):
 
     async def post_install(self, pad_code: str) -> bool:
         if self.config.needs_root:
-            await asyncio.sleep(7)
-            await open_root(
-                pad_code_list=[pad_code],
-                pkg_name=self.config.package_name
-            )
+            await asyncio.sleep(1)
+            while True:
+                result = await open_root(
+                    pad_code_list=[pad_code],
+                    pkg_name=self.config.package_name
+                )
+                if result.get("msg", None) == "success":
+                    break
+                await asyncio.sleep(1)
+
             await update_cloud_status(
                 pad_code=pad_code,
                 current_status=f"{self.config.name}:获取root成功"
             )
             logger.success(f"{self.config.name}:获取root成功")
-            await asyncio.sleep(1)
+            await asyncio.sleep(2)
         return True
 
 
@@ -350,14 +356,16 @@ async def install_all_apps(pad_code: str, config, task_manager):
             longitude=current_proxy.longitude
         )
 
-        await asyncio.sleep(2)
+        await asyncio.sleep(1)
         await update_cloud_status(pad_code=pad_code, current_status="开始启动应用")
 
-        await start_app_state(
-            package_name=config.get_package_name("primary"),
-            pad_code=pad_code,
-            task_manager=task_manager
-        )
+        while True:
+            if await start_app_state(
+                    package_name=config.get_package_name("primary"),
+                    pad_code=pad_code,
+                    task_manager=task_manager):
+                break
+            await asyncio.sleep(5)
 
         await task_manager.complete_main_task(pad_code)
 
