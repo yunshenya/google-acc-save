@@ -7,8 +7,6 @@
     <list default="true" id="33b578dc-7668-40a4-aa63-5810a51b0f9d" name="更改" comment="fix:安装失败">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/services/app_installer.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/app_installer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/every_task.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/every_task.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/services/task_status.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/services/task_status.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -625,23 +623,7 @@
       <workItem from="1760682279444" duration="50000" />
       <workItem from="1760682405600" duration="124000" />
       <workItem from="1760685717788" duration="670000" />
-      <workItem from="1760686530071" duration="545000" />
-    </task>
-    <task id="LOCAL-00200" summary="增加查看转发邮箱">
-      <option name="closed" value="true" />
-      <created>1759138104440</created>
-      <option name="number" value="00200" />
-      <option name="presentableId" value="LOCAL-00200" />
-      <option name="project" value="LOCAL" />
-      <updated>1759138104440</updated>
-    </task>
-    <task id="LOCAL-00201" summary="增加查看转发邮箱">
-      <option name="closed" value="true" />
-      <created>1759140082512</created>
-      <option name="number" value="00201" />
-      <option name="presentableId" value="LOCAL-00201" />
-      <option name="project" value="LOCAL" />
-      <updated>1759140082512</updated>
+      <workItem from="1760686530071" duration="3501000" />
     </task>
     <task id="LOCAL-00202" summary="单次提交">
       <option name="closed" value="true" />
@@ -1019,7 +1001,23 @@
       <option name="project" value="LOCAL" />
       <updated>1760618694619</updated>
     </task>
-    <option name="localTasksCounter" value="249" />
+    <task id="LOCAL-00249" summary="fix:安装失败">
+      <option name="closed" value="true" />
+      <created>1760687082303</created>
+      <option name="number" value="00249" />
+      <option name="presentableId" value="LOCAL-00249" />
+      <option name="project" value="LOCAL" />
+      <updated>1760687082303</updated>
+    </task>
+    <task id="LOCAL-00250" summary="fix:安装失败">
+      <option name="closed" value="true" />
+      <created>1760689685879</created>
+      <option name="number" value="00250" />
+      <option name="presentableId" value="LOCAL-00250" />
+      <option name="project" value="LOCAL" />
+      <updated>1760689685879</updated>
+    </task>
+    <option name="localTasksCounter" value="251" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
